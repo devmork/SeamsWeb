@@ -2,7 +2,8 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import LoginPage from "./pages/Auth/LoginPage";
 import RegisterPage from "./pages/Auth/RegisterPage";
-import Layout from "./components/layouts/Layout";
+import Layout from "./components/layouts/AuthenticatedLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -21,9 +22,8 @@ function App() {
             </ProtectedRoute>
           }
         >
-          {/* nested protected pages go here, e.g. */}
-          {/* <Route index element={<Dashboard />} /> */}
         </Route>
+        
          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
