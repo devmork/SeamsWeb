@@ -1,8 +1,8 @@
-import React, { useState } from "react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Field, FieldLabel, FieldContent, FieldTitle } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { useState } from "react"
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -18,20 +18,10 @@ export default function LoginPage() {
             </TabsList>
           </Tabs>
         </div>
-
-        <div className="mb-6 rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
-          <div className="font-semibold mb-2">Demo Accounts:</div>
-          <div className="space-y-1">
-            <div><span className="font-semibold">Admin:</span> admin@school.edu / Admin123</div>
-            <div><span className="font-semibold">Officer:</span> officer@school.edu / Officer123</div>
-            <div><span className="font-semibold">Student:</span> student@school.edu / Student123</div>
-          </div>
-        </div>
-
         <form className="space-y-6">
           <Field>
             <FieldLabel>
-              <FieldTitle>Student ID</FieldTitle>
+              <FieldTitle>Email</FieldTitle>
             </FieldLabel>
             <FieldContent>
               <div className="relative">
