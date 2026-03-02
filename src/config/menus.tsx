@@ -1,9 +1,9 @@
-export interface MenuItem {
+export interface NavItem {
   label: string;
   path: string;
 }
 
-export const getMenusByRole = (role: string): MenuItem[] => {
+export const getMenusByRole = (role: string): NavItem[] => {
   switch (role) {
     case "admin":
       return [
