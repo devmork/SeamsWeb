@@ -1,19 +1,19 @@
-import { getCurrentUserRole } from "@/service/authService";
-import { Navigate } from "react-router-dom";
+// import { getCurrentUserRole } from "@/service/authService";
+// import { Navigate } from "react-router-dom";
 
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-}
+// interface ProtectedRouteProps {
+//   children: React.ReactNode;
+// }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const role = getCurrentUserRole();
+// const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+//   const role = getCurrentUserRole();
 
-  if (!role) {
-    // Not authenticated, redirect to login
-    return <Navigate to="/login" replace />;
-  }
+//   if (!role) {
+//     // Not authenticated, redirect to login
+//     return <Navigate to="/login" replace />;
+//   }
 
-  return <>{children}</>;
-};
+//   return <>{children}</>;
+// };
 
-export default ProtectedRoute;
+// export default ProtectedRoute;
