@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
+import { Link } from "react-router-dom"
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -72,9 +73,11 @@ export default function LoginPage() {
         {/* Sign up link */}
         <p className="text-center text-sm text-slate-500 mt-6">
           Don't have an account?{" "}
-          <a href="#" className="text-blue-600 font-semibold hover:underline">
-            Sign up
-          </a>
+          <Link to="/register">
+            <a href="" className="text-blue-600 font-semibold hover:underline">
+              Sign up
+            </a>
+          </Link>
         </p>
       </div>
     </div>
