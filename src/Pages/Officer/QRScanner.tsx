@@ -1,0 +1,263 @@
+import React, { useState } from 'react';
+import { Scanner } from '@yudiel/react-qr-scanner';
+import { Camera, LogOut, QrCode, ChevronDown, CheckCircle2 } from 'lucide-react';
+
+interface ScanRecord {
+  id: string;
+  studentId: string;
+  timestamp: Date;
+}
+
+interface EventItem {
+  id: string;
+  name: string;
+  status: 'ongoing' | 'upcoming' | 'ended';
+  time: string;
+}
+
+// Mock data for our dropdown
+const MOCK_EVENTS: EventItem[] = [
+  { id: '1', name: 'Seminar on AI', status: 'ongoing', time: '8:00 AM - 10:00 AM' },
+  { id: '2', name: 'General Assembly', status: 'upcoming', time: '1:00 PM - 4:00 PM' },
+  { id: '3', name: 'IT Week Opening', status: 'upcoming', time: 'Yesterday' },
+];
+
+export default function QRScanner() {
+  const [manualId, setManualId] = useState('');
+  const [scanHistory, setScanHistory] = useState<ScanRecord[]>([]);
+  const [isScanning, setIsScanning] = useState(false);
+  
+  // Dropdown states
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<EventItem>(MOCK_EVENTS[0]);
+
+  // Handle successful QR Scan
+  const handleScan = (detectedCodes: { rawValue: string }[]) => {
+    if (detectedCodes && detectedCodes.length > 0) {
+      addScanRecord(detectedCodes[0].rawValue);
+    }
+  };
+
+  // Handle Manual Input Submit
+  const handleManualSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (manualId.trim()) {
+      addScanRecord(manualId.trim());
+      setManualId('');
+    }
+  };
+
+  // Add to history and update state
+  const addScanRecord = (studentId: string) => {
+    setScanHistory(prev => {
+      // Prevent rapid duplicate scans
+      if (prev.length > 0 && prev[0].studentId === studentId) {
+        const timeDiff = new Date().getTime() - prev[0].timestamp.getTime();
+        if (timeDiff < 3000) return prev;
+      }
+
+      const newRecord: ScanRecord = {
+        id: Math.random().toString(36).substring(2, 9),
+        studentId,
+        timestamp: new Date(),
+      };
+      return [newRecord, ...prev];
+    });
+  };
+
+  // Helper function to color-code the status pills
+  const getStatusStyles = (status: string) => {
+    switch (status) {
+      case 'ongoing': return 'text-[#14532D] bg-[#DCFCE7]';
+      case 'upcoming': return 'text-blue-800 bg-blue-100';
+      case 'ended': return 'text-slate-600 bg-slate-200';
+      default: return 'text-slate-600 bg-slate-200';
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
+      {/* Top Navigation Bar */}
+      <header className="flex justify-between items-center px-6 py-4 bg-white border-b border-slate-200">
+        <div className="flex items-center gap-3">
+          <div className="bg-[#2E6B4A] p-2 rounded-md text-white">
+            <QrCode size={24} />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-slate-800 leading-tight">SEAMS - Officer Portal</h1>
+            <p className="text-sm text-slate-500">QR Code Scanner</p>
+          </div>
+        </div>
+        <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
+          <LogOut size={16} />
+          Logout
+        </button>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* Left Column (Scanner & Controls) */}
+          <div className="lg:col-span-2 space-y-6">
+            
+            {/* Scanner Card */}
+            <div className="bg-white rounded-xl border-2 border-[#2E6B4A] p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-2">
+                <Camera size={20} className="text-[#2E6B4A]" />
+                <h2 className="text-lg font-bold">QR Code Scanner</h2>
+              </div>
+              <p className="text-sm text-slate-500 mb-6">Scan student QR codes for attendance</p>
+
+              {/* Functional Event Selector Dropdown */}
+              <div className="mb-6 relative z-30">
+                <label className="block text-sm font-medium text-slate-700 mb-2">Select Event *</label>
+                
+                {/* Selected Value Box */}
+                <div 
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-center justify-between w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-100 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="font-medium">{selectedEvent.name}</span>
+                    <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${getStatusStyles(selectedEvent.status)}`}>
+                      {selectedEvent.status}
+                    </span>
+                  </div>
+                  <ChevronDown size={20} className={`text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                </div>
+
+                {/* Dropdown Menu & Invisible Overlay */}
+                {isDropdownOpen && (
+                  <>
+                    {/* Invisible overlay to catch clicks outside the dropdown */}
+                    <div 
+                      className="fixed inset-0 z-40" 
+                      onClick={() => setIsDropdownOpen(false)}
+                    />
+                    
+                    {/* Actual dropdown menu */}
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-lg shadow-lg z-50 overflow-hidden">
+                      {MOCK_EVENTS.map((event) => (
+                        <div
+                          key={event.id}
+                          onClick={() => {
+                            setSelectedEvent(event);
+                            setIsDropdownOpen(false);
+                          }}
+                          className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 cursor-pointer border-b last:border-0 border-slate-100 transition-colors"
+                        >
+                          <span className="font-medium text-slate-700">{event.name}</span>
+                          <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${getStatusStyles(event.status)}`}>
+                            {event.status}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Camera Area */}
+              <div className="relative bg-[#0F172A] rounded-xl aspect-video w-full flex flex-col items-center justify-center overflow-hidden mb-6 z-10">
+                {!isScanning ? (
+                  <div className="flex flex-col items-center text-slate-400 z-10">
+                    <div className="w-32 h-32 border-2 border-dashed border-slate-500 rounded-lg flex items-center justify-center mb-4">
+                      <Camera size={48} className="text-slate-500" />
+                    </div>
+                    <p className="font-medium text-slate-300">Camera scanner would appear here</p>
+                    <p className="text-sm mt-1">Click below to activate your device camera</p>
+                    <button 
+                      onClick={() => setIsScanning(true)}
+                      className="mt-4 px-4 py-2 bg-[#2E6B4A] text-white text-sm rounded-lg hover:bg-[#204e35] transition"
+                    >
+                      Start Camera
+                    </button>
+                  </div>
+                ) : (
+                  <div className="absolute inset-0 w-full h-full">
+                     <Scanner
+                        onScan={handleScan}
+                        components={{ finder: false }}
+                        styles={{ container: { width: '100%', height: '100%' } }}
+                     />
+                     {/* Overlay targeting box */}
+                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                        <div className="w-48 h-48 border-2 border-[#2E6B4A] rounded-lg"></div>
+                     </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Manual Entry */}
+              <div className="z-10 relative">
+                <label className="block text-sm font-medium text-slate-700 mb-2">Or enter manually:</label>
+                <form onSubmit={handleManualSubmit} className="flex gap-3">
+                  <input
+                    type="text"
+                    value={manualId}
+                    onChange={(e) => setManualId(e.target.value)}
+                    placeholder="Enter Student ID (e.g., 2023-0444)"
+                    className="flex-1 px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E6B4A] focus:border-transparent"
+                  />
+                  <button
+                    type="submit"
+                    className="px-6 py-2 bg-[#2E6B4A] text-white font-medium rounded-lg hover:bg-[#204e35] transition-colors"
+                  >
+                    Submit
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            {/* Bottom Stats Cards
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                <h3 className="text-sm font-medium text-slate-500 mb-1">Scans Today</h3>
+                <p className="text-3xl font-bold text-slate-800">{scanHistory.length}</p>
+                <p className="text-sm text-slate-500 mt-1">Total attendance recorded</p>
+              </div>
+              <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                <h3 className="text-sm font-medium text-slate-500 mb-1">Current Event</h3>
+                <p className="text-lg font-bold text-slate-800 mt-1">{selectedEvent.name}</p>
+                <p className="text-sm text-slate-500 mt-1">{selectedEvent.time}</p>
+              </div>
+            </div> */}
+
+          </div>
+
+         {/* Right Column (Scan History) */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm h-full max-h-[330px] flex flex-col">
+              <h2 className="text-lg font-bold text-slate-800">Scan History</h2>
+              <p className="text-sm text-slate-500 mb-6">Recent attendance records</p>
+
+              {scanHistory.length === 0 ? (
+                <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
+                  <QrCode size={48} className="mb-4 opacity-50 text-slate-300" />
+                  <p className="font-medium text-slate-500">No scans yet</p>
+                  <p className="text-sm mt-1 text-center">Select an event and start scanning</p>
+                </div>
+              ) : (
+                <div className="flex-1 min-h-0 overflow-y-auto pr-2 space-y-3">
+                  {scanHistory.map((record) => (
+                    <div key={record.id} className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-100 rounded-lg animate-in fade-in slide-in-from-top-2">
+                      <CheckCircle2 size={20} className="text-[#2E6B4A] flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-800">{record.studentId}</p>
+                        <p className="text-xs text-slate-500">
+                          {record.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  );
+}

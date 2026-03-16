@@ -1,8 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
-import LoginPage from "./Pages/Auth/LoginPage";
-import RegisterPage from "./Pages/Auth/RegisterPage";
-import { StudentDashboard } from "./Pages/StudentDashboard";
+import LoginPage from "./pages/Auth/LoginPage";
+import RegisterPage from "./pages/Auth/RegisterPage";
+import QRScanner from "./pages/Officer/QRScanner";
 
 function App() {
   return (
@@ -11,9 +11,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-
-          <Route path="/student" element={<StudentDashboard onLogout={() => {}} isApproved={true} />} />
-
+          <Route path="/officer" element={<QRScanner />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
