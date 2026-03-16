@@ -1,8 +1,9 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
-import LoginPage from "./pages/Auth/LoginPage";
-import RegisterPage from "./pages/Auth/RegisterPage";
-import QRScanner from "./pages/Officer/QRScanner";
+import LoginPage from "./Pages/Auth/LoginPage";
+import RegisterPage from "./Pages/Auth/RegisterPage";
+import QRScanner from "./Pages/Officer/QRScanner";
+import { StudentDashboard } from "./Pages/StudentDashboard";
 
 function App() {
   return (
@@ -12,6 +13,9 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/officer" element={<QRScanner />} />
+          <Route path="/student" element={<StudentDashboard onLogout={function (): void {
+            throw new Error("Function not implemented.");
+          } } isApproved={false} />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
