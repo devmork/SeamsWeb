@@ -1,4 +1,9 @@
-import type { AuthResponse, LogInData, SignUpData, User } from "@/types/user.type";
+import type {
+  AuthResponse,
+  LogInData,
+  SignUpData,
+  User,
+} from "@/types/user.type";
 import axios from "axios";
 
 const API_BASE_URL =
