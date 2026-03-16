@@ -210,7 +210,7 @@ export default function QRScanner() {
               </div>
             </div>
 
-            {/* Bottom Stats Cards */}
+            {/* Bottom Stats Cards
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
                 <h3 className="text-sm font-medium text-slate-500 mb-1">Scans Today</h3>
@@ -222,7 +222,7 @@ export default function QRScanner() {
                 <p className="text-lg font-bold text-slate-800 mt-1">{selectedEvent.name}</p>
                 <p className="text-sm text-slate-500 mt-1">{selectedEvent.time}</p>
               </div>
-            </div>
+            </div> */}
 
           </div>
 
