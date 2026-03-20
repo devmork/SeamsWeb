@@ -25,7 +25,7 @@ api.interceptors.request.use((config) => {
 });
 
 export const signUp = async (data: SignUpData): Promise<AuthResponse> => {
-  const response = await api.post<AuthResponse>("/Auth/register", data);
+  const response = await api.post<AuthResponse>("/Student", data);
   return response.data;
 };
 
