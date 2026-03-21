@@ -323,7 +323,7 @@ export default function RegisterPage() {
 
                 <div className="space-y-1.5">
                   <label className="block text-sm font-medium text-slate-700">
-                    E-mail
+                    Email
                   </label>
                   <div className="relative">
                     <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400">
@@ -345,7 +345,7 @@ export default function RegisterPage() {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="example@email.com"
+                      placeholder="example@dmc.edu.ph"
                       type="email"
                       className="h-10 pl-9"
                       required
@@ -383,14 +383,14 @@ export default function RegisterPage() {
                       name="studentId"
                       value={formData.studentId}
                       onChange={handleChange}
-                      placeholder="00-A-00000" 
+                      placeholder="2023-0446" 
                       className="h-10 pl-9"
                       required
                       disabled={isLoading}
                     />
                   </div>
                   <p className="text-xs text-slate-400 pl-1">
-                    Format: 00-A-00000
+                    Format: YYYY-NNNN
                   </p>
                 </div>
 
