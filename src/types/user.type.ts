@@ -7,9 +7,14 @@ export interface User {
 
 export interface SignUpData {
   firstName: string;
-  middleName: string;
+  middleName?: string;
   lastName: string;
   email: string;
+  suffix?: string;
+  schoolStudentId:string;
+  yearLevel:number;
+  course:string;
+  photoUrl?:string;
 }
 
 
