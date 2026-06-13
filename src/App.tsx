@@ -4,7 +4,6 @@ import QRScanner from "./pages/Officer/QRScanner";
 import { StudentDashboard } from "./pages/StudentDashboard";
 import { LoginForm } from "./pages/Auth/LoginForm";
 import { SignupForm } from "./pages/Auth/SignupForm";
-import RegisterPage from "./pages/Auth/RegisterPage";
 
 function App() {
   return (
@@ -13,7 +12,6 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<SignupForm />} />
-          <Route path="/register" element={<RegisterPage />} />
           <Route path="/officer" element={<QRScanner />} />
           <Route
             path="/student"
