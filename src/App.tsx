@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import QRScanner from "./pages/Officer/QRScanner";
 import { StudentDashboard } from "./pages/StudentDashboard";
 import { LoginForm } from "./pages/Auth/LoginForm";
-import { SignupForm } from "./pages/Auth/SignupForm";
+import SignupForm from "./pages/Auth/SignupForm";
 
 function App() {
   return (
