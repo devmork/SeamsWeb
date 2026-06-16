@@ -4,7 +4,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarRail,
 } from "@/components/ui/sidebar";
 import { navigationData } from "@/config/navigation";
 import { NavIdentity } from "./NavIdentity";
@@ -40,7 +39,6 @@ export function AppSidebar({ role, ...props }: AppSidebarProps) {
       <SidebarFooter>
         <NavUser user={navigationData.user} />
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   );
 }
