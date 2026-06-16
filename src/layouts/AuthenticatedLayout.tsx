@@ -1,11 +1,10 @@
-import { AppSidebar } from "@/components/layout/AppSidebar";
+import { AppSidebar } from "./AppSidebar";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Outlet, useLocation } from "react-router-dom";
-import { Separator } from "@/components/ui/separator";
 import { navigationData } from "@/config/navigation";
 
 interface AuthenticatedLayoutProps {

@@ -1,5 +1,4 @@
 import {
-  BookOpen,
   Calendar,
   CheckSquare,
   FileText,

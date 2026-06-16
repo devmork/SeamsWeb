@@ -1165,7 +1165,7 @@
 //     </div>
 //   );
 // }
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Scanner } from '@yudiel/react-qr-scanner';
 import { Camera, LogOut, QrCode, ChevronDown, CheckCircle2, AlertCircle, Calendar, Clock, BookOpen } from 'lucide-react';
 import { getEventItems, recordAttendance } from '../../service/attendanceService';
