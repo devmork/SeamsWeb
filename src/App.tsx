@@ -19,6 +19,10 @@ function App() {
               path="/student/dashboard"
               element={<div>Student Dashboard</div>}
             />
+            <Route
+              path="/admin/dashboard"
+              element={<div>Admin Dashboard</div>}
+            />
             <Route path="/officer" element={<QRScanner />} />
             <Route
               path="/student"
