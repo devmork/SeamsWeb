@@ -1,96 +1,54 @@
-/**
- * Layout Component
- *
- * This component provides a consistent layout with a sidebar navigation.
- * It renders different navigation based on user role (Admin, Student, Officer).
- */
-
-import { Link, Outlet } from "react-router-dom";
+import { AppSidebar } from "./AppSidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { Outlet, useLocation } from "react-router-dom";
+import { navigationData } from "@/config/navigation";
 
 interface AuthenticatedLayoutProps {
   role: "admin" | "student" | "officer";
 }
 
-const AuthenticatedLayout = ({ role }: AuthenticatedLayoutProps) => {
-  // Navigation items by role
-  const navigationItems = {
-    admin: [
-      { path: "/dashboard", label: "Dashboard", icon: "📊" },
-      { path: "/students", label: "Students", icon: "👥" },
-      { path: "/attendance", label: "Attendance", icon: "📅" },
-      { path: "/reports", label: "Reports", icon: "📋" },
-      { path: "/approvals", label: "Approvals", icon: "✓" },
-    ],
-    student: [
-      { path: "/dashboard", label: "Dashboard", icon: "📊" },
-      { path: "/qr-code", label: "My QR Code", icon: "🔲" },
-      { path: "/events", label: "Events", icon: "📅" },
-      { path: "/attendance-history", label: "Attendance History", icon: "📋" },
-      { path: "/profile", label: "Profile", icon: "👤" },
-    ],
-    officer: [{ path: "/dashboard", label: "Dashboard", icon: "📊" }],
-  };
-
-  const portalLabel = {
-    admin: "Admin Portal",
-    student: "Student Portal",
-    officer: "Officer Portal",
-  };
-
-  const currentNavItems = navigationItems[role];
-  const currentPortalLabel = portalLabel[role];
+export default function AuthenticatedLayout({
+  role,
+}: AuthenticatedLayoutProps) {
+  const location = useLocation();
+  const navItems = navigationData.navByRole[role] || [];
+  
+  let currentTitle = "Dashboard";
+  for (const item of navItems) {
+    if (item.url === location.pathname) {
+      currentTitle = item.name;
+      break;
+    }
+    if ("items" in item && Array.isArray(item.items)) {
+      const subItem = item.items.find(
+        (sub: { name: string; url: string }) => sub.url === location.pathname
+      );
+      if (subItem) {
+        currentTitle = subItem.name;
+        break;
+      }
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar Navigation */}
-      <aside className="w-64 bg-white shadow-md flex flex-col">
-        <div className="p-6 border-b">
-          <h1 className="text-2xl font-bold text-green-700">SEAMS</h1>
-          <p className="text-sm text-gray-500">{currentPortalLabel}</p>
-        </div>
-
-        <nav className="space-y-2 px-4 py-6 flex-1">
-          {currentNavItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className="flex items-center gap-3 px-4 py-3 bg-green-700 text-white rounded-lg font-semibold hover:bg-green-800 transition first:bg-green-700 first:text-white">
-              <span>{item.icon}</span> {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Logout Button */}
-        <div className="p-4 border-t">
-          <button className="w-full px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-semibold">
-            Logout
-          </button>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <header className="bg-white shadow-sm border-b">
-          <div className="px-8 py-4">
-            <h2 className="text-xl font-semibold text-gray-800">
-              Welcome to SEAMS
-            </h2>
-          </div>
+    <SidebarProvider>
+      <AppSidebar role={role} />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+          <SidebarTrigger className="-ml-1" />
+          <div className="h-4 w-[1.5px] bg-gray-300 mx-2 rounded-full" />
+          <span className="text-sm font-semibold text-gray-700">
+            {currentTitle}
+          </span>
         </header>
-
-        {/* Page Content */}
-        <main className="flex-1 px-8 py-8">
+        <main className="p-4">
           <Outlet />
         </main>
-
-        {/* Footer */}
-        <footer className="bg-gray-800 text-white text-center py-4">
-          <p className="text-sm">SEAMS © 2026 - Educational Demo</p>
-        </footer>
-      </div>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
-};
-
-export default AuthenticatedLayout;
+}
