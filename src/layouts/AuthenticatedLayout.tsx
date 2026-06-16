@@ -1,42 +1,40 @@
 /**
  * Layout Component
- * 
+ *
  * This component provides a consistent layout with a sidebar navigation.
  * It renders different navigation based on user role (Admin, Student, Officer).
  */
 
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet } from "react-router-dom";
 
 interface AuthenticatedLayoutProps {
-  role: 'admin' | 'student' | 'officer';
+  role: "admin" | "student" | "officer";
 }
 
 const AuthenticatedLayout = ({ role }: AuthenticatedLayoutProps) => {
   // Navigation items by role
   const navigationItems = {
     admin: [
-      { path: '/dashboard', label: 'Dashboard', icon: '📊' },
-      { path: '/students', label: 'Students', icon: '👥' },
-      { path: '/attendance', label: 'Attendance', icon: '📅' },
-      { path: '/reports', label: 'Reports', icon: '📋' },
-      { path: '/approvals', label: 'Approvals', icon: '✓' },
+      { path: "/dashboard", label: "Dashboard", icon: "📊" },
+      { path: "/students", label: "Students", icon: "👥" },
+      { path: "/attendance", label: "Attendance", icon: "📅" },
+      { path: "/reports", label: "Reports", icon: "📋" },
+      { path: "/approvals", label: "Approvals", icon: "✓" },
     ],
     student: [
-      { path: '/dashboard', label: 'Dashboard', icon: '📊' },
-      { path: '/qr-code', label: 'My QR Code', icon: '🔲' },
-      { path: '/events', label: 'Events', icon: '📅' },
-      { path: '/attendance-history', label: 'Attendance History', icon: '📋' },
-      { path: '/profile', label: 'Profile', icon: '👤' },
+      { path: "/dashboard", label: "Dashboard", icon: "📊" },
+      { path: "/qr-code", label: "My QR Code", icon: "🔲" },
+      { path: "/events", label: "Events", icon: "📅" },
+      { path: "/attendance-history", label: "Attendance History", icon: "📋" },
+      { path: "/profile", label: "Profile", icon: "👤" },
     ],
-    officer: [
-      { path: '/dashboard', label: 'Dashboard', icon: '📊' },
-    ],
+    officer: [{ path: "/dashboard", label: "Dashboard", icon: "📊" }],
   };
 
   const portalLabel = {
-    admin: 'Admin Portal',
-    student: 'Student Portal',
-    officer: 'Officer Portal',
+    admin: "Admin Portal",
+    student: "Student Portal",
+    officer: "Officer Portal",
   };
 
   const currentNavItems = navigationItems[role];
@@ -56,8 +54,7 @@ const AuthenticatedLayout = ({ role }: AuthenticatedLayoutProps) => {
             <Link
               key={item.path}
               to={item.path}
-              className="flex items-center gap-3 px-4 py-3 bg-green-700 text-white rounded-lg font-semibold hover:bg-green-800 transition first:bg-green-700 first:text-white"
-            >
+              className="flex items-center gap-3 px-4 py-3 bg-green-700 text-white rounded-lg font-semibold hover:bg-green-800 transition first:bg-green-700 first:text-white">
               <span>{item.icon}</span> {item.label}
             </Link>
           ))}
@@ -76,7 +73,9 @@ const AuthenticatedLayout = ({ role }: AuthenticatedLayoutProps) => {
         {/* Header */}
         <header className="bg-white shadow-sm border-b">
           <div className="px-8 py-4">
-            <h2 className="text-xl font-semibold text-gray-800">Welcome to SEAMS</h2>
+            <h2 className="text-xl font-semibold text-gray-800">
+              Welcome to SEAMS
+            </h2>
           </div>
         </header>
 
