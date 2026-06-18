@@ -5,20 +5,19 @@ export interface User {
   role: string;
 }
 
-export interface SignUpData {
+export interface SignupData {
   firstName: string;
   middleName?: string;
   lastName: string;
   email: string;
   suffix?: string;
-  schoolStudentId:string;
-  yearLevel:number;
-  course:string;
-  photoUrl?:string;
+  schoolStudentId: string;
+  yearLevel: number;
+  course: string;
+  photoUrl?: string;
 }
 
-
-export interface LogInData {
+export interface LoginData {
   email: string;
   password: string;
 }
