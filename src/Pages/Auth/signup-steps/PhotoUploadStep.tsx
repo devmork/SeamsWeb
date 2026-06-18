@@ -8,7 +8,11 @@ import {
 } from "@/components/ui/field";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-export type PhotoData = { file: File | null; previewUrl: string };
+export type PhotoData = {
+  file: File | null;
+  previewUrl: string;
+  base64: string;
+};
 
 type Props = {
   data: PhotoData;
@@ -22,7 +26,16 @@ export function PhotoUploadStep({ data, onNext, onBack }: Props) {
 
   const handleFile = (file: File) => {
     const previewUrl = URL.createObjectURL(file);
-    setPhoto({ file, previewUrl });
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPhoto({
+        file,
+        previewUrl,
+        base64: reader.result as string,
+      });
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleDrop = (e: React.DragEvent) => {
