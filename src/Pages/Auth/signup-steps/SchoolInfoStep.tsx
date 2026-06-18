@@ -15,7 +15,6 @@ export type SchoolInfoData = {
   studentId: string;
   yearLevel: string;
   department: string;
-  section: string;
 };
 
 type Props = {
@@ -61,9 +60,14 @@ export function SchoolInfoStep({ data, onNext, onBack }: Props) {
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
-              {["1st Year", "2nd Year", "3rd Year", "4th Year"].map((y) => (
-                <SelectItem key={y} value={y}>
-                  {y}
+              {[
+                { label: "1st Year", value: "1" },
+                { label: "2nd Year", value: "2" },
+                { label: "3rd Year", value: "3" },
+                { label: "4th Year", value: "4" },
+              ].map(({ label, value }) => (
+                <SelectItem key={value} value={value}>
+                  {label}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -87,18 +91,6 @@ export function SchoolInfoStep({ data, onNext, onBack }: Props) {
           </Select>
         </Field>
       </div>
-
-      <Field>
-        <FieldLabel htmlFor="section">Section</FieldLabel>
-        <Input
-          id="section"
-          value={form.section}
-          onChange={set("section")}
-          placeholder="e.g. A, B, C"
-          required
-        />
-      </Field>
-
       <div className="flex gap-2">
         <Button
           type="button"
