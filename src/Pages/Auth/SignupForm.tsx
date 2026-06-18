@@ -15,6 +15,8 @@ import {
   type PhotoData,
 } from "./signup-steps/PhotoUploadStep";
 import { ReviewStep } from "./signup-steps/ReviewStep";
+import type { SignupData } from "@/types/user.type";
+import { signUp } from "@/service/authService";
 
 const STEPS = ["Personal", "School", "Photo", "Review"];
 
@@ -34,19 +36,34 @@ export default function SignupForm() {
     studentId: "",
     yearLevel: "",
     department: "",
-    section: "",
   });
-  const [photo, setPhoto] = useState<PhotoData>({ file: null, previewUrl: "" });
+  const [photo, setPhoto] = useState<PhotoData>({
+    file: null,
+    previewUrl: "",
+    base64: "",
+  });
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const formData = new FormData();
-      formData.append("personal", JSON.stringify(personal));
-      formData.append("school", JSON.stringify(school));
-      if (photo.file) formData.append("photo", photo.file);
-      await fetch("/api/auth/register", { method: "POST", body: formData });
-      navigate("/pending-approval");
+      const payload: SignupData = {
+        firstName: personal.firstName,
+        middleName: personal.middleName || undefined,
+        lastName: personal.lastName,
+        suffix:
+          personal.suffix === "none" ? undefined : personal.suffix || undefined,
+        email: personal.email,
+        schoolStudentId: school.studentId,
+        yearLevel: parseInt(school.yearLevel),
+        course: school.department,
+        photoUrl: photo.base64 || undefined,
+      };
+
+      await signUp(payload);
+      navigate("/login");
+    } catch (error) {
+      console.error("Registration failed:", error);
+      // TODO: show error toast/message to user
     } finally {
       setIsSubmitting(false);
     }
