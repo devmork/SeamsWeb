@@ -1,4 +1,4 @@
-import { AppSidebar } from "./AppSidebar";
+import { AppSidebar } from "../components/layout/AppSidebar";
 import {
   SidebarInset,
   SidebarProvider,
@@ -16,7 +16,7 @@ export default function AuthenticatedLayout({
 }: AuthenticatedLayoutProps) {
   const location = useLocation();
   const navItems = navigationData.navByRole[role] || [];
-  
+
   let currentTitle = "Dashboard";
   for (const item of navItems) {
     if (item.url === location.pathname) {
@@ -25,7 +25,7 @@ export default function AuthenticatedLayout({
     }
     if ("items" in item && Array.isArray(item.items)) {
       const subItem = item.items.find(
-        (sub: { name: string; url: string }) => sub.url === location.pathname
+        (sub: { name: string; url: string }) => sub.url === location.pathname,
       );
       if (subItem) {
         currentTitle = subItem.name;
