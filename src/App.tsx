@@ -4,6 +4,7 @@ import QRScanner from "./pages/Officer/QRScanner";
 import { StudentDashboard } from "./pages/StudentDashboard";
 import { LoginForm } from "./pages/Auth/LoginForm";
 import SignupForm from "./pages/Auth/SignupForm";
+import AuthenticatedLayout from "./layouts/AuthenticatedLayout";
 
 function App() {
   return (
@@ -13,17 +14,26 @@ function App() {
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<SignupForm />} />
           <Route path="/officer" element={<QRScanner />} />
-          <Route
-            path="/student"
-            element={
-              <StudentDashboard
-                onLogout={function (): void {
-                  throw new Error("Function not implemented.");
-                }}
-                isApproved={false}
-              />
-            }
-          />
+          <Route element={<AuthenticatedLayout role="student" />}>
+            <Route
+              path="/student/dashboard"
+              element={<div>Student Dashboard</div>}
+            />
+            <Route
+              path="/admin/dashboard"
+              element={<div>Admin Dashboard</div>}
+            />
+            <Route path="/officer" element={<QRScanner />} />
+            <Route
+              path="/student"
+              element={
+                <StudentDashboard
+                  onLogout={() => console.log("Logout clicked")}
+                  isApproved={false}
+                />
+              }
+            />
+          </Route>
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
