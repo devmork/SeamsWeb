@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Outlet, useLocation } from "react-router-dom";
 import { navigationData } from "@/config/navigation";
+import { Toaster } from "@/components/ui/sonner";
 
 interface AuthenticatedLayoutProps {
   role: "admin" | "student" | "officer";
@@ -47,6 +48,7 @@ export default function AuthenticatedLayout({
         </header>
         <main className="p-4">
           <Outlet />
+          <Toaster />
         </main>
       </SidebarInset>
     </SidebarProvider>
