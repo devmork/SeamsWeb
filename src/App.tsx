@@ -1,7 +1,7 @@
 import './App.css';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import LoginForm from './pages/Auth/LoginForm';
-import SignupForm from './pages/Auth/SignupForm';
+import LoginForm from './Pages/Auth/LoginForm';
+import SignupForm from './Pages/Auth/SignupForm';
 import AuthenticatedLayout from './layouts/AuthenticatedLayout';
 
 function App() {
