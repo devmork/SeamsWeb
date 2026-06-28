@@ -1,12 +1,12 @@
 import "./App.css";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import QRScanner from "./pages/Officer/QRScanner";
-import { StudentDashboard } from "./pages/StudentDashboard";
+import { StudentDashboard } from "./pages/Student/StudentDashboard";
 import { LoginForm } from "./pages/Auth/LoginForm";
 import SignupForm from "./pages/Auth/SignupForm";
 import AuthenticatedLayout from "./layouts/AuthenticatedLayout";
 
-function App() {
+export default function App() {
   return (
     <>
       <BrowserRouter>
@@ -40,5 +40,3 @@ function App() {
     </>
   );
 }
-
-export default App;
