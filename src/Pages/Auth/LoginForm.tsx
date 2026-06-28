@@ -10,7 +10,7 @@ import {
 import { Input } from '@/components/ui/input';
 import AuthLayout from '@/layouts/AuthLayout';
 
-export function LoginForm({
+export default function LoginForm({
   className,
   ...props
 }: React.ComponentProps<'form'>) {
