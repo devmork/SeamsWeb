@@ -1,6 +1,6 @@
 import './App.css';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { LoginForm } from './pages/Auth/LoginForm';
+import LoginForm from './pages/Auth/LoginForm';
 import SignupForm from './pages/Auth/SignupForm';
 import AuthenticatedLayout from './layouts/AuthenticatedLayout';
 
