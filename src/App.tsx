@@ -1,10 +1,10 @@
-import "./App.css";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import QRScanner from "./pages/Officer/QRScanner";
-import { StudentDashboard } from "./pages/Student/StudentDashboard";
-import { LoginForm } from "./pages/Auth/LoginForm";
-import SignupForm from "./pages/Auth/SignupForm";
-import AuthenticatedLayout from "./layouts/AuthenticatedLayout";
+import './App.css';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import QRScanner from './pages/Officer/QRScanner';
+import { StudentDashboard } from './pages/Student/StudentDashboard';
+import { LoginForm } from './pages/Auth/LoginForm';
+import SignupForm from './pages/Auth/SignupForm';
+import AuthenticatedLayout from './layouts/AuthenticatedLayout';
 
 export default function App() {
   return (
@@ -28,7 +28,7 @@ export default function App() {
               path="/student"
               element={
                 <StudentDashboard
-                  onLogout={() => console.log("Logout clicked")}
+                  onLogout={() => console.log('Logout clicked')}
                   isApproved={false}
                 />
               }
