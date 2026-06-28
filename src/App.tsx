@@ -4,7 +4,7 @@ import LoginForm from './pages/Auth/LoginForm';
 import SignupForm from './pages/Auth/SignupForm';
 import AuthenticatedLayout from './layouts/AuthenticatedLayout';
 
-export default function App() {
+function App() {
   return (
     <BrowserRouter>
       <Routes>
@@ -18,3 +18,5 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
+export default App;
