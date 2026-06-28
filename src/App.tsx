@@ -1,7 +1,7 @@
 import './App.css';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import LoginForm from './pages/Auth/LoginForm';
-import SignupForm from './pages/Auth/SignupForm';
+// import LoginForm from './pages/Auth/LoginForm';
+// import SignupForm from './pages/Auth/SignupForm';
 import AuthenticatedLayout from './layouts/AuthenticatedLayout';
 
 export default function App() {
@@ -9,8 +9,8 @@ export default function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/signup" element={<SignupForm />} />
+          {/* <Route path="/login" element={<LoginForm />} />
+          <Route path="/signup" element={<SignupForm />} /> */}
           <Route element={<AuthenticatedLayout role="student" />}>
             <Route
               path="/admin/dashboard"
