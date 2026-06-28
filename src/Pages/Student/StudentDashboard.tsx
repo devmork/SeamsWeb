@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   QrCode,
   Calendar,
@@ -11,16 +11,16 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-} from "lucide-react";
-import { Button } from "../../components/ui/button";
+} from 'lucide-react';
+import { Button } from '../../components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../components/ui/card";
-import { Badge } from "../../components/ui/badge";
+} from '../../components/ui/card';
+import { Badge } from '../../components/ui/badge';
 
 interface StudentDashboardProps {
   onLogout: () => void;
@@ -36,11 +36,11 @@ export function StudentDashboard({
 
   // Mock student data
   const studentInfo = {
-    name: "Juan Santos Dela Cruz",
-    studentId: "2021-1234",
-    program: "BS Computer Science",
-    yearLevel: "3rd Year",
-    email: "student@school.edu",
+    name: 'Juan Santos Dela Cruz',
+    studentId: '2021-1234',
+    program: 'BS Computer Science',
+    yearLevel: '3rd Year',
+    email: 'student@school.edu',
   };
 
   const stats = {
@@ -53,34 +53,34 @@ export function StudentDashboard({
   const upcomingEvents = [
     {
       id: 1,
-      name: "Seminar on AI",
-      date: "Feb 21, 2026",
-      time: "8:00 AM",
-      location: "Auditorium",
+      name: 'Seminar on AI',
+      date: 'Feb 21, 2026',
+      time: '8:00 AM',
+      location: 'Auditorium',
       registered: true,
     },
     {
       id: 2,
-      name: "Workshop: Web Dev",
-      date: "Feb 21, 2026",
-      time: "1:00 PM",
-      location: "Computer Lab 1",
+      name: 'Workshop: Web Dev',
+      date: 'Feb 21, 2026',
+      time: '1:00 PM',
+      location: 'Computer Lab 1',
       registered: true,
     },
     {
       id: 3,
-      name: "Career Fair 2026",
-      date: "Feb 22, 2026",
-      time: "9:00 AM",
-      location: "Gymnasium",
+      name: 'Career Fair 2026',
+      date: 'Feb 22, 2026',
+      time: '9:00 AM',
+      location: 'Gymnasium',
       registered: false,
     },
     {
       id: 4,
-      name: "Coding Competition",
-      date: "Feb 25, 2026",
-      time: "10:00 AM",
-      location: "Computer Lab 2",
+      name: 'Coding Competition',
+      date: 'Feb 25, 2026',
+      time: '10:00 AM',
+      location: 'Computer Lab 2',
       registered: true,
     },
   ];
@@ -88,47 +88,47 @@ export function StudentDashboard({
   const attendanceHistory = [
     {
       id: 1,
-      event: "Tech Talk: Python",
-      date: "Feb 18, 2026",
-      status: "attended",
-      time: "8:15 AM",
+      event: 'Tech Talk: Python',
+      date: 'Feb 18, 2026',
+      status: 'attended',
+      time: '8:15 AM',
     },
     {
       id: 2,
-      event: "Leadership Summit",
-      date: "Feb 15, 2026",
-      status: "attended",
-      time: "1:05 PM",
+      event: 'Leadership Summit',
+      date: 'Feb 15, 2026',
+      status: 'attended',
+      time: '1:05 PM',
     },
     {
       id: 3,
-      event: "Sports Fest Opening",
-      date: "Feb 12, 2026",
-      status: "missed",
-      time: "-",
+      event: 'Sports Fest Opening',
+      date: 'Feb 12, 2026',
+      status: 'missed',
+      time: '-',
     },
     {
       id: 4,
-      event: "Orientation Day",
-      date: "Feb 10, 2026",
-      status: "attended",
-      time: "9:00 AM",
+      event: 'Orientation Day',
+      date: 'Feb 10, 2026',
+      status: 'attended',
+      time: '9:00 AM',
     },
     {
       id: 5,
-      event: "Club Fair",
-      date: "Feb 8, 2026",
-      status: "attended",
-      time: "2:30 PM",
+      event: 'Club Fair',
+      date: 'Feb 8, 2026',
+      status: 'attended',
+      time: '2:30 PM',
     },
   ];
 
   const navigationItems = [
-    { icon: LayoutDashboard, label: "Dashboard", active: true },
-    { icon: QrCode, label: "My QR Code", active: false },
-    { icon: Calendar, label: "Events", active: false },
-    { icon: FileText, label: "Attendance History", active: false },
-    { icon: User, label: "Profile", active: false },
+    { icon: LayoutDashboard, label: 'Dashboard', active: true },
+    { icon: QrCode, label: 'My QR Code', active: false },
+    { icon: Calendar, label: 'Events', active: false },
+    { icon: FileText, label: 'Attendance History', active: false },
+    { icon: User, label: 'Profile', active: false },
   ];
 
   return (
@@ -140,7 +140,8 @@ export function StudentDashboard({
         </h1>
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 hover:bg-gray-100 rounded-lg">
+          className="p-2 hover:bg-gray-100 rounded-lg"
+        >
           {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -151,8 +152,9 @@ export function StudentDashboard({
           className={`
             fixed lg:sticky top-0 left-0 h-screen bg-white border-r border-gray-200 w-64 z-40
             transition-transform duration-300 lg:translate-x-0
-            ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-          `}>
+            ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          `}
+        >
           <div className="p-6 border-b border-gray-200 hidden lg:block">
             <h1 className="text-2xl font-bold bg-gradient-to-r from-[#2C5530] to-[#3d7042] bg-clip-text text-transparent">
               SEAMS
@@ -168,10 +170,11 @@ export function StudentDashboard({
                   w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
                   ${
                     item.active
-                      ? "bg-gradient-to-r from-[#2C5530] to-[#3d7042] text-white"
-                      : "text-gray-700 hover:bg-gray-100"
+                      ? 'bg-gradient-to-r from-[#2C5530] to-[#3d7042] text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
                   }
-                `}>
+                `}
+              >
                 <item.icon size={20} />
                 <span>{item.label}</span>
               </button>
@@ -182,7 +185,8 @@ export function StudentDashboard({
             <Button
               onClick={onLogout}
               variant="outline"
-              className="w-full flex items-center gap-2">
+              className="w-full flex items-center gap-2"
+            >
               <LogOut size={20} />
               Logout
             </Button>
@@ -193,7 +197,8 @@ export function StudentDashboard({
         {sidebarOpen && (
           <div
             className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
-            onClick={() => setSidebarOpen(false)}></div>
+            onClick={() => setSidebarOpen(false)}
+          ></div>
         )}
 
         {/* Main Content */}
@@ -201,7 +206,7 @@ export function StudentDashboard({
           {/* Header */}
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-900">
-              Welcome back, {studentInfo.name.split(" ")[0]}!
+              Welcome back, {studentInfo.name.split(' ')[0]}!
             </h2>
             <p className="text-gray-600 mt-1">
               {studentInfo.studentId} • {studentInfo.program}
@@ -280,9 +285,10 @@ export function StudentDashboard({
                     </div>
                     <Button
                       onClick={() => setShowQRCode(!showQRCode)}
-                      className="bg-gradient-to-r from-[#2C5530] to-[#3d7042] hover:opacity-90">
+                      className="bg-gradient-to-r from-[#2C5530] to-[#3d7042] hover:opacity-90"
+                    >
                       <QrCode size={20} className="mr-2" />
-                      {showQRCode ? "Hide QR Code" : "Show QR Code"}
+                      {showQRCode ? 'Hide QR Code' : 'Show QR Code'}
                     </Button>
                   </div>
 
@@ -346,7 +352,8 @@ export function StudentDashboard({
                   {upcomingEvents.map((event) => (
                     <div
                       key={event.id}
-                      className="border border-gray-200 rounded-lg p-4">
+                      className="border border-gray-200 rounded-lg p-4"
+                    >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
                           <h4 className="font-semibold text-gray-900">
@@ -371,7 +378,8 @@ export function StudentDashboard({
                         <Button
                           size="sm"
                           variant="outline"
-                          className="w-full mt-3 border-[#2C5530] text-[#2C5530] hover:bg-[#2C5530] hover:text-white">
+                          className="w-full mt-3 border-[#2C5530] text-[#2C5530] hover:bg-[#2C5530] hover:text-white"
+                        >
                           Register for Event
                         </Button>
                       )}
@@ -392,13 +400,15 @@ export function StudentDashboard({
                   {attendanceHistory.map((record) => (
                     <div
                       key={record.id}
-                      className="flex items-start gap-4 pb-4 border-b border-gray-100 last:border-0">
+                      className="flex items-start gap-4 pb-4 border-b border-gray-100 last:border-0"
+                    >
                       <div
                         className={`
                         w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0
-                        ${record.status === "attended" ? "bg-green-100" : "bg-red-100"}
-                      `}>
-                        {record.status === "attended" ? (
+                        ${record.status === 'attended' ? 'bg-green-100' : 'bg-red-100'}
+                      `}
+                      >
+                        {record.status === 'attended' ? (
                           <CheckCircle size={20} className="text-green-700" />
                         ) : (
                           <XCircle size={20} className="text-red-700" />
@@ -410,23 +420,24 @@ export function StudentDashboard({
                         </p>
                         <p className="text-xs text-gray-600">{record.date}</p>
                         <p className="text-xs text-gray-500 mt-1">
-                          {record.status === "attended"
+                          {record.status === 'attended'
                             ? `Checked in at ${record.time}`
-                            : "No attendance recorded"}
+                            : 'No attendance recorded'}
                         </p>
                       </div>
                       <Badge
                         variant={
-                          record.status === "attended"
-                            ? "default"
-                            : "destructive"
+                          record.status === 'attended'
+                            ? 'default'
+                            : 'destructive'
                         }
                         className={
-                          record.status === "attended"
-                            ? "bg-green-100 text-green-700 hover:bg-green-100"
-                            : ""
-                        }>
-                        {record.status === "attended" ? "Present" : "Absent"}
+                          record.status === 'attended'
+                            ? 'bg-green-100 text-green-700 hover:bg-green-100'
+                            : ''
+                        }
+                      >
+                        {record.status === 'attended' ? 'Present' : 'Absent'}
                       </Badge>
                     </div>
                   ))}

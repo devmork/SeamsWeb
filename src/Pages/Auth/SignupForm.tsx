@@ -1,22 +1,22 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import AuthLayout from "@/layouts/AuthLayout";
-import { StepIndicator } from "@/components/ui/step-indicator";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AuthLayout from '@/layouts/AuthLayout';
+import { StepIndicator } from '@/components/ui/step-indicator';
 import {
   PersonalInfoStep,
   type PersonalInfoData,
-} from "./signup-steps/PersonalInfoStep";
+} from './signup-steps/PersonalInfoStep';
 import {
   SchoolInfoStep,
   type SchoolInfoData,
-} from "./signup-steps/SchoolInfoStep";
+} from './signup-steps/SchoolInfoStep';
 import {
   PhotoUploadStep,
   type PhotoData,
-} from "./signup-steps/PhotoUploadStep";
-import { ReviewStep } from "./signup-steps/ReviewStep";
+} from './signup-steps/PhotoUploadStep';
+import { ReviewStep } from './signup-steps/ReviewStep';
 
-const STEPS = ["Personal", "School", "Photo", "Review"];
+const STEPS = ['Personal', 'School', 'Photo', 'Review'];
 
 export default function SignupForm() {
   const navigate = useNavigate();
@@ -24,29 +24,29 @@ export default function SignupForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [personal, setPersonal] = useState<PersonalInfoData>({
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    suffix: "",
-    email: "",
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    suffix: '',
+    email: '',
   });
   const [school, setSchool] = useState<SchoolInfoData>({
-    studentId: "",
-    yearLevel: "",
-    department: "",
-    section: "",
+    studentId: '',
+    yearLevel: '',
+    department: '',
+    section: '',
   });
-  const [photo, setPhoto] = useState<PhotoData>({ file: null, previewUrl: "" });
+  const [photo, setPhoto] = useState<PhotoData>({ file: null, previewUrl: '' });
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
       const formData = new FormData();
-      formData.append("personal", JSON.stringify(personal));
-      formData.append("school", JSON.stringify(school));
-      if (photo.file) formData.append("photo", photo.file);
-      await fetch("/api/auth/register", { method: "POST", body: formData });
-      navigate("/pending-approval");
+      formData.append('personal', JSON.stringify(personal));
+      formData.append('school', JSON.stringify(school));
+      if (photo.file) formData.append('photo', photo.file);
+      await fetch('/api/auth/register', { method: 'POST', body: formData });
+      navigate('/pending-approval');
     } finally {
       setIsSubmitting(false);
     }
