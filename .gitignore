@@ -25,3 +25,5 @@ dist-ssr
 repomix-output.xml
 repomix-*.xml
 .gitignore
+.env
+.env.production
