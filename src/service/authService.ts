@@ -1,7 +1,7 @@
 import type {
   AuthResponse,
-  LogInData,
-  SignUpData,
+  LoginData,
+  SignupData,
   User,
 } from "@/types/user.type";
 import axios from "axios";
@@ -24,12 +24,12 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const signUp = async (data: SignUpData): Promise<AuthResponse> => {
+export const signUp = async (data: SignupData): Promise<AuthResponse> => {
   const response = await api.post<AuthResponse>("/Student", data);
   return response.data;
 };
 
-export const logIn = async (data: LogInData): Promise<AuthResponse> => {
+export const logIn = async (data: LoginData): Promise<AuthResponse> => {
   const response = await api.post<AuthResponse>("/Auth/login", data);
 
   if (response.data.token) {
