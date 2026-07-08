@@ -481,13 +481,16 @@ export default function SignupForm() {
           personal.suffix === 'none' ? undefined : personal.suffix || undefined,
         email: personal.email,
         schoolStudentId: school.studentId,
-        yearLevel: parseInt(school.yearLevel),
+        yearLevel: school.yearLevel,
         course: school.department,
         photoUrl: photo.base64 || undefined,
       };
 
       await signUp(payload);
-      toast.success('Registration successful!', { position: 'top-center' });
+      toast.success('Registration submitted successfully!!', {
+        position: 'top-center',
+        description: 'Your application is now pending admin approval.',
+      });
       navigate('/login');
     } catch (error) {
       toast.error('Registration error!', { position: 'top-center' });
