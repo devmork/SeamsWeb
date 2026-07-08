@@ -12,7 +12,7 @@ export interface SignupData {
   email: string;
   suffix?: string;
   schoolStudentId: string;
-  yearLevel: number;
+  yearLevel: string;
   course: string;
   photoUrl?: string;
 }
