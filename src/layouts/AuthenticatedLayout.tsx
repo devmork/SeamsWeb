@@ -1,30 +1,30 @@
-import { AppSidebar } from "../components/layout/AppSidebar";
+import { AppSidebar } from '../components/layout/AppSidebar';
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { Outlet, useLocation } from "react-router-dom";
-import { navigationData } from "@/config/navigation";
-import { Toaster } from "@/components/ui/sonner";
+} from '@/components/ui/sidebar';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { navigationData } from '@/config/navigation';
+import { Toaster } from '@/components/ui/sonner';
+import { getCurrentUser } from '@/service/authService';
 
-interface AuthenticatedLayoutProps {
-  role: "admin" | "student" | "officer";
-}
-
-export default function AuthenticatedLayout({
-  role,
-}: AuthenticatedLayoutProps) {
+export default function AuthenticatedLayout() {
   const location = useLocation();
+  const user = getCurrentUser();
+
+  if (!user) return <Navigate to="/login" replace />;
+
+  const role = user.role.toLowerCase() as 'admin' | 'officer' | 'student';
   const navItems = navigationData.navByRole[role] || [];
 
-  let currentTitle = "Dashboard";
+  let currentTitle = 'Dashboard';
   for (const item of navItems) {
     if (item.url === location.pathname) {
       currentTitle = item.name;
       break;
     }
-    if ("items" in item && Array.isArray(item.items)) {
+    if ('items' in item && Array.isArray(item.items)) {
       const subItem = item.items.find(
         (sub: { name: string; url: string }) => sub.url === location.pathname,
       );
