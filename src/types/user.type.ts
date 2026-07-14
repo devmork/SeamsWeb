@@ -23,6 +23,8 @@ export interface LoginData {
 }
 
 export interface AuthResponse {
-  user: User;
   token: string;
+  userId: number;
+  email: string;
+  role: string;
 }
