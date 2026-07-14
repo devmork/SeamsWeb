@@ -1,31 +1,33 @@
-import * as React from "react";
+import * as React from 'react';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-} from "@/components/ui/sidebar";
-import { navigationData } from "@/config/navigation";
-import { NavIdentity } from "./NavIdentity";
-import { NavItem } from "./NavItem";
-import { NavUser } from "./NavUser";
+} from '@/components/ui/sidebar';
+import { navigationData } from '@/config/navigation';
+import { NavIdentity } from './NavIdentity';
+import { NavItem } from './NavItem';
+import { NavUser } from './NavUser';
+import { getCurrentUser } from '@/service/authService';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  role: "admin" | "student" | "officer";
+  role: 'admin' | 'student' | 'officer';
 }
 
 export function AppSidebar({ role, ...props }: AppSidebarProps) {
   const navItems = navigationData.navByRole[role] || [];
+  const user = getCurrentUser();
 
   const portalLabels = {
-    admin: "Admin Portal",
-    student: "Student Portal",
-    officer: "Officer Portal",
+    admin: 'Admin Portal',
+    student: 'Student Portal',
+    officer: 'Officer Portal',
   };
 
   const dynamicAppIdentity = navigationData.app.map((appItem) => ({
     ...appItem,
-    portal: portalLabels[role] || "",
+    portal: portalLabels[role] || '',
   }));
 
   return (
@@ -37,7 +39,13 @@ export function AppSidebar({ role, ...props }: AppSidebarProps) {
         <NavItem items={navItems} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={navigationData.user} />
+        <NavUser
+          user={{
+            name: user?.name ?? '',
+            email: user?.email ?? '',
+            avatar: user?.avatar ?? '',
+          }}
+        />
       </SidebarFooter>
     </Sidebar>
   );

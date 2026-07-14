@@ -33,11 +33,18 @@ export const signUp = async (data: SignupData): Promise<AuthResponse> => {
 };
 
 export const logIn = async (data: LoginData): Promise<AuthResponse> => {
-  const response = await api.post<AuthResponse>('/Auth/login', data);
+  const response = await api.post<AuthResponse>('/auth/login', data);
 
   if (response.data.token) {
     localStorage.setItem('auth_token', response.data.token);
-    localStorage.setItem('user', JSON.stringify(response.data.user));
+    localStorage.setItem(
+      'user',
+      JSON.stringify({
+        userId: response.data.userId,
+        email: response.data.email,
+        role: response.data.role,
+      }),
+    );
   }
 
   return response.data;

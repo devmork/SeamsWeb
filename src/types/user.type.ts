@@ -1,7 +1,7 @@
 export interface User {
-  userName: string;
-  email: string;
   name: string;
+  email: string;
+  avatar: string;
   role: string;
 }
 
@@ -23,6 +23,8 @@ export interface LoginData {
 }
 
 export interface AuthResponse {
-  user: User;
   token: string;
+  userId: number;
+  email: string;
+  role: string;
 }
