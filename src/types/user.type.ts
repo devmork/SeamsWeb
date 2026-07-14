@@ -1,8 +1,7 @@
 export interface User {
-  userName: string;
-  email: string;
   name: string;
-  role: string;
+  email: string;
+  avatar: string;
 }
 
 export interface SignupData {
