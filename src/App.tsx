@@ -4,6 +4,7 @@ import LoginForm from './pages/auth/LoginForm';
 import SignupForm from './pages/auth/SignupForm';
 import AuthenticatedLayout from './layouts/AuthenticatedLayout';
 import Dashboard from './pages/admin/Dashboard';
+import ApplicantList from './pages/admin/applicants/ApplicantLIst';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         {/* admin routes */}
         <Route element={<AuthenticatedLayout />}>
           <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/applicants" element={<ApplicantList />} />
         </Route>
 
         <Route element={<AuthenticatedLayout />}>
