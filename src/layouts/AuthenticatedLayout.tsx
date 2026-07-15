@@ -7,7 +7,7 @@ import {
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { navigationData } from '@/config/navigation';
 import { Toaster } from '@/components/ui/sonner';
-import { getCurrentUser } from '@/service/authService';
+import { getCurrentUser } from '@/features/auth/services/AuthService';
 
 export default function AuthenticatedLayout() {
   const location = useLocation();

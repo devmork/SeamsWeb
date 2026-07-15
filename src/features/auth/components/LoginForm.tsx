@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import AuthLayout from '@/layouts/AuthLayout';
-import { logIn } from '@/service/authService';
+import { logIn } from '@/features/auth/services/AuthService';
 import { toast } from 'sonner';
 
 export default function LoginForm() {

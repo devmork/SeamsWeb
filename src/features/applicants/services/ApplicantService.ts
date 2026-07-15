@@ -1,30 +1,22 @@
-import axios from 'axios';
-import type { Applicant } from '@/types/applicant.type';
+import api from '../../../service/api';
+import type { Applicant } from '@/features/applicants/applicant.type';
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'https://localhost:7122/api';
-
-export const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+/**
+ * Fetch all approved student applications.
+ */
+export const getAllApplications = async (): Promise<Applicant[]> => {
+  const response = await api.get<Applicant[]>(
+    '/student-application/all-applications',
+  );
+  return response.data;
+};
 
 /**
  * Fetch all student applications that are still awaiting review.
  */
 export const getPendingApplications = async (): Promise<Applicant[]> => {
   const response = await api.get<Applicant[]>(
-    '/StudentApplication/pending-applications',
+    '/student-application/pending-applications',
   );
   return response.data;
 };
@@ -34,7 +26,7 @@ export const getPendingApplications = async (): Promise<Applicant[]> => {
  */
 export const getApprovedApplications = async (): Promise<Applicant[]> => {
   const response = await api.get<Applicant[]>(
-    '/StudentApplication/approved-applications',
+    '/student-application/approved-applications',
   );
   return response.data;
 };
@@ -44,7 +36,7 @@ export const getApprovedApplications = async (): Promise<Applicant[]> => {
  */
 export const getRejectedApplications = async (): Promise<Applicant[]> => {
   const response = await api.get<Applicant[]>(
-    '/StudentApplication/rejected-applications',
+    '/student-application/rejected-applications',
   );
   return response.data;
 };
@@ -56,7 +48,7 @@ export const getRejectedApplications = async (): Promise<Applicant[]> => {
 export const approveApplication = async (
   applicationId: number,
 ): Promise<void> => {
-  await api.patch(`/StudentApplication/approve-application/${applicationId}`);
+  await api.patch(`/student-application/approve-application/${applicationId}`);
 };
 
 /**
@@ -65,5 +57,5 @@ export const approveApplication = async (
 export const rejectApplication = async (
   applicationId: number,
 ): Promise<void> => {
-  await api.patch(`/StudentApplication/reject-application/${applicationId}`);
+  await api.patch(`/student-application/reject-application/${applicationId}`);
 };

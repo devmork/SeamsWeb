@@ -9,7 +9,7 @@ import { navigationData } from '@/config/navigation';
 import { NavIdentity } from './NavIdentity';
 import { NavItem } from './NavItem';
 import { NavUser } from './NavUser';
-import { getCurrentUser } from '@/service/authService';
+import { getCurrentUser } from '@/features/auth/services/AuthService';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   role: 'admin' | 'student' | 'officer';

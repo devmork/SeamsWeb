@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Check, X, ClockAlert, Search, UserCheck, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -13,12 +13,26 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import type { Applicant } from '@/types/applicant.type';
+import type { Applicant } from '@/features/applicants/applicant.type';
 import {
-  getPendingApplications,
   approveApplication,
   rejectApplication,
-} from '@/service/applicants';
+  getAllApplications,
+} from '@/features/applicants/services/ApplicantService';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import {
+  programOptions,
+  statusOptions,
+  yearLevelOptions,
+} from '@/config/filter';
 
 function getFullName(s: Applicant) {
   return [s.firstName, s.middleName, s.lastName, s.suffix]
@@ -33,27 +47,6 @@ function getInitials(s: Applicant) {
     .toUpperCase();
 }
 
-// function formatDate(value: string) {
-//   const date = new Date(value);
-//   if (Number.isNaN(date.getTime())) return value;
-//   return date.toLocaleDateString('en-US', {
-//     month: 'short',
-//     day: 'numeric',
-//     year: 'numeric',
-//   });
-// }
-
-const AVATAR_COLORS = [
-  'bg-[#2C5530]',
-  'bg-blue-600',
-  'bg-purple-600',
-  'bg-orange-600',
-  'bg-teal-600',
-  'bg-rose-600',
-  'bg-indigo-600',
-  'bg-amber-600',
-];
-
 export default function ApplicantList() {
   const [students, setStudents] = useState<Applicant[]>([]);
   const [search, setSearch] = useState('');
@@ -62,6 +55,9 @@ export default function ApplicantList() {
   const [totalReceived, setTotalReceived] = useState(0);
   const [resolvedCount, setResolvedCount] = useState(0);
   const [actioningId, setActioningId] = useState<number | null>(null);
+  const [filterProgram, setFilterProgram] = useState('all');
+  const [filterYear, setFilterYear] = useState('all');
+  const [filterStatus, setFilterStatus] = useState('all');
 
   useEffect(() => {
     loadApplications();
@@ -71,7 +67,7 @@ export default function ApplicantList() {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await getPendingApplications();
+      const data = await getAllApplications();
       setStudents(data);
       setTotalReceived(data.length);
       setResolvedCount(0);
@@ -85,12 +81,19 @@ export default function ApplicantList() {
 
   const filtered = students.filter((s) => {
     const q = search.toLowerCase();
-    return (
+    const matchesSearch =
       getFullName(s).toLowerCase().includes(q) ||
       s.schoolStudentId.toLowerCase().includes(q) ||
       s.course.toLowerCase().includes(q) ||
-      s.email.toLowerCase().includes(q)
-    );
+      s.email.toLowerCase().includes(q);
+
+    const matchesProgram =
+      filterProgram === 'all' || s.course === filterProgram;
+    const matchesYear = filterYear === 'all' || s.yearLevel === filterYear;
+    const matchesStatus =
+      filterStatus === 'all' || s.status.toString() === filterStatus;
+
+    return matchesSearch && matchesProgram && matchesYear && matchesStatus;
   });
 
   const handleApprove = async (applicant: Applicant) => {
@@ -184,14 +187,6 @@ export default function ApplicantList() {
       <Card>
         <CardHeader className="pb-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <CardTitle className="flex items-center gap-2">
-              Applications
-              {students.length > 0 && (
-                <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100">
-                  {students.length} pending
-                </Badge>
-              )}
-            </CardTitle>
             <div className="relative w-full sm:w-72">
               <Search
                 size={15}
@@ -204,8 +199,58 @@ export default function ApplicantList() {
                 className="pl-9"
               />
             </div>
+
+            {/* Filters */}
+            <div className="flex flex-wrap gap-3 w-full lg:w-auto">
+              {/* All Programs Filter */}
+              <Select value={filterProgram} onValueChange={setFilterProgram}>
+                <SelectTrigger className="w-full sm:w-42.5">
+                  <SelectValue placeholder="All Programs" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Programs</SelectItem>
+                  {programOptions.map((prog) => (
+                    <SelectItem key={prog} value={prog}>
+                      {prog}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* All Year Levels Filter */}
+              <Select value={filterYear} onValueChange={setFilterYear}>
+                <SelectTrigger className="w-full sm:w-40">
+                  <SelectValue placeholder="All Year Levels" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Year Levels</SelectItem>
+                  {yearLevelOptions.map((year) => (
+                    <SelectItem key={year} value={year}>
+                      {year}st Year
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* All Status Filter */}
+              <Select value={filterStatus} onValueChange={setFilterStatus}>
+                <SelectTrigger className="w-full sm:w-37.5">
+                  <SelectValue placeholder="All Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  {statusOptions.map((status) => (
+                    <SelectItem key={status.value} value={status.value}>
+                      {status.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardHeader>
+
+        <Separator />
 
         <CardContent className="p-0">
           {isLoading ? (
@@ -229,7 +274,7 @@ export default function ApplicantList() {
                 All caught up!
               </h3>
               <p className="text-sm text-gray-500 max-w-sm">
-                There are no pending student registrations to review at this
+                There are no pending student applications to review at this
                 time.
               </p>
             </div>
@@ -248,7 +293,7 @@ export default function ApplicantList() {
                   <TableHead>Program</TableHead>
                   <TableHead>Year Level</TableHead>
                   <TableHead>Email</TableHead>
-                  {/* <TableHead>Submitted</TableHead> */}
+                  <TableHead>Status</TableHead>
                   <TableHead className="text-center pr-6">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -262,18 +307,14 @@ export default function ApplicantList() {
                         {index + 1}
                       </TableCell>
 
-                      {/* Student name + avatar */}
+                      {/* Student Name + Avatar */}
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <div
-                            className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 ${
-                              AVATAR_COLORS[
-                                student.applicationId % AVATAR_COLORS.length
-                              ]
-                            }`}
-                          >
-                            {getInitials(student)}
-                          </div>
+                          <Avatar>
+                            <AvatarFallback>
+                              {getInitials(student)}
+                            </AvatarFallback>
+                          </Avatar>
                           <span className="font-medium text-gray-900 whitespace-nowrap">
                             {getFullName(student)}
                           </span>
@@ -288,7 +329,7 @@ export default function ApplicantList() {
                       </TableCell>
 
                       {/* Program */}
-                      <TableCell className="text-gray-600 max-w-[180px]">
+                      <TableCell className="text-gray-600 max-w-45">
                         <span className="truncate block">{student.course}</span>
                       </TableCell>
 
@@ -303,42 +344,67 @@ export default function ApplicantList() {
                       </TableCell>
 
                       {/* Email */}
-                      <TableCell className="text-gray-500 text-xs max-w-[180px]">
+                      <TableCell className="text-gray-500 text-xs max-w-45">
                         <span className="truncate block">{student.email}</span>
                       </TableCell>
 
-                      {/* Submitted */}
-                      {/* <TableCell className="text-gray-500 text-xs whitespace-nowrap">
-                        {formatDate(student.submittedAt)}
-                      </TableCell> */}
+                      {/* Status */}
+                      <TableCell>
+                        <Badge
+                          variant={
+                            student.status === 1
+                              ? 'default' // Pending - Orange
+                              : student.status === 2
+                                ? 'secondary' // Approved - Green
+                                : 'destructive' // Rejected - Red
+                          }
+                          className={
+                            student.status === 1
+                              ? 'bg-orange-100 text-orange-700 hover:bg-orange-100 border-orange-200'
+                              : student.status === 2
+                                ? 'bg-green-100 text-green-700 hover:bg-green-100 border-green-200'
+                                : 'bg-red-100 text-red-700 hover:bg-red-100 border-red-200'
+                          }
+                        >
+                          {student.status === 1 && 'Pending'}
+                          {student.status === 2 && 'Approved'}
+                          {student.status === 3 && 'Rejected'}
+                        </Badge>
+                      </TableCell>
 
                       {/* Actions */}
-                      <TableCell className="pr-6">
-                        <div className="flex items-center justify-center gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={isActioning}
-                            onClick={() => handleReject(student)}
-                            className="h-8 px-3 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-400 hover:text-red-700 flex items-center gap-1.5"
-                          >
-                            <X size={13} />
-                            Reject
-                          </Button>
-                          <Button
-                            size="sm"
-                            disabled={isActioning}
-                            onClick={() => handleApprove(student)}
-                            className="h-8 px-3 bg-green-600 hover:bg-green-700 text-white flex items-center gap-1.5"
-                          >
-                            {isActioning ? (
-                              <Loader2 size={13} className="animate-spin" />
-                            ) : (
-                              <Check size={13} />
-                            )}
-                            Approve
-                          </Button>
-                        </div>
+                      <TableCell className="pr-6 text-center">
+                        {student.status === 1 ? (
+                          <div className="flex items-center justify-center gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled={isActioning}
+                              onClick={() => handleReject(student)}
+                              className="h-8 px-3 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-400 hover:text-red-700 flex items-center gap-1.5"
+                            >
+                              <X size={13} />
+                              Reject
+                            </Button>
+                            <Button
+                              size="sm"
+                              disabled={isActioning}
+                              onClick={() => handleApprove(student)}
+                              className="h-8 px-3 bg-green-600 hover:bg-green-700 text-white flex items-center gap-1.5"
+                            >
+                              {isActioning ? (
+                                <Loader2 size={13} className="animate-spin" />
+                              ) : (
+                                <Check size={13} />
+                              )}
+                              Approve
+                            </Button>
+                          </div>
+                        ) : (
+                          <span className="text-gray-400 text-sm font-medium">
+                            —
+                          </span>
+                        )}
                       </TableCell>
                     </TableRow>
                   );
