@@ -16,7 +16,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { useNavigate } from 'react-router-dom';
-import { logOut } from '@/service/authService';
+import { logOut } from '@/features/auth/services/AuthService';
 
 export function NavUser({
   user,
