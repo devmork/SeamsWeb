@@ -1,10 +1,11 @@
 import './App.css';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import LoginForm from './pages/auth/LoginForm';
-import SignupForm from './pages/auth/SignupForm';
 import AuthenticatedLayout from './layouts/AuthenticatedLayout';
-import Dashboard from './pages/admin/Dashboard';
-import ApplicantList from './pages/admin/applicants/ApplicantLIst';
+import { ApplicantList } from './features/applicants';
+import { LoginForm, SignupForm } from './features/auth';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import StudentDashboard from './pages/student/StudentDashboard';
+import OfficerDashboard from './pages/officer/OfficerDashboard';
 
 function App() {
   return (
@@ -15,16 +16,18 @@ function App() {
 
         {/* admin routes */}
         <Route element={<AuthenticatedLayout />}>
-          <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/applicants" element={<ApplicantList />} />
         </Route>
 
+        {/* student routes */}
         <Route element={<AuthenticatedLayout />}>
-          <Route path="/student/dashboard" element={<Dashboard />} />
+          <Route path="/student/dashboard" element={<StudentDashboard />} />
         </Route>
 
+        {/* officer routes */}
         <Route element={<AuthenticatedLayout />}>
-          <Route path="/officer/dashboard" element={<Dashboard />} />
+          <Route path="/officer/dashboard" element={<OfficerDashboard />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />
