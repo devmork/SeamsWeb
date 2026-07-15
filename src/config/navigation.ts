@@ -22,7 +22,7 @@ export const navigationData = {
       { name: 'Students', url: '/admin/students', icon: Users },
       { name: 'Event', url: '/admin/event', icon: Calendar },
       { name: 'Reports', url: '/admin/reports', icon: FileText },
-      { name: 'Applicants', url: '/admin/applicants', icon: CheckSquare },
+      { name: 'Approvals', url: '/admin/applicants', icon: CheckSquare },
     ],
     student: [
       { name: 'Dashboard', url: '/student/dashboard', icon: LayoutDashboard },
