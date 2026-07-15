@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import AuthLayout from '@/layouts/AuthLayout';
 import { StepIndicator } from '@/components/ui/step-indicator';
 import type { SignupData } from '@/types/user.type';
-import { signUp } from '@/service/authService';
+import { signUp } from '@/features/auth/services/AuthService';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
