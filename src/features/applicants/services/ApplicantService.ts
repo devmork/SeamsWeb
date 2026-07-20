@@ -1,4 +1,4 @@
-import api from '../../../service/api';
+import api from '@/service/api';
 import type { Applicant } from '@/features/applicants/applicant.type';
 
 /**
