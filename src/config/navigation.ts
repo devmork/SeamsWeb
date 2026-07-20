@@ -1,10 +1,12 @@
 import {
   Calendar,
-  CheckSquare,
+  ClipboardCheck,
   FileText,
+  FileUser,
   LayoutDashboard,
+  ScanQrCode,
   ShieldCheck,
-  User,
+  ShieldUser,
   Users,
 } from 'lucide-react';
 
@@ -20,15 +22,15 @@ export const navigationData = {
     admin: [
       { name: 'Dashboard', url: '/admin/dashboard', icon: LayoutDashboard },
       { name: 'Students', url: '/admin/students', icon: Users },
-      { name: 'Event', url: '/admin/event', icon: Calendar },
+      { name: 'Officers', url: '/admin/officers', icon: ShieldUser },
+      { name: 'Events', url: '/admin/events', icon: Calendar },
+      { name: 'Applicants', url: '/admin/applicants', icon: FileUser },
       { name: 'Reports', url: '/admin/reports', icon: FileText },
-      { name: 'Approvals', url: '/admin/applicants', icon: CheckSquare },
     ],
     student: [
       { name: 'Dashboard', url: '/student/dashboard', icon: LayoutDashboard },
-      { name: 'Events', url: '/student/events', icon: Calendar },
-      { name: 'Attendance History', url: '/student/history', icon: FileText },
-      { name: 'Profile', url: '/student/profile', icon: User },
+      { name: 'Attendance', url: '/student/history', icon: ClipboardCheck },
+      { name: 'My QR', url: '/student/qr', icon: ScanQrCode },
     ],
     officer: [
       { name: 'Dashboard', url: '/officer/dashboard', icon: LayoutDashboard },
