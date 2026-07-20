@@ -6,6 +6,7 @@ import { LoginForm, SignupForm } from './features/auth';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import StudentDashboard from './pages/student/StudentDashboard';
 import OfficerDashboard from './pages/officer/OfficerDashboard';
+import EventList from './features/events/components/EventList';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route element={<AuthenticatedLayout />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/applicants" element={<ApplicantList />} />
+          <Route path="/admin/events" element={<EventList />} />
         </Route>
 
         {/* student routes */}
