@@ -10,6 +10,7 @@ import { NavIdentity } from './NavIdentity';
 import { NavItem } from './NavItem';
 import { NavUser } from './NavUser';
 import { getCurrentUser } from '@/features/auth/services/AuthService';
+import { Separator } from '../ui/separator';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   role: 'admin' | 'student' | 'officer';
@@ -38,6 +39,7 @@ export function AppSidebar({ role, ...props }: AppSidebarProps) {
       <SidebarContent>
         <NavItem items={navItems} />
       </SidebarContent>
+      <Separator />
       <SidebarFooter>
         <NavUser
           user={{
