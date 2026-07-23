@@ -11,8 +11,7 @@ export interface Student {
   course: string;
   photoUrl?: string;
   qrCode?: string;
-  createdAt: string;
-  updatedAt: string;
+  status: number;
 }
 
 export interface StudentRequest {
