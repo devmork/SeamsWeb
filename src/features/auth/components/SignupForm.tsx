@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from '@/layouts/AuthLayout';
 import { StepIndicator } from '@/components/ui/step-indicator';
 import type { SignupData } from '@/types/user.type';
@@ -148,7 +148,7 @@ export function PersonalInfoStep({ data, onNext }: PersonalInfoProps) {
       </Button>
       <Field>
         <FieldDescription className="px-6 text-center">
-          Already have an account? <a href="/login">Sign in</a>
+          Already have an account? <Link to="/login">Sign in</Link>
         </FieldDescription>
       </Field>
     </FieldGroup>

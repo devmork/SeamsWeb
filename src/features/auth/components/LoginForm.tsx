@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
   Field,
@@ -93,9 +93,9 @@ export default function LoginForm() {
           <Field>
             <FieldDescription className="text-center">
               Don&apos;t have an account?{' '}
-              <a href="/signup" className="underline underline-offset-4">
+              <Link to="/signup" className="underline underline-offset-4">
                 Sign up
-              </a>
+              </Link>
             </FieldDescription>
           </Field>
         </FieldGroup>
