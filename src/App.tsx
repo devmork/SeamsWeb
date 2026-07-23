@@ -8,6 +8,7 @@ import StudentDashboard from './pages/student/StudentDashboard';
 import OfficerDashboard from './pages/officer/OfficerDashboard';
 import EventList from './features/events/components/EventList';
 import OfficerList from './features/officers/components/OfficerList';
+import { StudentList } from './features/students';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         {/* admin routes */}
         <Route element={<AuthenticatedLayout />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/students" element={<StudentList />} />
           <Route path="/admin/officers" element={<OfficerList />} />
           <Route path="/admin/events" element={<EventList />} />
           <Route path="/admin/applicants" element={<ApplicantList />} />
