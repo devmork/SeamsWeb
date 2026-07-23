@@ -13,7 +13,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
       </div>
       <div className="relative hidden bg-muted lg:block">
         <img
-          src="/src/assets/backgrounds/dmc-building-nighty.png"
+          src="/assets/backgrounds/dmc-building-nighty.png"
           alt="St. Lasalle Building"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.10] dark:grayscale"
         />
@@ -23,7 +23,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
         {/* Overlay content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-8 text-center">
           <img
-            src="/src/assets/logos/dmc-logo-white.png"
+            src="/assets/logos/dmc-logo-white.png"
             alt="DMC College Foundation Logo"
             className="h-50 w-50 drop-shadow-lg"
           />
