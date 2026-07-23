@@ -29,6 +29,10 @@ export const studentService = {
   ): Promise<void> => {
     await api.put(`/student/${studentId}`, data);
   },
+
+  deactivateStudent: async (studentId: number): Promise<void> => {
+    await api.patch(`/student/${studentId}/deactivate`);
+  },
 };
 
 export default studentService;
