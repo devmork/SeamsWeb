@@ -28,7 +28,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
             className="h-50 w-50 drop-shadow-lg"
           />
           <div className="flex flex-col items-center gap-1">
-            <h1 className="text-4xl font-extrabold italic tracking-wide text-white drop-shadow-md">
+            <h1 className="text-5xl font-extrabold italic tracking-wide text-white drop-shadow-md">
               SEAMS
             </h1>
           </div>
