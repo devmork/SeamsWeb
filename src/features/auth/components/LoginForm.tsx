@@ -11,11 +11,13 @@ import { Input } from '@/components/ui/input';
 import AuthLayout from '@/layouts/AuthLayout';
 import { logIn } from '@/features/auth/services/AuthService';
 import { toast } from 'sonner';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function LoginForm() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -28,7 +30,7 @@ export default function LoginForm() {
       const response = await logIn({ email, password });
       const role = response.role.toLowerCase();
 
-      if (role === 'admin') navigate('/admin/dashboard');
+      if (role === 'admin') navigate('/admin/students');
       else if (role === 'officer') navigate('/officer/dashboard');
       else navigate('/student/dashboard');
     } catch {
@@ -43,9 +45,9 @@ export default function LoginForm() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <FieldGroup>
           <div className="flex flex-col items-center gap-1 text-center">
-            <h1 className="text-2xl font-bold">Login to your account</h1>
+            <h1 className="text-2xl font-bold">Welcome</h1>
             <p className="text-sm text-balance text-muted-foreground">
-              Enter your email below to login to your account
+              Login to your account to continue
             </p>
           </div>
 
@@ -56,7 +58,7 @@ export default function LoginForm() {
             <Input
               id="email"
               type="email"
-              placeholder="m@example.com"
+              placeholder="your_school_email@dmc.edu.ph"
               required
               className="bg-background"
               value={email}
@@ -74,14 +76,25 @@ export default function LoginForm() {
                 Forgot your password?
               </a>
             </div>
-            <Input
-              id="password"
-              type="password"
-              required
-              className="bg-background"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                required
+                className="bg-background pr-10"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </Field>
 
           <Field>

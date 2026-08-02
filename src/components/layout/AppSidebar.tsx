@@ -6,7 +6,7 @@ import {
   SidebarHeader,
 } from '@/components/ui/sidebar';
 import { navigationData } from '@/config/navigation';
-import { NavIdentity } from './NavIdentity';
+import { NavHeader } from './NavHeader';
 import { NavItem } from './NavItem';
 import { NavUser } from './NavUser';
 import { getCurrentUser } from '@/features/auth/services/AuthService';
@@ -20,21 +20,10 @@ export function AppSidebar({ role, ...props }: AppSidebarProps) {
   const navItems = navigationData.navByRole[role] || [];
   const user = getCurrentUser();
 
-  const portalLabels = {
-    admin: 'Admin Portal',
-    student: 'Student Portal',
-    officer: 'Officer Portal',
-  };
-
-  const dynamicAppIdentity = navigationData.app.map((appItem) => ({
-    ...appItem,
-    portal: portalLabels[role] || '',
-  }));
-
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <NavIdentity app={dynamicAppIdentity} />
+        <NavHeader />
       </SidebarHeader>
       <SidebarContent>
         <NavItem items={navItems} />

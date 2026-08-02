@@ -42,9 +42,7 @@ export default function AuthenticatedLayout() {
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
           <div className="h-4 w-[1.5px] bg-gray-300 mx-2 rounded-full" />
-          <span className="text-sm font-semibold text-gray-700">
-            {currentTitle}
-          </span>
+          <span className="text-sm font-semibold">{currentTitle}</span>
         </header>
         <main className="p-4">
           <Outlet />
