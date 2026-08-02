@@ -3,7 +3,6 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import AuthenticatedLayout from './layouts/AuthenticatedLayout';
 import { ApplicantList } from './features/applicants';
 import { LoginForm, SignupForm } from './features/auth';
-import AdminDashboard from './pages/admin/AdminDashboard';
 import StudentDashboard from './pages/student/StudentDashboard';
 import OfficerDashboard from './pages/officer/OfficerDashboard';
 import EventList from './features/events/components/EventList';
@@ -19,7 +18,6 @@ function App() {
 
         {/* admin routes */}
         <Route element={<AuthenticatedLayout />}>
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/students" element={<StudentList />} />
           <Route path="/admin/officers" element={<OfficerList />} />
           <Route path="/admin/events" element={<EventList />} />
