@@ -7,7 +7,7 @@ import { signUp } from '@/features/auth/services/AuthService';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
 import {
   Field,
   FieldDescription,
@@ -27,6 +27,14 @@ import type {
   SchoolInfoData,
 } from '@/types/signup.type';
 import { toast } from 'sonner';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 const STEPS = ['Personal', 'School', 'Photo', 'Review'];
 
@@ -451,6 +459,7 @@ export default function SignupForm() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   const [personal, setPersonal] = useState<PersonalInfoData>({
     firstName: '',
@@ -487,11 +496,11 @@ export default function SignupForm() {
       };
 
       await signUp(payload);
+      setShowSuccessDialog(true);
       toast.success('Registration submitted successfully!!', {
         position: 'top-center',
         description: 'Your application is now pending admin approval.',
       });
-      navigate('/login');
     } catch (error) {
       toast.error('Registration error!', { position: 'top-center' });
       console.error('Registration failed:', error);
@@ -542,6 +551,40 @@ export default function SignupForm() {
           isSubmitting={isSubmitting}
         />
       )}
+      <Dialog
+        open={showSuccessDialog}
+        onOpenChange={(open) => {
+          setShowSuccessDialog(open);
+          if (!open) navigate('/login');
+        }}
+      >
+        <DialogContent showCloseButton={false}>
+          <DialogHeader>
+            <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
+              <CheckCircle2 className="size-7 text-green-600" />
+            </div>
+            <DialogTitle className="text-center">
+              Registration Submitted
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              Your account has been created, but its not active yet. Please wait
+              for admin approval — the admin needs to verify your school status
+              first before you can log in.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              className="w-full"
+              onClick={() => {
+                setShowSuccessDialog(false);
+                navigate('/login');
+              }}
+            >
+              Got it
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AuthLayout>
   );
 }
