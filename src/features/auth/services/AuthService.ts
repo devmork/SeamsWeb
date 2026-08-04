@@ -1,4 +1,4 @@
-import api from '../../../service/api';
+import api from '@/service/api';
 import type {
   AuthResponse,
   LoginData,
@@ -49,3 +49,14 @@ export const getToken = (): string | null => {
 export const isAuthenticated = (): boolean => {
   return !!getToken();
 };
+
+export const authService = {
+  signUp,
+  logIn,
+  logOut,
+  getCurrentUser,
+  getToken,
+  isAuthenticated,
+};
+
+export default authService;
