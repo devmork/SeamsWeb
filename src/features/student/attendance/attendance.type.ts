@@ -1,6 +1,7 @@
 export const AttendanceMarkStatus = {
   Absent: 0,
   Present: 1,
+  Upcoming: 2,
 } as const;
 
 export type AttendanceMarkStatus =

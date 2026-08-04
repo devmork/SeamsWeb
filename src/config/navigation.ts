@@ -18,8 +18,12 @@ export const navigationData = {
     ],
     student: [
       { name: 'Dashboard', url: '/student/dashboard', icon: LayoutDashboard },
-      { name: 'Attendance', url: '/student/history', icon: ClipboardCheck },
-      { name: 'My QR', url: '/student/qr', icon: ScanQrCode },
+      {
+        name: 'Attendance',
+        url: '/student/attendance-history',
+        icon: ClipboardCheck,
+      },
+      { name: 'My QR', url: '/student/my-qr', icon: ScanQrCode },
     ],
     officer: [
       { name: 'Dashboard', url: '/officer/dashboard', icon: LayoutDashboard },

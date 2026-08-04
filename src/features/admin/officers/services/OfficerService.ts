@@ -11,8 +11,8 @@ export const officerService = {
     await api.post<Officer>('/officer', { userId });
   },
 
-  removeOfficer: async (officerId: number): Promise<void> => {
-    await api.patch(`/officer/${officerId}`);
+  removeOfficer: async (userId: number): Promise<void> => {
+    await api.patch(`/officer/${userId}`);
   },
 };
 
