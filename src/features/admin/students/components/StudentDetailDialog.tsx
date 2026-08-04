@@ -3,7 +3,6 @@ import { X, Loader2, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -153,7 +152,7 @@ export default function StudentDetailDialog({
                 {getFullName(student)}
               </h3>
               <p className="text-sm text-gray-500 mt-1">{student.email}</p>
-              <div className="flex items-center gap-2 mt-3">
+              {/* <div className="flex items-center gap-2 mt-3">
                 <Badge
                   className={
                     student.status === 1
@@ -163,7 +162,7 @@ export default function StudentDetailDialog({
                 >
                   {student.status === 1 ? '● Active' : '● Inactive'}
                 </Badge>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -325,7 +324,7 @@ export default function StudentDetailDialog({
           <Separator />
 
           {/* Status Information (read-only — status is managed via Deactivate) */}
-          <div className="mt-6">
+          {/* <div className="mt-6">
             <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
               Account Status
             </h4>
@@ -350,7 +349,7 @@ export default function StudentDetailDialog({
                 {student.status === 1 ? 'Active' : 'Inactive'}
               </Badge>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Footer */}

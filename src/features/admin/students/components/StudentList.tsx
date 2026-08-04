@@ -214,7 +214,7 @@ export default function StudentList() {
                   <TableHead>Program</TableHead>
                   <TableHead>Year Level</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Status</TableHead>
+                  {/* <TableHead>Status</TableHead> */}
                   <TableHead className="text-center pr-6">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -267,7 +267,7 @@ export default function StudentList() {
                     </TableCell>
 
                     {/* Status */}
-                    <TableCell>
+                    {/* <TableCell>
                       <Badge
                         className={
                           student.status === 1
@@ -277,7 +277,7 @@ export default function StudentList() {
                       >
                         {student.status === 1 ? '● Active' : '● Inactive'}
                       </Badge>
-                    </TableCell>
+                    </TableCell> */}
 
                     {/* Actions */}
                     <TableCell className="pr-6 text-center">
