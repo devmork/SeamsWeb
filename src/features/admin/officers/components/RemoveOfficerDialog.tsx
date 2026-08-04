@@ -27,7 +27,7 @@ export default function RemoveOfficerDialog({
   const handleConfirmRemove = async () => {
     if (setIsRemoving) setIsRemoving(true);
     try {
-      await officerService.removeOfficer(officer.officerId);
+      await officerService.removeOfficer(officer.userId);
       toast.success('Officer Removed', {
         description: `${officer.firstName} ${officer.lastName} has been reverted to student status.`,
       });
