@@ -7,23 +7,32 @@ import {
   FieldGroup,
   FieldLabel,
 } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
 import AuthLayout from '@/layouts/AuthLayout';
 import { logIn } from '@/features/auth/services/AuthService';
 import { toast } from 'sonner';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Mail } from 'lucide-react';
+import { Input } from '@/components/motion/input';
 
 export default function LoginForm() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const emailError =
+    email.length > 0 && !email.includes('@dmc.edu.ph')
+      ? 'Enter a valid email address.'
+      : undefined;
+
+  const passwordError =
+    password.length > 0 &&
+    (password.length < 8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password))
+      ? 'Password must be at least 8 chars, include a number and an uppercase letter.'
+      : undefined;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setIsLoading(true);
 
     try {
@@ -51,18 +60,18 @@ export default function LoginForm() {
             </p>
           </div>
 
-          {error && <p className="text-sm text-red-500 text-center">{error}</p>}
-
           <Field>
             <FieldLabel htmlFor="email">Email</FieldLabel>
             <Input
               id="email"
               type="email"
-              placeholder="your_school_email@dmc.edu.ph"
+              placeholder="email@dmc.edu.ph"
+              leftIcon={<Mail />}
+              error={emailError}
               required
               className="bg-background"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={setEmail}
             />
           </Field>
 
@@ -81,25 +90,28 @@ export default function LoginForm() {
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 required
-                className="bg-background pr-10"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={setPassword}
+                error={passwordError}
+                rightIcon={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((s) => !s)}
+                    aria-label={
+                      showPassword ? 'Hide password' : 'Show password'
+                    }
+                    className="pointer-events-auto"
+                  >
+                    {showPassword ? <EyeOff /> : <Eye />}
+                  </button>
+                }
               />
-
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
             </div>
           </Field>
 
           <Field>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Logging in...' : 'Login'}
+              {isLoading ? 'Logging in...' : 'Log in'}
             </Button>
           </Field>
 
