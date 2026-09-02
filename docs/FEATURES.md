@@ -113,3 +113,15 @@ The student role is read-mostly / self-service:
 4. Export the public component(s)/service from `index.ts`.
 5. Add the route to the right file in `src/routes/modules/` (see [02-architecture.md](./02-architecture.md#25-routing)).
 6. Add a nav entry in `src/config/navigation.ts` if it should appear in the sidebar.
+
+## 4.8 Recent feature additions
+
+The following feature modules have been added since the last documentation update:
+
+- **admin** – handles applicant management, attendance tracking, event scheduling, and officer oversight.
+- **attendance** – records and reports student attendance; includes service-layer API wrappers.
+- **events** – manages event creation, publishing, and participant registration.
+- **officer/scan** – implements QR‑code scanning for officer check‑ins; uses `MyQR.tsx` as a minimal example.
+- **student** – provides profile management, QR-based check‑in, and attendance history.
+
+Each of these follows the standard feature layout (`*.type.ts`, `index.ts`, `components/`, `services/`) and integrates with routing via `src/routes/modules/`.
