@@ -7,7 +7,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from '@/components/ui/field';
-import AuthLayout from '@/layouts/AuthLayout';
+import AuthLayout from '@/shared/layouts/AuthLayout';
 import { logIn } from '@/features/auth/services/AuthService';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Mail } from 'lucide-react';

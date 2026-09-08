@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import AuthLayout from '@/layouts/AuthLayout';
+import AuthLayout from '@/shared/layouts/AuthLayout';
 import { StepIndicator } from '@/components/ui/step-indicator';
 import type { SignupData } from '@/types/user.type';
 import { signUp } from '@/features/auth/services/AuthService';
