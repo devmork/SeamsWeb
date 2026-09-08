@@ -1,10 +1,10 @@
-import { AppSidebar } from '../../components/layout/AppSidebar';
+import { AppSidebar } from '../components/AppSidebar';
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from '@tanstack/react-router';
 import { navigationData } from '@/config/navigation';
 import { Toaster } from '@/components/ui/sonner';
 import { getCurrentUser } from '@/features/auth/services/AuthService';
