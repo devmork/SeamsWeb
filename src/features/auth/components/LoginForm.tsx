@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import {
   Field,
@@ -7,7 +7,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from '@/components/ui/field';
-import AuthLayout from '@/layouts/AuthLayout';
+import AuthLayout from '@/shared/layouts/AuthLayout';
 import { logIn } from '@/features/auth/services/AuthService';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Mail } from 'lucide-react';
@@ -39,9 +39,9 @@ export default function LoginForm() {
       const response = await logIn({ email, password });
       const role = response.role.toLowerCase();
 
-      if (role === 'admin') navigate('/admin/students');
-      else if (role === 'officer') navigate('/officer/dashboard');
-      else navigate('/student/dashboard');
+      if (role === 'admin') navigate({ to: '/admin/students' });
+      else if (role === 'officer') navigate({ to: '/officer/dashboard' });
+      else navigate({ to: '/student/dashboard' });
     } catch {
       toast.error('Invalid email or password. Please try again.');
     } finally {

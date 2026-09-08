@@ -7,10 +7,10 @@ import {
 } from '@/components/ui/sidebar';
 import { navigationData } from '@/config/navigation';
 import { NavHeader } from './NavHeader';
-import { NavItem } from './NavItem';
-import { NavUser } from './NavUser';
+import { NavItem } from '@/shared/components/NavItem';
+import { NavUser } from '@/shared/components/NavUser';
 import { getCurrentUser } from '@/features/auth/services/AuthService';
-import { Separator } from '../ui/separator';
+import { Separator } from '../../components/ui/separator';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   role: 'admin' | 'student' | 'officer';
