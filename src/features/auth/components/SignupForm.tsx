@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import AuthLayout from '@/shared/layouts/AuthLayout';
 import { StepIndicator } from '@/components/ui/step-indicator';
-import type { SignupData } from '@/types/user.type';
+import type { SignupData } from '@/features/auth/types';
 import { signUp } from '@/features/auth/services/AuthService';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
@@ -25,7 +25,7 @@ import type {
   PersonalInfoData,
   PhotoData,
   SchoolInfoData,
-} from '@/types/signup.type';
+} from '@/features/auth/types';
 import { toast } from 'sonner';
 import {
   Dialog,
