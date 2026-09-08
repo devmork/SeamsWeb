@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from '@tanstack/react-router';
 import AuthLayout from '@/shared/layouts/AuthLayout';
 import { StepIndicator } from '@/components/ui/step-indicator';
 import type { SignupData } from '@/types/user.type';
@@ -555,7 +555,7 @@ export default function SignupForm() {
         open={showSuccessDialog}
         onOpenChange={(open) => {
           setShowSuccessDialog(open);
-          if (!open) navigate('/login');
+          if (!open) navigate({ to: '/login' });
         }}
       >
         <DialogContent showCloseButton={false}>
@@ -577,7 +577,7 @@ export default function SignupForm() {
               className="w-full"
               onClick={() => {
                 setShowSuccessDialog(false);
-                navigate('/login');
+                navigate({ to: '/login' });
               }}
             >
               Got it
