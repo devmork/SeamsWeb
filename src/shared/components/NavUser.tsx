@@ -14,7 +14,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@tanstack/react-router';
 import { logOut } from '@/features/auth/services/AuthService';
 
 export function NavUser({
@@ -31,7 +31,7 @@ export function NavUser({
 
   const handleLogout = () => {
     logOut();
-    navigate('/login', { replace: true });
+    navigate({ to: '/login', replace: true });
   };
 
   return (
