@@ -7,12 +7,24 @@ import App from './App.tsx';
 import { ErrorBoundary } from './ErrorBoundary.tsx';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
+
+import { routeTree } from './tanstack-routeTree.gen.ts'
+import { createRouter, RouterProvider } from '@tanstack/react-router';
+
+const router = createRouter({ routeTree })
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>
       <TooltipProvider>
         <QueryClientProvider client={queryClient}>
-        <App />
+          <RouterProvider router={router} />
         </QueryClientProvider>
       </TooltipProvider>
     </ErrorBoundary>
