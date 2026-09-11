@@ -1,9 +1,6 @@
 import api from '@/service/api';
-import type {
-  AuthResponse,
-  LoginData,
-  SignupData
-} from '../types';
+import type { AuthResponse, LoginData, SignupData } from '../types';
+import { useAuthStore } from '../Stores/AuthStore';
 
 export const signUp = async (data: SignupData): Promise<AuthResponse> => {
   const response = await api.post<AuthResponse>(
@@ -18,15 +15,18 @@ export const logIn = async (data: LoginData): Promise<AuthResponse> => {
   return response.data;
 };
 
+/** Read the current user from the Zustand store (works outside React). */
+export const getCurrentUser = () => useAuthStore.getState().user;
+
 export const logOut = (): void => {
-  localStorage.removeItem('auth_token');
-  localStorage.removeItem('user');
+  useAuthStore.getState().clearAuth();
 };
 
 export const authService = {
   signUp,
   logIn,
   logOut,
+  getCurrentUser,
 };
 
 export default authService;
