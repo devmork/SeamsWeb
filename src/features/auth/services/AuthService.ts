@@ -2,9 +2,8 @@ import api from '@/service/api';
 import type {
   AuthResponse,
   LoginData,
-  SignupData,
-  User,
-} from '@/types/user.type';
+  SignupData
+} from '../types';
 
 export const signUp = async (data: SignupData): Promise<AuthResponse> => {
   const response = await api.post<AuthResponse>(
@@ -16,19 +15,6 @@ export const signUp = async (data: SignupData): Promise<AuthResponse> => {
 
 export const logIn = async (data: LoginData): Promise<AuthResponse> => {
   const response = await api.post<AuthResponse>('/auth/login', data);
-
-  if (response.data.token) {
-    localStorage.setItem('auth_token', response.data.token);
-    localStorage.setItem(
-      'user',
-      JSON.stringify({
-        userId: response.data.userId,
-        email: response.data.email,
-        role: response.data.role,
-      }),
-    );
-  }
-
   return response.data;
 };
 
@@ -37,26 +23,10 @@ export const logOut = (): void => {
   localStorage.removeItem('user');
 };
 
-export const getCurrentUser = (): User | null => {
-  const userStr = localStorage.getItem('user');
-  return userStr ? JSON.parse(userStr) : null;
-};
-
-export const getToken = (): string | null => {
-  return localStorage.getItem('auth_token');
-};
-
-export const isAuthenticated = (): boolean => {
-  return !!getToken();
-};
-
 export const authService = {
   signUp,
   logIn,
   logOut,
-  getCurrentUser,
-  getToken,
-  isAuthenticated,
 };
 
 export default authService;
