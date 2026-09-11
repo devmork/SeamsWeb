@@ -12,6 +12,7 @@
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.9",
     "@fontsource-variable/noto-sans": "^5.2.10",
+    "@hookform/resolvers": "^5.9.1",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-query": "^5.102.8",
     "@tanstack/react-query-devtools": "^5.102.8",
@@ -38,6 +39,7 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.1.18",
+    "zod": "^4.6.1",
     "zustand": "^5.0.15"
   },
   "devDependencies": {
