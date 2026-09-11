@@ -13,10 +13,11 @@ export const api = axios.create({
 
 // Request Interceptor - Adds Bearer Token automatically
 api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token;
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  if (config.data instanceof FormData) {
+    delete config.headers['Content-Type'];
   }
+  const token = useAuthStore.getState().token;
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
