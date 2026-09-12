@@ -167,7 +167,7 @@ export default function ScanQR() {
 
   const handleLogout = () => {
     logOut();
-    navigate('/login', { replace: true });
+    navigate({ to: '/login', replace: true });
   };
 
   const handleCameraError = (error: IScannerError) => {
