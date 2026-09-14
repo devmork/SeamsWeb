@@ -8,12 +8,7 @@ import { Eye, EyeOff, Mail } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from '@/components/ui/field';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/motion/input';
 import AuthLayout from '@/shared/layouts/AuthLayout';
 import { logIn } from '@/features/auth/services/AuthService';
@@ -29,10 +24,7 @@ const loginSchema = z.object({
     .refine((val) => val.endsWith('@dmc.edu.ph'), {
       message: 'Must be a @dmc.edu.ph email',
     }),
-  password: z
-    .string()
-    .trim()
-    .min(1, 'Password is required'),
+  password: z.string().trim().min(1, 'Password is required'),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -85,7 +77,19 @@ export default function LoginForm() {
   };
 
   return (
-    <AuthLayout>
+    <AuthLayout
+      footer={
+        <p className="text-center text-sm text-muted-foreground">
+          Don&apos;t have an account?{' '}
+          <Link
+            to="/signup"
+            className="font-medium text-foreground underline-offset-4 hover:underline"
+          >
+            Create account
+          </Link>
+        </p>
+      }
+    >
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col gap-6"
@@ -153,15 +157,6 @@ export default function LoginForm() {
             <Button type="submit" disabled={loginMutation.isPending}>
               {loginMutation.isPending ? 'Logging in...' : 'Log in'}
             </Button>
-          </Field>
-
-          <Field>
-            <FieldDescription className="text-center">
-              Don&apos;t have an account?{' '}
-              <Link to="/signup" className="underline underline-offset-4">
-                Sign up
-              </Link>
-            </FieldDescription>
           </Field>
         </FieldGroup>
       </form>
