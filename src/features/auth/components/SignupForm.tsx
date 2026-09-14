@@ -13,20 +13,22 @@ import { Checkbox } from '@/components/ui/checkbox';
 import {
   ArrowLeft,
   ArrowRight,
-  User,
-  Tag,
   Mail,
-  IdCard,
   GraduationCap,
   BarChart3,
 } from 'lucide-react';
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import {
-  SelectTrigger,
-  SelectValue,
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
+import {
+  Select,
   SelectContent,
   SelectItem,
-  Select,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 
@@ -34,7 +36,7 @@ const STEP_LABELS = ['Personal', 'School', 'Review'];
 
 function ProgressBar({ current }: { current: number }) {
   return (
-    <div className="flex gap-1.5 mb-6">
+    <div className="mx-auto mb-1 flex gap-1 w-2/3">
       {STEP_LABELS.map((_, i) => (
         <div
           key={i}
@@ -51,18 +53,6 @@ function ProgressBar({ current }: { current: number }) {
   );
 }
 
-function IconInput({
-  icon: Icon,
-  ...props
-}: React.ComponentProps<typeof Input> & { icon: React.ElementType }) {
-  return (
-    <div className="relative">
-      <Icon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-      <Input className="rounded-full pl-9" {...props} />
-    </div>
-  );
-}
-
 // PERSONAL INFO STEP
 
 function PersonalInfoStep({
@@ -73,6 +63,7 @@ function PersonalInfoStep({
   onNext: (data: PersonalInfoData) => void;
 }) {
   const [form, setForm] = useState<PersonalInfoData>(data);
+  const [touched, setTouched] = useState(false);
 
   const set =
     (field: keyof PersonalInfoData) =>
@@ -80,6 +71,7 @@ function PersonalInfoStep({
       setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
   const canProceed = form.firstName && form.lastName && form.email;
+  const emailInvalid = touched && !form.email;
 
   return (
     <FieldGroup>
@@ -91,80 +83,86 @@ function PersonalInfoStep({
       </div>
 
       <Field>
-        <FieldLabel htmlFor="firstName" className="sr-only">
-          First name
-        </FieldLabel>
-        <IconInput
-          icon={User}
+        <FieldLabel htmlFor="firstName">First name</FieldLabel>
+        <Input
           id="firstName"
           value={form.firstName}
           onChange={set('firstName')}
-          placeholder="First name"
+          placeholder="MARIA"
+          required
         />
       </Field>
 
       <div className="grid grid-cols-2 gap-3">
         <Field>
-          <FieldLabel htmlFor="middleName" className="sr-only">
-            Middle name
-          </FieldLabel>
-          <IconInput
-            icon={User}
+          <FieldLabel htmlFor="middleName">Middle Name</FieldLabel>
+          <Input
             id="middleName"
             value={form.middleName}
             onChange={set('middleName')}
-            placeholder="Middle name (optional)"
+            placeholder="M"
           />
         </Field>
+
         <Field>
-          <FieldLabel htmlFor="suffix" className="sr-only">
-            Suffix
-          </FieldLabel>
-          <IconInput
-            icon={Tag}
-            id="suffix"
+          <FieldLabel htmlFor="suffix">Suffix(optional)</FieldLabel>
+          <Select
             value={form.suffix}
-            onChange={set('suffix')}
-            placeholder="Suffix (optional)"
-          />
+            onValueChange={(v) => setForm((p) => ({ ...p, suffix: v }))}
+          >
+            <SelectTrigger id="suffix" className="w-full">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">None</SelectItem>
+              <SelectItem value="Jr.">Jr.</SelectItem>
+              <SelectItem value="Sr.">Sr.</SelectItem>
+              <SelectItem value="II">II</SelectItem>
+              <SelectItem value="III">III</SelectItem>
+              <SelectItem value="IV">IV</SelectItem>
+              <SelectItem value="V">V</SelectItem>
+            </SelectContent>
+          </Select>
         </Field>
       </div>
 
       <Field>
-        <FieldLabel htmlFor="lastName" className="sr-only">
-          Last name
-        </FieldLabel>
-        <IconInput
-          icon={User}
+        <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
+        <Input
           id="lastName"
           value={form.lastName}
           onChange={set('lastName')}
-          placeholder="Last name"
+          placeholder="CLARA"
+          required
         />
       </Field>
 
-      <Field>
-        <FieldLabel htmlFor="email" className="sr-only">
-          Email
-        </FieldLabel>
-        <IconInput
-          icon={Mail}
+      <Field data-invalid={emailInvalid || undefined}>
+        <FieldLabel htmlFor="email">Email</FieldLabel>
+        <Input
           id="email"
           type="email"
           value={form.email}
           onChange={set('email')}
-          placeholder="Email"
+          onBlur={() => setTouched(true)}
+          placeholder="you@dmc.edu.ph"
+          aria-invalid={emailInvalid || undefined}
+          required
         />
+        {emailInvalid && (
+          <FieldDescription>Email is required.</FieldDescription>
+        )}
       </Field>
+
       <ProgressBar current={0} />
 
       <Button
         type="button"
-        className="w-full rounded-full"
+        className="w-full"
         disabled={!canProceed}
         onClick={() => onNext(form)}
       >
-        NEXT <ArrowRight className="size-4 ml-1" />
+        NEXT <ArrowRight className="ml-1 size-4" />
       </Button>
     </FieldGroup>
   );
@@ -186,7 +184,6 @@ function SchoolInfoStep({
 
   return (
     <FieldGroup>
-      <ProgressBar current={1} />
       <div className="mb-4">
         <h1 className="text-2xl font-bold">Create an account</h1>
         <p className="text-sm text-muted-foreground">
@@ -195,57 +192,66 @@ function SchoolInfoStep({
       </div>
 
       <Field>
-        <FieldLabel htmlFor="studentId" className="sr-only">
-          Student ID
-        </FieldLabel>
-        <IconInput
-          icon={IdCard}
+        <FieldLabel htmlFor="studentId">Student ID</FieldLabel>
+        <Input
           id="studentId"
           value={form.studentId}
           onChange={(e) =>
             setForm((p) => ({ ...p, studentId: e.target.value }))
           }
-          placeholder="Student ID"
+          placeholder="2023-0444"
+          required
         />
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="department" className="sr-only">
-          Course
-        </FieldLabel>
+        <FieldLabel htmlFor="department">Course</FieldLabel>
         <Select
           value={form.department}
           onValueChange={(v) => setForm((p) => ({ ...p, department: v }))}
         >
-          <SelectTrigger id="department" className="rounded-full">
-            <GraduationCap className="size-4 text-muted-foreground mr-1" />
-            <SelectValue placeholder="Course" />
+          <SelectTrigger id="department" className="w-full">
+            <SelectValue placeholder="Select" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="BSIT">
               Bachelor of Science in Information Technology
             </SelectItem>
-            <SelectItem value="BSCS">
-              Bachelor of Science in Computer Science
+            <SelectItem value="BSN">Bachelor of Science in Nursing</SelectItem>
+            <SelectItem value="BSMT">
+              Bachelor of Science in Medical Technology
             </SelectItem>
-            <SelectItem value="BSCpE">
-              Bachelor of Science in Computer Engineering
+            <SelectItem value="BSHM">
+              Bachelor of Science in Hospitality Management
+            </SelectItem>
+            <SelectItem value="BSP">Bachelor of Science in Pharmacy</SelectItem>
+            <SelectItem value="BSES">
+              Bachelor of Science in Education
+            </SelectItem>
+            <SelectItem value="BSBA">
+              Bachelor of Science in Business Accountancy
+            </SelectItem>
+            <SelectItem value="BSRT">
+              Bachelor of Science in Radiologic Technology
+            </SelectItem>
+            <SelectItem value="BSPT">
+              Bachelor of Science in Physical Therapy
+            </SelectItem>
+            <SelectItem value="BSM">
+              Bachelor of Science in Midwifery
             </SelectItem>
           </SelectContent>
         </Select>
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="yearLevel" className="sr-only">
-          Year level
-        </FieldLabel>
+        <FieldLabel htmlFor="yearLevel">Year level</FieldLabel>
         <Select
           value={form.yearLevel}
           onValueChange={(v) => setForm((p) => ({ ...p, yearLevel: v }))}
         >
-          <SelectTrigger id="yearLevel" className="rounded-full">
-            <BarChart3 className="size-4 text-muted-foreground mr-1" />
-            <SelectValue placeholder="Year level" />
+          <SelectTrigger id="yearLevel" className="w-full">
+            <SelectValue placeholder="Select" />
           </SelectTrigger>
           <SelectContent>
             {[
@@ -262,22 +268,24 @@ function SchoolInfoStep({
         </Select>
       </Field>
 
+      <ProgressBar current={1} />
+
       <div className="flex gap-2 pt-2">
         <Button
           type="button"
           variant="outline"
-          className="flex-1 rounded-full"
+          className="flex-1"
           onClick={onBack}
         >
-          <ArrowLeft className="size-4 mr-1" /> BACK
+          <ArrowLeft className="mr-1 size-4" /> BACK
         </Button>
         <Button
           type="button"
-          className="flex-1 rounded-full"
+          className="flex-1"
           disabled={!canProceed}
           onClick={() => onNext(form)}
         >
-          NEXT <ArrowRight className="size-4 ml-1" />
+          NEXT <ArrowRight className="ml-1 size-4" />
         </Button>
       </div>
     </FieldGroup>
@@ -309,9 +317,20 @@ function ReviewStep({
     .filter(Boolean)
     .join(' ');
 
+  const yearLabel = school.yearLevel
+    ? `${school.yearLevel}${
+        school.yearLevel === '1'
+          ? 'st'
+          : school.yearLevel === '2'
+            ? 'nd'
+            : school.yearLevel === '3'
+              ? 'rd'
+              : 'th'
+      } Year`
+    : '';
+
   return (
     <FieldGroup>
-      <ProgressBar current={2} />
       <div className="mb-4">
         <h1 className="text-2xl font-bold">Create an account</h1>
         <p className="text-sm text-muted-foreground">
@@ -319,63 +338,79 @@ function ReviewStep({
         </p>
       </div>
 
-      <div className="rounded-2xl border p-4">
-        <p className="font-semibold">{fullName}</p>
-        <p className="text-sm text-muted-foreground mb-3">{school.studentId}</p>
-
-        <div className="flex items-center gap-2 text-sm mb-1">
-          <Mail className="size-4 text-muted-foreground" /> {personal.email}
-        </div>
-        <div className="flex items-center gap-2 text-sm mb-1">
-          <GraduationCap className="size-4 text-muted-foreground" />{' '}
-          {school.department}
-        </div>
-        <div className="flex items-center gap-2 text-sm mb-3">
-          <BarChart3 className="size-4 text-muted-foreground" />{' '}
-          {school.yearLevel}
-          {school.yearLevel === '1'
-            ? 'st'
-            : school.yearLevel === '2'
-              ? 'nd'
-              : school.yearLevel === '3'
-                ? 'rd'
-                : 'th'}{' '}
-          Year
+      <div className="overflow-hidden rounded-2xl border bg-card">
+        {/* Header */}
+        <div className="border-b bg-muted/40 px-5 py-4 text-center">
+          <p className="text-sm font-bold uppercase tracking-wide">
+            {fullName}
+          </p>
+          <p className="text-xs text-muted-foreground">{school.studentId}</p>
         </div>
 
-        <label className="flex items-start gap-2 text-sm">
+        {/* Details */}
+        <div className="space-y-3 px-5 py-4">
+          <div className="flex items-start gap-3 text-sm">
+            <Mail className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+            <span className="break-all">{personal.email}</span>
+          </div>
+
+          <div className="flex items-start gap-3 text-sm">
+            <GraduationCap className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+            <span>
+              <span className="font-medium">{school.department}</span>{' '}
+              <span className="text-muted-foreground">
+                (Bachelor of Science in Information Technology)
+              </span>
+            </span>
+          </div>
+
+          <div className="flex items-start gap-3 text-sm">
+            <BarChart3 className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+            <span className="font-medium uppercase tracking-wide">
+              {yearLabel}
+            </span>
+          </div>
+        </div>
+
+        {/* Certification */}
+        <label className="flex cursor-pointer items-start gap-3 border-t bg-muted/40 px-5 py-4 text-sm">
           <Checkbox
             checked={certified}
             onCheckedChange={(v) => setCertified(!!v)}
+            className="mt-0.5"
           />
-          I certify that these academic records match my collegiate credentials.
+          <span className="text-muted-foreground">
+            I certify that these academic records match my collegiate
+            enrollment.
+          </span>
         </label>
       </div>
+
+      <ProgressBar current={2} />
 
       <div className="flex gap-2 pt-2">
         <Button
           type="button"
           variant="outline"
-          className="flex-1 rounded-full"
+          className="flex-1"
           onClick={onBack}
           disabled={isSubmitting}
         >
-          <ArrowLeft className="size-4 mr-1" /> BACK
+          <ArrowLeft className="mr-1 size-4" /> BACK
         </Button>
         <Button
           type="button"
-          className="flex-1 rounded-full"
+          className="flex-1"
           disabled={!certified || isSubmitting}
           onClick={onConfirm}
         >
           {isSubmitting ? 'Submitting...' : 'NEXT'}{' '}
-          <ArrowRight className="size-4 ml-1" />
+          <ArrowRight className="ml-1 size-4" />
         </Button>
       </div>
     </FieldGroup>
   );
 }
-
 // SIGN UP FORM
 
 export default function SignupForm() {
