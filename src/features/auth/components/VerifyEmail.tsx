@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import AuthLayout from '@/shared/layouts/AuthLayout';
+import { Link } from '@tanstack/react-router';
 import {
   verifyEmail,
   resendVerification,
@@ -66,44 +66,70 @@ export default function VerifyEmail() {
   };
 
   return (
-    <AuthLayout>
-      <div className="flex flex-col items-center gap-4 text-center">
-        <p className="text-sm text-muted-foreground">
-          Please enter the verification code we sent to
-          <br />
-          <span className="font-medium text-foreground">{email}</span>
-        </p>
+    <div className="relative flex min-h-svh flex-col bg-background">
+      {/* Center content */}
+      <div className="flex flex-1 items-center justify-center px-6">
+        <div className="flex w-full max-w-md flex-col items-center gap-6 text-center">
+          <p className="text-sm text-muted-foreground">
+            Please enter the verification code we sent to
+            <br />
+            <span className="font-semibold text-foreground">{email}</span>
+          </p>
 
-        <div className="flex gap-2">
-          {digits.map((d, i) => (
-            <input
-              key={i}
-              ref={(el) => {
-                inputsRef.current[i] = el;
-              }}
-              value={d}
-              onChange={(e) => handleChange(i, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(i, e)}
-              disabled={isSubmitting}
-              inputMode="numeric"
-              maxLength={1}
-              className="size-11 rounded-md border bg-muted/40 text-center text-lg font-medium focus:outline-none focus:ring-2 focus:ring-ring"
-            />
-          ))}
+          <div className="flex gap-2">
+            {digits.map((d, i) => (
+              <input
+                key={i}
+                ref={(el) => {
+                  inputsRef.current[i] = el;
+                }}
+                value={d}
+                onChange={(e) => handleChange(i, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(i, e)}
+                disabled={isSubmitting}
+                inputMode="numeric"
+                maxLength={1}
+                aria-label={`Digit ${i + 1}`}
+                className="h-16 w-12 rounded-xl border border-input bg-muted text-center text-2xl font-medium text-foreground shadow-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/40 disabled:opacity-50 sm:h-20 sm:w-14"
+              />
+            ))}
+          </div>
+
+          <p className="text-sm text-muted-foreground">
+            Didn&apos;t receive the code?{' '}
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={secondsLeft > 0}
+              className="font-semibold text-foreground underline underline-offset-4 disabled:text-muted-foreground disabled:no-underline"
+            >
+              Resend{secondsLeft > 0 ? ` (${secondsLeft})` : ''}
+            </button>
+          </p>
+
+          {/* <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <ShieldCheck className="size-3.5" />
+            Protected by Student Data Privacy Act (RA 10173). Secure
+            verification channel.
+          </p> */}
         </div>
+      </div>
 
-        <p className="text-sm text-muted-foreground">
-          Don&apos;t receive the code?{' '}
-          <button
-            type="button"
-            onClick={handleResend}
-            disabled={secondsLeft > 0}
-            className="font-medium text-foreground underline underline-offset-4 disabled:no-underline disabled:text-muted-foreground"
+      {/* Footer */}
+      <div className="px-6 pb-8 text-center text-xs text-muted-foreground">
+        <p>
+          Already have an account?{' '}
+          <Link
+            to="/login"
+            className="font-semibold text-foreground underline underline-offset-4"
           >
-            Resend {secondsLeft > 0 ? `(${secondsLeft}s)` : ''}
-          </button>
+            Sign in
+          </Link>
+        </p>
+        <p className="mt-1 text-[11px] text-muted-foreground/70">
+          Powered by CCS - Developers v0.0.0
         </p>
       </div>
-    </AuthLayout>
+    </div>
   );
 }
