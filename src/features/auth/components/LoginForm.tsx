@@ -8,12 +8,18 @@ import { Eye, EyeOff, Mail } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
-import { Input } from '@/components/motion/input';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
 import AuthLayout from '@/shared/layouts/AuthLayout';
 import { logIn } from '@/features/auth/services/AuthService';
 import { useAuthStore } from '@/features/auth/Stores/AuthStore';
 import type { AuthResponse, User } from '@/features/auth/types';
+import { Input } from '@/components/ui/input';
 
 const loginSchema = z.object({
   email: z
@@ -103,60 +109,76 @@ export default function LoginForm() {
           </div>
 
           {/* Email Field */}
-          <Field>
+          <Field data-invalid={!!form.formState.errors.email}>
             <FieldLabel htmlFor="email">Email</FieldLabel>
             <Controller
               name="email"
               control={form.control}
               render={({ field }) => (
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="email@dmc.edu.ph"
-                  leftIcon={<Mail />}
-                  className="bg-background"
-                  error={form.formState.errors.email?.message}
-                  value={field.value}
-                  onChange={field.onChange}
-                />
+                <div className="relative">
+                  <Mail className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="email@dmc.edu.ph"
+                    className="bg-background pl-9"
+                    aria-invalid={!!form.formState.errors.email}
+                    {...field}
+                  />
+                </div>
               )}
             />
+            <FieldError errors={[form.formState.errors.email]} />
           </Field>
 
           {/* Password Field */}
-          <Field>
+          <Field data-invalid={!!form.formState.errors.password}>
             <FieldLabel htmlFor="password">Password</FieldLabel>
             <Controller
               name="password"
               control={form.control}
               render={({ field }) => (
-                <Input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  error={form.formState.errors.password?.message}
-                  value={field.value}
-                  onChange={field.onChange}
-                  rightIcon={
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((s) => !s)}
-                      aria-label={
-                        showPassword ? 'Hide password' : 'Show password'
-                      }
-                      className="pointer-events-auto"
-                    >
-                      {showPassword ? <EyeOff /> : <Eye />}
-                    </button>
-                  }
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    className="bg-background pr-9"
+                    aria-invalid={!!form.formState.errors.password}
+                    {...field}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((s) => !s)}
+                    aria-label={
+                      showPassword ? 'Hide password' : 'Show password'
+                    }
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="size-4" />
+                    ) : (
+                      <Eye className="size-4" />
+                    )}
+                  </button>
+                </div>
               )}
             />
+            <FieldError errors={[form.formState.errors.password]} />
           </Field>
 
           <Field>
             <Button type="submit" disabled={loginMutation.isPending}>
               {loginMutation.isPending ? 'Logging in...' : 'Log in'}
             </Button>
+          </Field>
+
+          <Field>
+            <FieldDescription className="text-center">
+              Don&apos;t have an account?{' '}
+              <Link to="/signup" className="underline underline-offset-4">
+                Create an account
+              </Link>
+            </FieldDescription>
           </Field>
         </FieldGroup>
       </form>
