@@ -10,7 +10,6 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -170,15 +169,6 @@ export default function LoginForm() {
             <Button type="submit" disabled={loginMutation.isPending}>
               {loginMutation.isPending ? 'Logging in...' : 'Log in'}
             </Button>
-          </Field>
-
-          <Field>
-            <FieldDescription className="text-center">
-              Don&apos;t have an account?{' '}
-              <Link to="/signup" className="underline underline-offset-4">
-                Create an account
-              </Link>
-            </FieldDescription>
           </Field>
         </FieldGroup>
       </form>
