@@ -10,6 +10,17 @@ export const signUp = async (data: SignupData): Promise<AuthResponse> => {
   return response.data;
 };
 
+export const verifyEmail = async (
+  email: string,
+  code: string,
+): Promise<void> => {
+  await api.post('/auth/verify-email', { email, code });
+};
+
+export const resendVerification = async (email: string): Promise<void> => {
+  await api.post('/auth/resend-verification', { email });
+};
+
 export const logIn = async (data: LoginData): Promise<AuthResponse> => {
   const response = await api.post<AuthResponse>('/auth/login', data);
   return response.data;
