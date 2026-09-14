@@ -1,19 +1,26 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import AuthLayout from '@/shared/layouts/AuthLayout';
-import { StepIndicator } from '@/components/ui/step-indicator';
-import type { SignupData } from '@/features/auth/types';
+import type {
+  PersonalInfoData,
+  SchoolInfoData,
+  SignupData,
+} from '@/features/auth/types';
 import { signUp } from '@/features/auth/services/AuthService';
-import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from '@/components/ui/field';
+  ArrowLeft,
+  ArrowRight,
+  User,
+  Tag,
+  Mail,
+  IdCard,
+  GraduationCap,
+  BarChart3,
+} from 'lucide-react';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import {
   SelectTrigger,
   SelectValue,
@@ -21,52 +28,50 @@ import {
   SelectItem,
   Select,
 } from '@/components/ui/select';
-import type {
-  PersonalInfoData,
-  PhotoData,
-  SchoolInfoData,
-} from '@/features/auth/types';
 import { toast } from 'sonner';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 
-const STEPS = ['Personal', 'School', 'Photo', 'Review'];
+const STEP_LABELS = ['Personal', 'School', 'Review'];
 
-type PersonalInfoProps = {
-  data: PersonalInfoData;
-  onNext: (data: PersonalInfoData) => void;
-};
+function ProgressBar({ current }: { current: number }) {
+  return (
+    <div className="flex gap-1.5 mb-6">
+      {STEP_LABELS.map((_, i) => (
+        <div
+          key={i}
+          className={`h-1.5 flex-1 rounded-full ${
+            i < current
+              ? 'bg-teal-400'
+              : i === current
+                ? 'bg-foreground'
+                : 'bg-muted'
+          }`}
+        />
+      ))}
+    </div>
+  );
+}
 
-type SchoolInfoProps = {
-  data: SchoolInfoData;
-  onNext: (data: SchoolInfoData) => void;
-  onBack: () => void;
-};
-
-type PhotoUploadProps = {
-  data: PhotoData;
-  onNext: (data: PhotoData) => void;
-  onBack: () => void;
-};
-
-type ReviewStepProps = {
-  personal: PersonalInfoData;
-  school: SchoolInfoData;
-  photo: PhotoData;
-  onSubmit: () => void;
-  onBack: () => void;
-  isSubmitting: boolean;
-};
+function IconInput({
+  icon: Icon,
+  ...props
+}: React.ComponentProps<typeof Input> & { icon: React.ElementType }) {
+  return (
+    <div className="relative">
+      <Icon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+      <Input className="rounded-full pl-9" {...props} />
+    </div>
+  );
+}
 
 // PERSONAL INFO STEP
 
-export function PersonalInfoStep({ data, onNext }: PersonalInfoProps) {
+function PersonalInfoStep({
+  data,
+  onNext,
+}: {
+  data: PersonalInfoData;
+  onNext: (data: PersonalInfoData) => void;
+}) {
   const [form, setForm] = useState<PersonalInfoData>(data);
 
   const set =
@@ -74,276 +79,205 @@ export function PersonalInfoStep({ data, onNext }: PersonalInfoProps) {
     (e: React.ChangeEvent<HTMLInputElement>) =>
       setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
+  const canProceed = form.firstName && form.lastName && form.email;
+
   return (
     <FieldGroup>
-      <div className="flex flex-col gap-1 text-center mb-4">
-        <h1 className="text-2xl font-bold">Personal information</h1>
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold">Create an account</h1>
         <p className="text-sm text-muted-foreground">
-          Enter your legal name as it appears on your school records.
+          Fill out the fields to get started.
         </p>
       </div>
 
-      <div className="grid grid-cols-[1fr_1fr_80px] gap-3">
+      <Field>
+        <FieldLabel htmlFor="firstName" className="sr-only">
+          First name
+        </FieldLabel>
+        <IconInput
+          icon={User}
+          id="firstName"
+          value={form.firstName}
+          onChange={set('firstName')}
+          placeholder="First name"
+        />
+      </Field>
+
+      <div className="grid grid-cols-2 gap-3">
         <Field>
-          <FieldLabel htmlFor="firstName">First name</FieldLabel>
-          <Input
-            id="firstName"
-            value={form.firstName}
-            onChange={set('firstName')}
-            placeholder="Juan"
-            required
+          <FieldLabel htmlFor="middleName" className="sr-only">
+            Middle name
+          </FieldLabel>
+          <IconInput
+            icon={User}
+            id="middleName"
+            value={form.middleName}
+            onChange={set('middleName')}
+            placeholder="Middle name (optional)"
           />
         </Field>
         <Field>
-          <FieldLabel htmlFor="lastName">Last name</FieldLabel>
-          <Input
-            id="lastName"
-            value={form.lastName}
-            onChange={set('lastName')}
-            placeholder="Cruz"
-            required
-          />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="suffix">Suffix</FieldLabel>
-          <Select
+          <FieldLabel htmlFor="suffix" className="sr-only">
+            Suffix
+          </FieldLabel>
+          <IconInput
+            icon={Tag}
+            id="suffix"
             value={form.suffix}
-            onValueChange={(v) => setForm((p) => ({ ...p, suffix: v }))}
-          >
-            <SelectTrigger id="suffix">
-              <SelectValue placeholder="—" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">—</SelectItem>
-              <SelectItem value="Jr.">Jr.</SelectItem>
-              <SelectItem value="Sr.">Sr.</SelectItem>
-              <SelectItem value="II">II</SelectItem>
-              <SelectItem value="III">III</SelectItem>
-            </SelectContent>
-          </Select>
+            onChange={set('suffix')}
+            placeholder="Suffix (optional)"
+          />
         </Field>
       </div>
 
       <Field>
-        <FieldLabel htmlFor="middleName">
-          Middle name{' '}
-          <span className="text-muted-foreground text-xs font-normal">
-            (optional)
-          </span>
+        <FieldLabel htmlFor="lastName" className="sr-only">
+          Last name
         </FieldLabel>
-        <Input
-          id="middleName"
-          value={form.middleName}
-          onChange={set('middleName')}
-          placeholder="Santos"
+        <IconInput
+          icon={User}
+          id="lastName"
+          value={form.lastName}
+          onChange={set('lastName')}
+          placeholder="Last name"
         />
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="email">Email</FieldLabel>
-        <Input
+        <FieldLabel htmlFor="email" className="sr-only">
+          Email
+        </FieldLabel>
+        <IconInput
+          icon={Mail}
           id="email"
           type="email"
           value={form.email}
           onChange={set('email')}
-          placeholder="juan@dmc.edu.ph"
-          required
+          placeholder="Email"
         />
       </Field>
+      <ProgressBar current={0} />
 
-      <Button type="button" className="w-full" onClick={() => onNext(form)}>
+      <Button
+        type="button"
+        className="w-full rounded-full"
+        disabled={!canProceed}
+        onClick={() => onNext(form)}
+      >
         NEXT <ArrowRight className="size-4 ml-1" />
       </Button>
-      <Field>
-        <FieldDescription className="px-6 text-center">
-          Already have an account? <Link to="/login">Sign in</Link>
-        </FieldDescription>
-      </Field>
     </FieldGroup>
   );
 }
 
 // SCHOOL INFO STEP
 
-export function SchoolInfoStep({ data, onNext, onBack }: SchoolInfoProps) {
+function SchoolInfoStep({
+  data,
+  onNext,
+  onBack,
+}: {
+  data: SchoolInfoData;
+  onNext: (data: SchoolInfoData) => void;
+  onBack: () => void;
+}) {
   const [form, setForm] = useState<SchoolInfoData>(data);
-
-  const set =
-    (field: keyof SchoolInfoData) => (e: React.ChangeEvent<HTMLInputElement>) =>
-      setForm((prev) => ({ ...prev, [field]: e.target.value }));
+  const canProceed = form.studentId && form.yearLevel && form.department;
 
   return (
     <FieldGroup>
-      <div className="flex flex-col gap-1 text-center mb-4">
-        <h1 className="text-2xl font-bold">School information</h1>
+      <ProgressBar current={1} />
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold">Create an account</h1>
         <p className="text-sm text-muted-foreground">
-          Used to verify your enrollment status.
+          Fill out the fields to get started.
         </p>
       </div>
 
       <Field>
-        <FieldLabel htmlFor="studentId">Student ID</FieldLabel>
-        <Input
+        <FieldLabel htmlFor="studentId" className="sr-only">
+          Student ID
+        </FieldLabel>
+        <IconInput
+          icon={IdCard}
           id="studentId"
           value={form.studentId}
-          onChange={set('studentId')}
-          placeholder="2023-0444"
-          required
+          onChange={(e) =>
+            setForm((p) => ({ ...p, studentId: e.target.value }))
+          }
+          placeholder="Student ID"
         />
       </Field>
-
-      <div className="grid grid-cols-2 gap-3">
-        <Field>
-          <FieldLabel htmlFor="yearLevel">Year level</FieldLabel>
-          <Select
-            value={form.yearLevel}
-            onValueChange={(v) => setForm((p) => ({ ...p, yearLevel: v }))}
-          >
-            <SelectTrigger id="yearLevel">
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              {[
-                { label: '1st Year', value: '1' },
-                { label: '2nd Year', value: '2' },
-                { label: '3rd Year', value: '3' },
-                { label: '4th Year', value: '4' },
-              ].map(({ label, value }) => (
-                <SelectItem key={value} value={value}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="department">Department</FieldLabel>
-          <Select
-            value={form.department}
-            onValueChange={(v) => setForm((p) => ({ ...p, department: v }))}
-          >
-            <SelectTrigger id="department">
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              {['BSIT', 'BSCS', 'BSIS', 'BSED'].map((d) => (
-                <SelectItem key={d} value={d}>
-                  {d}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Field>
-      </div>
-      <div className="flex gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          className="flex-1"
-          onClick={onBack}
-        >
-          <ArrowLeft className="size-4 ml-1" />
-          Back
-        </Button>
-        <Button type="button" className="flex-1" onClick={() => onNext(form)}>
-          NEXT <ArrowRight className="size-4 ml-1" />
-        </Button>
-      </div>
-    </FieldGroup>
-  );
-}
-
-// PHOTO UPLOAD STEP
-
-export function PhotoUploadStep({ data, onNext, onBack }: PhotoUploadProps) {
-  const [photo, setPhoto] = useState<PhotoData>(data);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleFile = (file: File) => {
-    const previewUrl = URL.createObjectURL(file);
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPhoto({
-        file,
-        previewUrl,
-        base64: reader.result as string,
-      });
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
-  };
-
-  return (
-    <FieldGroup>
-      <div className="flex flex-col gap-1 text-center mb-4">
-        <h1 className="text-2xl font-bold">Profile photo</h1>
-        <p className="text-sm text-muted-foreground">
-          Upload a clear photo of your face. Helps admin verify your identity.
-        </p>
-      </div>
 
       <Field>
-        <FieldLabel>Photo</FieldLabel>
-        <div
-          onClick={() => inputRef.current?.click()}
-          onDrop={handleDrop}
-          onDragOver={(e) => e.preventDefault()}
-          className="flex flex-col items-center justify-center gap-3 border-2 border-dashed rounded-lg p-8 cursor-pointer hover:bg-muted/50 transition-colors"
+        <FieldLabel htmlFor="department" className="sr-only">
+          Course
+        </FieldLabel>
+        <Select
+          value={form.department}
+          onValueChange={(v) => setForm((p) => ({ ...p, department: v }))}
         >
-          {photo.previewUrl ? (
-            <img
-              src={photo.previewUrl}
-              alt="Preview"
-              className="w-24 h-24 rounded-full object-cover border"
-            />
-          ) : (
-            <>
-              <div className="text-4xl text-muted-foreground">📷</div>
-              <p className="text-sm font-medium">
-                Click to upload or drag and drop
-              </p>
-            </>
-          )}
-          <FieldDescription>
-            JPG or PNG · Max 5 MB · Square crop recommended
-          </FieldDescription>
-        </div>
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/jpeg,image/png"
-          className="hidden"
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) handleFile(f);
-          }}
-        />
+          <SelectTrigger id="department" className="rounded-full">
+            <GraduationCap className="size-4 text-muted-foreground mr-1" />
+            <SelectValue placeholder="Course" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="BSIT">
+              Bachelor of Science in Information Technology
+            </SelectItem>
+            <SelectItem value="BSCS">
+              Bachelor of Science in Computer Science
+            </SelectItem>
+            <SelectItem value="BSCpE">
+              Bachelor of Science in Computer Engineering
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </Field>
 
-      <div className="flex gap-2">
+      <Field>
+        <FieldLabel htmlFor="yearLevel" className="sr-only">
+          Year level
+        </FieldLabel>
+        <Select
+          value={form.yearLevel}
+          onValueChange={(v) => setForm((p) => ({ ...p, yearLevel: v }))}
+        >
+          <SelectTrigger id="yearLevel" className="rounded-full">
+            <BarChart3 className="size-4 text-muted-foreground mr-1" />
+            <SelectValue placeholder="Year level" />
+          </SelectTrigger>
+          <SelectContent>
+            {[
+              { label: '1st Year', value: '1' },
+              { label: '2nd Year', value: '2' },
+              { label: '3rd Year', value: '3' },
+              { label: '4th Year', value: '4' },
+            ].map((y) => (
+              <SelectItem key={y.value} value={y.value}>
+                {y.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </Field>
+
+      <div className="flex gap-2 pt-2">
         <Button
           type="button"
           variant="outline"
-          className="flex-1"
+          className="flex-1 rounded-full"
           onClick={onBack}
         >
-          <ArrowLeft className="size-4 ml-1" />
-          Back
+          <ArrowLeft className="size-4 mr-1" /> BACK
         </Button>
         <Button
           type="button"
-          className="flex-1"
-          disabled={!photo.file}
-          onClick={() => onNext(photo)}
+          className="flex-1 rounded-full"
+          disabled={!canProceed}
+          onClick={() => onNext(form)}
         >
-          NEXT
-          <ArrowRight className="size-4 ml-1" />
+          NEXT <ArrowRight className="size-4 ml-1" />
         </Button>
       </div>
     </FieldGroup>
@@ -352,21 +286,20 @@ export function PhotoUploadStep({ data, onNext, onBack }: PhotoUploadProps) {
 
 // REVIEW STEP
 
-const Row = ({ label, value }: { label: string; value: string }) => (
-  <div className="flex justify-between py-2 text-sm border-b last:border-0">
-    <span className="text-muted-foreground">{label}</span>
-    <span className="font-medium">{value || '—'}</span>
-  </div>
-);
-
-export function ReviewStep({
+function ReviewStep({
   personal,
   school,
-  photo,
-  onSubmit,
   onBack,
+  onConfirm,
   isSubmitting,
-}: ReviewStepProps) {
+}: {
+  personal: PersonalInfoData;
+  school: SchoolInfoData;
+  onBack: () => void;
+  onConfirm: () => void;
+  isSubmitting: boolean;
+}) {
+  const [certified, setCertified] = useState(false);
   const fullName = [
     personal.firstName,
     personal.middleName,
@@ -375,81 +308,71 @@ export function ReviewStep({
   ]
     .filter(Boolean)
     .join(' ');
-  const initials = [personal.firstName[0], personal.lastName[0]]
-    .join('')
-    .toUpperCase();
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1 text-center">
-        <h1 className="text-2xl font-bold">Review your details</h1>
+    <FieldGroup>
+      <ProgressBar current={2} />
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold">Create an account</h1>
         <p className="text-sm text-muted-foreground">
-          Check everything before submitting. Your application will be reviewed
-          by the admin.
+          Fill out the fields to get started.
         </p>
       </div>
 
-      <div className="flex items-center gap-3">
-        {photo.previewUrl ? (
-          <img
-            src={photo.previewUrl}
-            className="w-12 h-12 rounded-full object-cover border"
-            alt="Profile"
-          />
-        ) : (
-          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
-            {initials}
-          </div>
-        )}
-        <div>
-          <p className="font-medium">{fullName}</p>
-          <p className="text-sm text-muted-foreground">{personal.email}</p>
+      <div className="rounded-2xl border p-4">
+        <p className="font-semibold">{fullName}</p>
+        <p className="text-sm text-muted-foreground mb-3">{school.studentId}</p>
+
+        <div className="flex items-center gap-2 text-sm mb-1">
+          <Mail className="size-4 text-muted-foreground" /> {personal.email}
         </div>
-      </div>
+        <div className="flex items-center gap-2 text-sm mb-1">
+          <GraduationCap className="size-4 text-muted-foreground" />{' '}
+          {school.department}
+        </div>
+        <div className="flex items-center gap-2 text-sm mb-3">
+          <BarChart3 className="size-4 text-muted-foreground" />{' '}
+          {school.yearLevel}
+          {school.yearLevel === '1'
+            ? 'st'
+            : school.yearLevel === '2'
+              ? 'nd'
+              : school.yearLevel === '3'
+                ? 'rd'
+                : 'th'}{' '}
+          Year
+        </div>
 
-      <Separator />
-
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-          Personal
-        </p>
-        <Row label="First name" value={personal.firstName} />
-        <Row label="Middle name" value={personal.middleName} />
-        <Row label="Last name" value={personal.lastName} />
-        <Row label="Suffix" value={personal.suffix} />
-        <Row label="Email" value={personal.email} />
-      </div>
-
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-          School
-        </p>
-        <Row label="Student ID" value={school.studentId} />
-        <Row label="Year level" value={school.yearLevel} />
-        <Row label="Department" value={school.department} />
+        <label className="flex items-start gap-2 text-sm">
+          <Checkbox
+            checked={certified}
+            onCheckedChange={(v) => setCertified(!!v)}
+          />
+          I certify that these academic records match my collegiate credentials.
+        </label>
       </div>
 
       <div className="flex gap-2 pt-2">
         <Button
           type="button"
           variant="outline"
-          className="flex-1"
+          className="flex-1 rounded-full"
           onClick={onBack}
           disabled={isSubmitting}
         >
-          <ArrowLeft className="size-4 ml-1" />
-          Back
+          <ArrowLeft className="size-4 mr-1" /> BACK
         </Button>
         <Button
           type="button"
-          className="flex-1"
-          onClick={onSubmit}
-          disabled={isSubmitting}
+          className="flex-1 rounded-full"
+          disabled={!certified || isSubmitting}
+          onClick={onConfirm}
         >
-          {isSubmitting ? 'Submitting...' : 'CONFIRM'}
+          {isSubmitting ? 'Submitting...' : 'NEXT'}{' '}
+          <ArrowRight className="size-4 ml-1" />
         </Button>
       </div>
-    </div>
+    </FieldGroup>
   );
 }
 
@@ -459,7 +382,6 @@ export default function SignupForm() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   const [personal, setPersonal] = useState<PersonalInfoData>({
     firstName: '',
@@ -473,34 +395,22 @@ export default function SignupForm() {
     yearLevel: '',
     department: '',
   });
-  const [photo, setPhoto] = useState<PhotoData>({
-    file: null,
-    previewUrl: '',
-    base64: '',
-  });
 
-  const handleSubmit = async () => {
+  const handleConfirm = async () => {
     setIsSubmitting(true);
     try {
       const payload: SignupData = {
         firstName: personal.firstName,
         middleName: personal.middleName || undefined,
         lastName: personal.lastName,
-        suffix:
-          personal.suffix === 'none' ? undefined : personal.suffix || undefined,
+        suffix: personal.suffix || undefined,
         email: personal.email,
         schoolStudentId: school.studentId,
         yearLevel: school.yearLevel,
         course: school.department,
-        photoUrl: photo.base64 || undefined,
       };
-
       await signUp(payload);
-      setShowSuccessDialog(true);
-      toast.success('Registration submitted successfully!!', {
-        position: 'top-center',
-        description: 'Your application is now pending admin approval.',
-      });
+      navigate({ to: '/verify', search: { email: personal.email } });
     } catch (error) {
       toast.error('Registration error!', { position: 'top-center' });
       console.error('Registration failed:', error);
@@ -510,8 +420,19 @@ export default function SignupForm() {
   };
 
   return (
-    <AuthLayout>
-      <StepIndicator steps={STEPS} current={step} />
+    <AuthLayout
+      footer={
+        <p className="text-center text-sm text-muted-foreground">
+          Already have an account?{' '}
+          <Link
+            to="/login"
+            className="font-medium text-foreground underline-offset-4 hover:underline"
+          >
+            Log in
+          </Link>
+        </p>
+      }
+    >
       {step === 0 && (
         <PersonalInfoStep
           data={personal}
@@ -532,59 +453,14 @@ export default function SignupForm() {
         />
       )}
       {step === 2 && (
-        <PhotoUploadStep
-          data={photo}
-          onNext={(d) => {
-            setPhoto(d);
-            setStep(3);
-          }}
-          onBack={() => setStep(1)}
-        />
-      )}
-      {step === 3 && (
         <ReviewStep
           personal={personal}
           school={school}
-          photo={photo}
-          onSubmit={handleSubmit}
-          onBack={() => setStep(2)}
+          onBack={() => setStep(1)}
+          onConfirm={handleConfirm}
           isSubmitting={isSubmitting}
         />
       )}
-      <Dialog
-        open={showSuccessDialog}
-        onOpenChange={(open) => {
-          setShowSuccessDialog(open);
-          if (!open) navigate({ to: '/login' });
-        }}
-      >
-        <DialogContent showCloseButton={false}>
-          <DialogHeader>
-            <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
-              <CheckCircle2 className="size-7 text-green-600" />
-            </div>
-            <DialogTitle className="text-center">
-              Registration Submitted
-            </DialogTitle>
-            <DialogDescription className="text-center">
-              Your account has been created, but its not active yet. Please wait
-              for admin approval — the admin needs to verify your school status
-              first before you can log in.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              className="w-full"
-              onClick={() => {
-                setShowSuccessDialog(false);
-                navigate({ to: '/login' });
-              }}
-            >
-              Got it
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </AuthLayout>
   );
 }
