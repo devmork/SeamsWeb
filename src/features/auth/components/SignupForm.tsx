@@ -34,9 +34,12 @@ import { toast } from 'sonner';
 
 const STEP_LABELS = ['Personal', 'School', 'Review'];
 
+const STUDENT_ID_PATTERN = /^\d{4}-\d{4}$/;
+const DMC_EMAIL_PATTERN = /^[^\s@]+@dmc\.edu\.ph$/i;
+
 function ProgressBar({ current }: { current: number }) {
   return (
-    <div className="mx-auto mb-1 flex gap-1 w-2/3">
+    <div className="mx-auto mb-1 flex w-2/3 gap-1">
       {STEP_LABELS.map((_, i) => (
         <div
           key={i}
@@ -63,15 +66,45 @@ function PersonalInfoStep({
   onNext: (data: PersonalInfoData) => void;
 }) {
   const [form, setForm] = useState<PersonalInfoData>(data);
-  const [touched, setTouched] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-  const set =
+  const setUpper =
     (field: keyof PersonalInfoData) =>
     (e: React.ChangeEvent<HTMLInputElement>) =>
-      setForm((prev) => ({ ...prev, [field]: e.target.value }));
+      setForm((prev) => ({
+        ...prev,
+        [field]: e.target.value.toUpperCase(),
+      }));
 
-  const canProceed = form.firstName && form.lastName && form.email;
-  const emailInvalid = touched && !form.email;
+  const setRaw =
+    (field: keyof PersonalInfoData) =>
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      setForm((prev) => ({
+        ...prev,
+        [field]: e.target.value,
+      }));
+
+  const errors = {
+    firstName: !form.firstName.trim() ? 'First name is required.' : '',
+    lastName: !form.lastName.trim() ? 'Last name is required.' : '',
+    email: !form.email.trim()
+      ? 'Email is required.'
+      : !DMC_EMAIL_PATTERN.test(form.email.trim())
+        ? 'Email must be a valid @dmc.edu.ph address.'
+        : '',
+  };
+
+  const showError = (field: keyof typeof errors) => submitted && errors[field];
+
+  const handleNext = () => {
+    setSubmitted(true);
+    const hasErrors = Object.values(errors).some(Boolean);
+    if (hasErrors) {
+      toast.error('Please fix the highlighted fields.');
+      return;
+    }
+    onNext(form);
+  };
 
   return (
     <FieldGroup>
@@ -82,15 +115,26 @@ function PersonalInfoStep({
         </p>
       </div>
 
-      <Field>
-        <FieldLabel htmlFor="firstName">First name</FieldLabel>
+      <Field data-invalid={showError('firstName') ? true : undefined}>
+        <FieldLabel htmlFor="firstName">
+          First name{' '}
+          {submitted && errors.firstName && (
+            <span className="text-destructive">*</span>
+          )}
+        </FieldLabel>
         <Input
           id="firstName"
           value={form.firstName}
-          onChange={set('firstName')}
-          placeholder="MARIA"
+          onChange={setUpper('firstName')}
+          placeholder="Maria"
+          aria-invalid={showError('firstName') ? true : undefined}
           required
         />
+        {showError('firstName') && (
+          <FieldDescription className="text-destructive">
+            {errors.firstName}
+          </FieldDescription>
+        )}
       </Field>
 
       <div className="grid grid-cols-2 gap-3">
@@ -99,7 +143,7 @@ function PersonalInfoStep({
           <Input
             id="middleName"
             value={form.middleName}
-            onChange={set('middleName')}
+            onChange={setUpper('middleName')}
             placeholder="M"
           />
         </Field>
@@ -126,48 +170,59 @@ function PersonalInfoStep({
         </Field>
       </div>
 
-      <Field>
-        <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
+      <Field data-invalid={showError('lastName') ? true : undefined}>
+        <FieldLabel htmlFor="lastName">
+          Last Name{' '}
+          {submitted && errors.lastName && (
+            <span className="text-destructive">*</span>
+          )}
+        </FieldLabel>
         <Input
           id="lastName"
           value={form.lastName}
-          onChange={set('lastName')}
-          placeholder="CLARA"
+          onChange={setUpper('lastName')}
+          placeholder="Clara"
+          aria-invalid={showError('lastName') ? true : undefined}
           required
         />
+        {showError('lastName') && (
+          <FieldDescription className="text-destructive">
+            {errors.lastName}
+          </FieldDescription>
+        )}
       </Field>
 
-      <Field data-invalid={emailInvalid || undefined}>
-        <FieldLabel htmlFor="email">Email</FieldLabel>
+      <Field data-invalid={showError('email') ? true : undefined}>
+        <FieldLabel htmlFor="email">
+          Email{' '}
+          {submitted && errors.email && (
+            <span className="text-destructive">*</span>
+          )}
+        </FieldLabel>
         <Input
           id="email"
           type="email"
           value={form.email}
-          onChange={set('email')}
-          onBlur={() => setTouched(true)}
+          onChange={setRaw('email')}
           placeholder="you@dmc.edu.ph"
-          aria-invalid={emailInvalid || undefined}
+          aria-invalid={showError('email') ? true : undefined}
           required
         />
-        {emailInvalid && (
-          <FieldDescription>Email is required.</FieldDescription>
+        {showError('email') && (
+          <FieldDescription className="text-destructive">
+            {errors.email}
+          </FieldDescription>
         )}
       </Field>
 
       <ProgressBar current={0} />
 
-      <Button
-        type="button"
-        className="w-full"
-        disabled={!canProceed}
-        onClick={() => onNext(form)}
-      >
+      <Button type="button" className="w-full" onClick={handleNext}>
         NEXT <ArrowRight className="ml-1 size-4" />
       </Button>
     </FieldGroup>
   );
 }
-
 // SCHOOL INFO STEP
 
 function SchoolInfoStep({
@@ -180,7 +235,36 @@ function SchoolInfoStep({
   onBack: () => void;
 }) {
   const [form, setForm] = useState<SchoolInfoData>(data);
-  const canProceed = form.studentId && form.yearLevel && form.department;
+  const [submitted, setSubmitted] = useState(false);
+
+  const errors = {
+    studentId: !form.studentId.trim()
+      ? 'Student ID is required.'
+      : !STUDENT_ID_PATTERN.test(form.studentId.trim())
+        ? 'Student ID must follow the format 0000-0000.'
+        : '',
+    department: !form.department ? 'Course is required.' : '',
+    yearLevel: !form.yearLevel ? 'Year level is required.' : '',
+  };
+
+  const showError = (field: keyof typeof errors) => submitted && errors[field];
+
+  const handleStudentIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D/g, '').slice(0, 8);
+    const formatted =
+      digits.length > 4 ? `${digits.slice(0, 4)}-${digits.slice(4)}` : digits;
+    setForm((p) => ({ ...p, studentId: formatted }));
+  };
+
+  const handleNext = () => {
+    setSubmitted(true);
+    const hasErrors = Object.values(errors).some(Boolean);
+    if (hasErrors) {
+      toast.error('Please fix the highlighted fields.');
+      return;
+    }
+    onNext(form);
+  };
 
   return (
     <FieldGroup>
@@ -191,26 +275,46 @@ function SchoolInfoStep({
         </p>
       </div>
 
-      <Field>
-        <FieldLabel htmlFor="studentId">Student ID</FieldLabel>
+      <Field data-invalid={showError('studentId') ? true : undefined}>
+        <FieldLabel htmlFor="studentId">
+          Student ID{' '}
+          {submitted && errors.studentId && (
+            <span className="text-destructive">*</span>
+          )}
+        </FieldLabel>
         <Input
           id="studentId"
           value={form.studentId}
-          onChange={(e) =>
-            setForm((p) => ({ ...p, studentId: e.target.value }))
-          }
+          onChange={handleStudentIdChange}
           placeholder="2023-0444"
+          inputMode="numeric"
+          maxLength={9}
+          aria-invalid={showError('studentId') ? true : undefined}
           required
         />
+        {showError('studentId') && (
+          <FieldDescription className="text-destructive">
+            {errors.studentId}
+          </FieldDescription>
+        )}
       </Field>
 
-      <Field>
-        <FieldLabel htmlFor="department">Course</FieldLabel>
+      <Field data-invalid={showError('department') ? true : undefined}>
+        <FieldLabel htmlFor="department">
+          Course{' '}
+          {submitted && errors.department && (
+            <span className="text-destructive">*</span>
+          )}
+        </FieldLabel>
         <Select
           value={form.department}
           onValueChange={(v) => setForm((p) => ({ ...p, department: v }))}
         >
-          <SelectTrigger id="department" className="w-full">
+          <SelectTrigger
+            id="department"
+            className="w-full"
+            aria-invalid={showError('department') ? true : undefined}
+          >
             <SelectValue placeholder="Select" />
           </SelectTrigger>
           <SelectContent>
@@ -242,15 +346,29 @@ function SchoolInfoStep({
             </SelectItem>
           </SelectContent>
         </Select>
+        {showError('department') && (
+          <FieldDescription className="text-destructive">
+            {errors.department}
+          </FieldDescription>
+        )}
       </Field>
 
-      <Field>
-        <FieldLabel htmlFor="yearLevel">Year level</FieldLabel>
+      <Field data-invalid={showError('yearLevel') ? true : undefined}>
+        <FieldLabel htmlFor="yearLevel">
+          Year level{' '}
+          {submitted && errors.yearLevel && (
+            <span className="text-destructive">*</span>
+          )}
+        </FieldLabel>
         <Select
           value={form.yearLevel}
           onValueChange={(v) => setForm((p) => ({ ...p, yearLevel: v }))}
         >
-          <SelectTrigger id="yearLevel" className="w-full">
+          <SelectTrigger
+            id="yearLevel"
+            className="w-full"
+            aria-invalid={showError('yearLevel') ? true : undefined}
+          >
             <SelectValue placeholder="Select" />
           </SelectTrigger>
           <SelectContent>
@@ -266,6 +384,11 @@ function SchoolInfoStep({
             ))}
           </SelectContent>
         </Select>
+        {showError('yearLevel') && (
+          <FieldDescription className="text-destructive">
+            {errors.yearLevel}
+          </FieldDescription>
+        )}
       </Field>
 
       <ProgressBar current={1} />
@@ -279,19 +402,13 @@ function SchoolInfoStep({
         >
           <ArrowLeft className="mr-1 size-4" /> BACK
         </Button>
-        <Button
-          type="button"
-          className="flex-1"
-          disabled={!canProceed}
-          onClick={() => onNext(form)}
-        >
+        <Button type="button" className="flex-1" onClick={handleNext}>
           NEXT <ArrowRight className="ml-1 size-4" />
         </Button>
       </div>
     </FieldGroup>
   );
 }
-
 // REVIEW STEP
 
 function ReviewStep({
@@ -308,6 +425,8 @@ function ReviewStep({
   isSubmitting: boolean;
 }) {
   const [certified, setCertified] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
   const fullName = [
     personal.firstName,
     personal.middleName,
@@ -329,6 +448,14 @@ function ReviewStep({
       } Year`
     : '';
 
+  const handleConfirm = () => {
+    setSubmitted(true);
+    if (!certified) {
+      toast.error('Please certify your academic records before continuing.');
+      return;
+    }
+    onConfirm();
+  };
   return (
     <FieldGroup>
       <div className="mb-4">
@@ -339,7 +466,6 @@ function ReviewStep({
       </div>
 
       <div className="overflow-hidden rounded-2xl border bg-card">
-        {/* Header */}
         <div className="border-b bg-muted/40 px-5 py-4 text-center">
           <p className="text-sm font-bold uppercase tracking-wide">
             {fullName}
@@ -347,7 +473,6 @@ function ReviewStep({
           <p className="text-xs text-muted-foreground">{school.studentId}</p>
         </div>
 
-        {/* Details */}
         <div className="space-y-3 px-5 py-4">
           <div className="flex items-start gap-3 text-sm">
             <Mail className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
@@ -356,12 +481,7 @@ function ReviewStep({
 
           <div className="flex items-start gap-3 text-sm">
             <GraduationCap className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-            <span>
-              <span className="font-medium">{school.department}</span>{' '}
-              <span className="text-muted-foreground">
-                (Bachelor of Science in Information Technology)
-              </span>
-            </span>
+            <span className="font-medium">{school.department}</span>
           </div>
 
           <div className="flex items-start gap-3 text-sm">
@@ -372,16 +492,24 @@ function ReviewStep({
           </div>
         </div>
 
-        {/* Certification */}
-        <label className="flex cursor-pointer items-start gap-3 border-t bg-muted/40 px-5 py-4 text-sm">
+        <label
+          className={`flex cursor-pointer items-start gap-3 border-t bg-muted/40 px-5 py-4 text-sm ${
+            submitted && !certified ? 'text-destructive' : ''
+          }`}
+        >
           <Checkbox
             checked={certified}
             onCheckedChange={(v) => setCertified(!!v)}
             className="mt-0.5"
           />
-          <span className="text-muted-foreground">
+          <span
+            className={submitted && !certified ? '' : 'text-muted-foreground'}
+          >
             I certify that these academic records match my collegiate
-            enrollment.
+            enrollment.{' '}
+            {submitted && !certified && (
+              <span className="text-destructive">*</span>
+            )}
           </span>
         </label>
       </div>
@@ -401,8 +529,8 @@ function ReviewStep({
         <Button
           type="button"
           className="flex-1"
-          disabled={!certified || isSubmitting}
-          onClick={onConfirm}
+          onClick={handleConfirm}
+          disabled={isSubmitting}
         >
           {isSubmitting ? 'Submitting...' : 'NEXT'}{' '}
           <ArrowRight className="ml-1 size-4" />
@@ -411,6 +539,7 @@ function ReviewStep({
     </FieldGroup>
   );
 }
+
 // SIGN UP FORM
 
 export default function SignupForm() {
@@ -438,8 +567,9 @@ export default function SignupForm() {
         firstName: personal.firstName,
         middleName: personal.middleName || undefined,
         lastName: personal.lastName,
-        suffix: personal.suffix || undefined,
-        email: personal.email,
+        suffix:
+          personal.suffix === 'none' ? undefined : personal.suffix || undefined,
+        email: personal.email.toLowerCase(),
         schoolStudentId: school.studentId,
         yearLevel: school.yearLevel,
         course: school.department,
