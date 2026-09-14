@@ -2,15 +2,29 @@ import { Particles } from '@/components/ui/particles';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
+  footer?: React.ReactNode;
 }
-export default function AuthLayout({ children }: AuthLayoutProps) {
+
+export default function AuthLayout({ children, footer }: AuthLayoutProps) {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">{children}</div>
+          <div className="flex w-full max-w-xs flex-col">
+            {/* Form content */}
+            <div className="flex-1">{children}</div>
+
+            {/* Footer slot */}
+            {footer && <div className="mt-8">{footer}</div>}
+
+            {/* Powered by */}
+            <div className="mt-2 text-center text-xs text-muted-foreground/70">
+              Powered by CCS - Developers v0.0.0
+            </div>
+          </div>
         </div>
       </div>
+
       <div className="relative hidden bg-muted lg:block">
         <img
           src="/assets/backgrounds/dmc-building-nighty.png"
