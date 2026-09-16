@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { checkApplicationAvailability } from '@/features/admin/applicants';
 
 const STEP_LABELS = ['Personal', 'School', 'Review'];
 
@@ -563,6 +564,31 @@ export default function SignupForm() {
   const handleConfirm = async () => {
     setIsSubmitting(true);
     try {
+      const availability = await checkApplicationAvailability(
+        personal.email.toLowerCase(),
+        school.studentId,
+      );
+
+      if (!availability.isAvailable) {
+        if (availability.emailRegistered) {
+          toast.error(
+            'This email address is already registered. Try logging in instead.',
+          );
+          setStep(0);
+        } else if (availability.emailPending) {
+          toast.error(
+            'This email already has an application pending review or verification.',
+          );
+          setStep(0);
+        } else if (availability.schoolStudentIdTaken) {
+          toast.error(
+            'This Student ID is already registered or pending review.',
+          );
+          setStep(1);
+        }
+        return;
+      }
+
       const payload: SignupData = {
         firstName: personal.firstName,
         middleName: personal.middleName || undefined,
