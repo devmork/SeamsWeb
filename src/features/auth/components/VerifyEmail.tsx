@@ -60,9 +60,13 @@ export default function VerifyEmail() {
 
   const handleResend = async () => {
     if (secondsLeft > 0) return;
-    await resendVerification(email);
-    setSecondsLeft(RESEND_SECONDS);
-    toast.success('Verification code resent.');
+    try {
+      await resendVerification(email);
+      setSecondsLeft(RESEND_SECONDS);
+      toast.success('Verification code resent.');
+    } catch {
+      toast.error('Could not resend the code.');
+    }
   };
 
   return (
