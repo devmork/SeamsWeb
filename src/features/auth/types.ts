@@ -6,6 +6,25 @@ export interface User {
   role: string;
 }
 
+export interface LoginData {
+  email: string;
+  password: string;
+}
+
+export interface SignupResponse {
+  applicationId: number;
+  email: string;
+  status: number;
+}
+
+export interface AuthResponse {
+  token: string;
+  userId: number;
+  email: string;
+  role: string;
+  name?: string;
+}
+
 export interface SignupData {
   firstName: string;
   middleName?: string;
@@ -15,21 +34,6 @@ export interface SignupData {
   schoolStudentId: string;
   yearLevel: string;
   course: string;
-  photoUrl?: string;
-}
-
-export interface LoginData {
-  email: string;
-  password: string;
-}
-
-export interface AuthResponse {
-  token: string;
-  userId: number;
-  email: string;
-  role: string;
-  name?: string;
-  avatar?: string | null;
 }
 
 export type PersonalInfoData = {
@@ -45,12 +49,3 @@ export type SchoolInfoData = {
   yearLevel: string;
   department: string;
 };
-
-export type PhotoData = {
-  file: File | null;
-  previewUrl: string;
-  base64: string;
-};
-
-
-
