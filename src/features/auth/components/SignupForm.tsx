@@ -16,6 +16,7 @@ import {
   Mail,
   GraduationCap,
   BarChart3,
+  X, // ✅ added for the close button
 } from 'lucide-react';
 import {
   Field,
@@ -30,13 +31,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { toast } from 'sonner';
 import { checkApplicationAvailability } from '@/features/admin/applicants';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const STEP_LABELS = ['Personal', 'School', 'Review'];
 
 const STUDENT_ID_PATTERN = /^\d{4}-\d{4}$/;
 const DMC_EMAIL_PATTERN = /^[^\s@]+@dmc\.edu\.ph$/i;
+
+type FormAlert = {
+  title: string;
+  description: string;
+  variant: 'default' | 'destructive';
+} | null;
 
 function ProgressBar({ current }: { current: number }) {
   return (
@@ -62,9 +75,11 @@ function ProgressBar({ current }: { current: number }) {
 function PersonalInfoStep({
   data,
   onNext,
+  onError,
 }: {
   data: PersonalInfoData;
   onNext: (data: PersonalInfoData) => void;
+  onError: (msg: string) => void;
 }) {
   const [form, setForm] = useState<PersonalInfoData>(data);
   const [submitted, setSubmitted] = useState(false);
@@ -101,7 +116,7 @@ function PersonalInfoStep({
     setSubmitted(true);
     const hasErrors = Object.values(errors).some(Boolean);
     if (hasErrors) {
-      toast.error('Please fix the highlighted fields.');
+      onError('Please fix the highlighted fields.');
       return;
     }
     onNext(form);
@@ -224,16 +239,19 @@ function PersonalInfoStep({
     </FieldGroup>
   );
 }
+
 // SCHOOL INFO STEP
 
 function SchoolInfoStep({
   data,
   onNext,
   onBack,
+  onError,
 }: {
   data: SchoolInfoData;
   onNext: (data: SchoolInfoData) => void;
   onBack: () => void;
+  onError: (msg: string) => void;
 }) {
   const [form, setForm] = useState<SchoolInfoData>(data);
   const [submitted, setSubmitted] = useState(false);
@@ -261,7 +279,7 @@ function SchoolInfoStep({
     setSubmitted(true);
     const hasErrors = Object.values(errors).some(Boolean);
     if (hasErrors) {
-      toast.error('Please fix the highlighted fields.');
+      onError('Please fix the highlighted fields.');
       return;
     }
     onNext(form);
@@ -410,6 +428,7 @@ function SchoolInfoStep({
     </FieldGroup>
   );
 }
+
 // REVIEW STEP
 
 function ReviewStep({
@@ -417,12 +436,14 @@ function ReviewStep({
   school,
   onBack,
   onConfirm,
+  onError,
   isSubmitting,
 }: {
   personal: PersonalInfoData;
   school: SchoolInfoData;
   onBack: () => void;
   onConfirm: () => void;
+  onError: (title: string, description: string) => void;
   isSubmitting: boolean;
 }) {
   const [certified, setCertified] = useState(false);
@@ -452,11 +473,15 @@ function ReviewStep({
   const handleConfirm = () => {
     setSubmitted(true);
     if (!certified) {
-      toast.error('Please certify your academic records before continuing.');
+      onError(
+        'Action required',
+        'Please certify your academic records before continuing.',
+      );
       return;
     }
     onConfirm();
   };
+
   return (
     <FieldGroup>
       <div className="mb-4">
@@ -533,7 +558,7 @@ function ReviewStep({
           onClick={handleConfirm}
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Submitting...' : 'NEXT'}{' '}
+          {isSubmitting ? 'Submitting...' : 'CONFIRM'}{' '}
           <ArrowRight className="ml-1 size-4" />
         </Button>
       </div>
@@ -547,6 +572,8 @@ export default function SignupForm() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alert, setAlert] = useState<FormAlert>(null);
 
   const [personal, setPersonal] = useState<PersonalInfoData>({
     firstName: '',
@@ -561,8 +588,22 @@ export default function SignupForm() {
     department: '',
   });
 
+  const clearAlert = () => {
+    setAlertOpen(false);
+  };
+
+  const showError = (
+    title: string,
+    description: string,
+    variant: 'default' | 'destructive' = 'destructive',
+  ) => {
+    setAlert({ title, description, variant });
+    setAlertOpen(true);
+  };
+
   const handleConfirm = async () => {
     setIsSubmitting(true);
+    clearAlert();
     try {
       const availability = await checkApplicationAvailability(
         personal.email.toLowerCase(),
@@ -571,20 +612,20 @@ export default function SignupForm() {
 
       if (!availability.isAvailable) {
         if (availability.emailRegistered) {
-          toast.error(
-            'This email address is already registered. Try logging in instead.',
+          showError(
+            'Oops!',
+            'This email address is already registered. Go back and log in instead.',
           );
-          setStep(0);
         } else if (availability.emailPending) {
-          toast.error(
+          showError(
+            'Oops!',
             'This email already has an application pending review or verification.',
           );
-          setStep(0);
         } else if (availability.schoolStudentIdTaken) {
-          toast.error(
-            'This Student ID is already registered or pending review.',
+          showError(
+            'Oops!',
+            'This Student ID is already registered or pending review. Go back and correct it.',
           );
-          setStep(1);
         }
         return;
       }
@@ -603,8 +644,11 @@ export default function SignupForm() {
       await signUp(payload);
       navigate({ to: '/verify', search: { email: personal.email } });
     } catch (error) {
-      toast.error('Registration error!', { position: 'top-center' });
       console.error('Registration failed:', error);
+      showError(
+        'Oops!',
+        'We could not submit your application. Please try again in a moment.',
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -629,8 +673,10 @@ export default function SignupForm() {
           data={personal}
           onNext={(d) => {
             setPersonal(d);
+            clearAlert();
             setStep(1);
           }}
+          onError={(msg: string) => showError('Oops!', msg)}
         />
       )}
       {step === 1 && (
@@ -638,20 +684,64 @@ export default function SignupForm() {
           data={school}
           onNext={(d) => {
             setSchool(d);
+            clearAlert();
             setStep(2);
           }}
-          onBack={() => setStep(0)}
+          onBack={() => {
+            clearAlert();
+            setStep(0);
+          }}
+          onError={(msg: string) => showError('Oops!', msg)}
         />
       )}
       {step === 2 && (
         <ReviewStep
           personal={personal}
           school={school}
-          onBack={() => setStep(1)}
+          onBack={() => {
+            clearAlert();
+            setStep(1);
+          }}
           onConfirm={handleConfirm}
+          onError={showError}
           isSubmitting={isSubmitting}
         />
       )}
+
+      {/* ── Styled AlertDialog matching the target design ─────────────── */}
+      <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
+        <AlertDialogContent className="max-w-sm gap-4">
+          {/* X close button, top-right */}
+          <button
+            type="button"
+            onClick={clearAlert}
+            aria-label="Close"
+            className="absolute top-4 right-4 flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          >
+            <X className="size-4" />
+          </button>
+
+          {/* Centered title + description */}
+          <div className="flex flex-col items-center gap-2 px-4 pt-4 text-center">
+            <AlertDialogTitle className="text-2xl font-bold">
+              {alert?.title ?? 'Oops!'}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-muted-foreground">
+              {alert?.description ?? ''}
+            </AlertDialogDescription>
+          </div>
+
+          {/* Centered action button */}
+          <div className="flex justify-center pb-2">
+            <AlertDialogAction
+              onClick={clearAlert}
+              className="min-w-32 rounded-full px-6"
+            >
+              Try Again
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </AuthLayout>
   );
 }
