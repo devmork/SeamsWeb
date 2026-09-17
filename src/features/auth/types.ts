@@ -23,6 +23,7 @@ export interface AuthResponse {
   email: string;
   role: string;
   name?: string;
+  avatar?: string;
 }
 
 export interface SignupData {
