@@ -1,9 +1,14 @@
 import api from '@/service/api';
-import type { AuthResponse, LoginData, SignupData } from '../types';
+import type {
+  LoginData,
+  SignupData,
+  SignupResponse,
+  AuthResponse,
+} from '../types';
 import { useAuthStore } from '../Stores/AuthStore';
 
-export const signUp = async (data: SignupData): Promise<AuthResponse> => {
-  const response = await api.post<AuthResponse>(
+export const signUp = async (data: SignupData): Promise<SignupResponse> => {
+  const response = await api.post<SignupResponse>(
     '/student-application/signup',
     data,
   );

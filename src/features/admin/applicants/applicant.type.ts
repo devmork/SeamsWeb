@@ -17,3 +17,11 @@ export interface Applicant {
   photoUrl?: string | null;
   status: number;
 }
+
+export type CheckApplicationAvailabilityResponse = {
+  emailRegistered: boolean;
+  emailPending: boolean;
+  schoolStudentIdTaken: boolean;
+  emailTaken: boolean;
+  isAvailable: boolean;
+};
