@@ -13,7 +13,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import type { Applicant } from '@/features/admin/applicants/applicant.type';
+import {
+  ApplicationStatus,
+  type Applicant,
+} from '@/features/admin/applicants/applicant.type';
 import {
   approveApplication,
   rejectApplication,
@@ -68,7 +71,12 @@ export default function ApplicantList() {
     setError(null);
     try {
       const data = await getAllApplications();
-      setStudents(data);
+
+      const pendingApplications = data.filter(
+        (app) => app.status === ApplicationStatus.PENDING,
+      );
+
+      setStudents(pendingApplications);
       setTotalReceived(data.length);
       setResolvedCount(0);
     } catch (err) {
