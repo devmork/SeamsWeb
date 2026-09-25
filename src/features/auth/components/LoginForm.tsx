@@ -20,14 +20,7 @@ import type { AuthResponse, User } from '@/features/auth/types';
 import { Input } from '@/components/ui/input';
 
 const loginSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .min(1, 'Email is required')
-    .email('Enter a valid email address')
-    .refine((val) => val.endsWith('@dmc.edu.ph'), {
-      message: 'Must be a @dmc.edu.ph email',
-    }),
+  email: z.string().trim().min(1, 'Email is required'),
   password: z.string().trim().min(1, 'Password is required'),
 });
 
