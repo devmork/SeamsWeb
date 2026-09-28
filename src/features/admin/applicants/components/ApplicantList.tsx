@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Check, X, ClockAlert, Search, UserCheck, Loader2 } from 'lucide-react';
+import { Check, X, Search, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -55,8 +55,6 @@ export default function ApplicantList() {
   const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [totalReceived, setTotalReceived] = useState(0);
-  const [resolvedCount, setResolvedCount] = useState(0);
   const [actioningId, setActioningId] = useState<number | null>(null);
   const [filterProgram, setFilterProgram] = useState('all');
   const [filterYear, setFilterYear] = useState('all');
@@ -77,8 +75,6 @@ export default function ApplicantList() {
       );
 
       setStudents(pendingApplications);
-      setTotalReceived(data.length);
-      setResolvedCount(0);
     } catch (err) {
       console.error(err);
       setError('Failed to load applications. Please try again.');
@@ -114,7 +110,6 @@ export default function ApplicantList() {
       setStudents((prev) =>
         prev.filter((x) => x.applicationId !== applicant.applicationId),
       );
-      setResolvedCount((prev) => prev + 1);
     } catch (err) {
       console.error(err);
       toast.error('Something went wrong', {
@@ -135,7 +130,6 @@ export default function ApplicantList() {
       setStudents((prev) =>
         prev.filter((x) => x.applicationId !== applicant.applicationId),
       );
-      setResolvedCount((prev) => prev + 1);
     } catch (err) {
       console.error(err);
       toast.error('Something went wrong', {
@@ -148,49 +142,6 @@ export default function ApplicantList() {
 
   return (
     <div className="flex-1 min-w-0">
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <Card className="border-t-4 border-t-orange-500">
-          <CardContent className="p-5 flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center shrink-0">
-              <ClockAlert size={20} className="text-orange-600" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">
-                {students.length}
-              </p>
-              <p className="text-xs text-gray-500">Pending</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-t-4 border-t-green-500">
-          <CardContent className="p-5 flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center shrink-0">
-              <Check size={20} className="text-green-600" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">
-                {resolvedCount}
-              </p>
-              <p className="text-xs text-gray-500">Resolved Today</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-t-4 border-t-[#2C5530]">
-          <CardContent className="p-5 flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-[#2C5530]/10 flex items-center justify-center shrink-0">
-              <UserCheck size={20} className="text-[#2C5530]" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">
-                {totalReceived}
-              </p>
-              <p className="text-xs text-gray-500">Total Received</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* Table Card */}
       <Card>
         <CardHeader className="pb-4">
@@ -232,9 +183,9 @@ export default function ApplicantList() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Year Levels</SelectItem>
-                  {yearLevelOptions.map((year) => (
-                    <SelectItem key={year} value={year}>
-                      {year}st Year
+                  {yearLevelOptions.map(({ value, label }) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
                     </SelectItem>
                   ))}
                 </SelectContent>
