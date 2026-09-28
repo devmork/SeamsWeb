@@ -16,7 +16,12 @@ export const programOptions = [
   'BSHM',
 ] as const;
 
-export const yearLevelOptions = ['1', '2', '3', '4'] as const;
+export const yearLevelOptions = [
+  { value: '1', label: '1st Year' },
+  { value: '2', label: '2nd Year' },
+  { value: '3', label: '3rd Year' },
+  { value: '4', label: '4th Year' },
+] as const;
 
 export const statusOptions = [
   { value: '1', label: 'Pending' },
@@ -25,4 +30,4 @@ export const statusOptions = [
 ] as const;
 
 export type ProgramOption = (typeof programOptions)[number];
-export type YearLevelOption = (typeof yearLevelOptions)[number];
+export type YearLevelOption = (typeof yearLevelOptions)[number]['value'];
