@@ -22,7 +22,6 @@ import {
   rejectApplication,
   getAllApplications,
 } from '@/features/admin/applicants/services/ApplicantService';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   Select,
   SelectContent,
@@ -41,13 +40,6 @@ function getFullName(s: Applicant) {
   return [s.firstName, s.middleName, s.lastName, s.suffix]
     .filter(Boolean)
     .join(' ');
-}
-
-function getInitials(s: Applicant) {
-  return [s.firstName?.[0], s.lastName?.[0]]
-    .filter(Boolean)
-    .join('')
-    .toUpperCase();
 }
 
 export default function ApplicantList() {
@@ -247,9 +239,9 @@ export default function ApplicantList() {
               <TableHeader>
                 <TableRow className="bg-gray-50 hover:bg-gray-50">
                   <TableHead className="pl-6 w-12">#</TableHead>
-                  <TableHead>Student</TableHead>
-                  <TableHead>Student ID</TableHead>
-                  <TableHead>Program</TableHead>
+                  <TableHead>Full Name</TableHead>
+                  <TableHead>School ID</TableHead>
+                  <TableHead>Course</TableHead>
                   <TableHead>Year Level</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Status</TableHead>
@@ -266,14 +258,9 @@ export default function ApplicantList() {
                         {index + 1}
                       </TableCell>
 
-                      {/* Student Name + Avatar */}
+                      {/* Student Name */}
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <Avatar>
-                            <AvatarFallback>
-                              {getInitials(student)}
-                            </AvatarFallback>
-                          </Avatar>
                           <span className="font-medium text-gray-900 whitespace-nowrap">
                             {getFullName(student)}
                           </span>
