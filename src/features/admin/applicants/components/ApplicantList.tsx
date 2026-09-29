@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Check, X, Search, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Table,
   TableBody,
@@ -22,7 +23,6 @@ import {
   rejectApplication,
   getAllApplications,
 } from '@/features/admin/applicants/services/ApplicantService';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   Select,
   SelectContent,
@@ -43,12 +43,7 @@ function getFullName(s: Applicant) {
     .join(' ');
 }
 
-function getInitials(s: Applicant) {
-  return [s.firstName?.[0], s.lastName?.[0]]
-    .filter(Boolean)
-    .join('')
-    .toUpperCase();
-}
+type BulkAction = 'approve' | 'reject' | null;
 
 export default function ApplicantList() {
   const [students, setStudents] = useState<Applicant[]>([]);
@@ -59,6 +54,11 @@ export default function ApplicantList() {
   const [filterProgram, setFilterProgram] = useState('all');
   const [filterYear, setFilterYear] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
+
+  // ── Bulk selection state ─────────────────────────────────────────────
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [bulkAction, setBulkAction] = useState<BulkAction>(null);
+  const isBulkProcessing = bulkAction !== null;
 
   useEffect(() => {
     loadApplications();
@@ -75,6 +75,7 @@ export default function ApplicantList() {
       );
 
       setStudents(pendingApplications);
+      setSelectedIds(new Set());
     } catch (err) {
       console.error(err);
       setError('Failed to load applications. Please try again.');
@@ -100,6 +101,41 @@ export default function ApplicantList() {
     return matchesSearch && matchesProgram && matchesYear && matchesStatus;
   });
 
+  // ── Selection helpers ────────────────────────────────────────────────
+  const visibleIds = useMemo(
+    () => filtered.map((s) => s.applicationId),
+    [filtered],
+  );
+
+  const allVisibleSelected =
+    visibleIds.length > 0 && visibleIds.every((id) => selectedIds.has(id));
+  const someVisibleSelected =
+    visibleIds.some((id) => selectedIds.has(id)) && !allVisibleSelected;
+
+  const toggleSelect = (id: number) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (allVisibleSelected) {
+        visibleIds.forEach((id) => next.delete(id));
+      } else {
+        visibleIds.forEach((id) => next.add(id));
+      }
+      return next;
+    });
+  };
+
+  const clearSelection = () => setSelectedIds(new Set());
+
+  // ── Single-row actions ───────────────────────────────────────────────
   const handleApprove = async (applicant: Applicant) => {
     setActioningId(applicant.applicationId);
     try {
@@ -110,6 +146,11 @@ export default function ApplicantList() {
       setStudents((prev) =>
         prev.filter((x) => x.applicationId !== applicant.applicationId),
       );
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        next.delete(applicant.applicationId);
+        return next;
+      });
     } catch (err) {
       console.error(err);
       toast.error('Something went wrong', {
@@ -130,6 +171,11 @@ export default function ApplicantList() {
       setStudents((prev) =>
         prev.filter((x) => x.applicationId !== applicant.applicationId),
       );
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        next.delete(applicant.applicationId);
+        return next;
+      });
     } catch (err) {
       console.error(err);
       toast.error('Something went wrong', {
@@ -139,6 +185,63 @@ export default function ApplicantList() {
       setActioningId(null);
     }
   };
+
+  // ── Bulk actions ─────────────────────────────────────────────────────
+  const runBulkAction = async (
+    action: Exclude<BulkAction, null>,
+    api: (id: number) => Promise<void>,
+  ) => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+
+    setBulkAction(action);
+
+    const results = await Promise.allSettled(ids.map((id) => api(id)));
+
+    const succeededIds: number[] = [];
+    const failedIds: number[] = [];
+    results.forEach((res, i) => {
+      if (res.status === 'fulfilled') succeededIds.push(ids[i]);
+      else failedIds.push(ids[i]);
+    });
+
+    const succeeded = succeededIds.length;
+    const failed = failedIds.length;
+
+    // Remove resolved applications from the pending list
+    if (succeededIds.length > 0) {
+      setStudents((prev) =>
+        prev.filter((s) => !succeededIds.includes(s.applicationId)),
+      );
+    }
+
+    // Keep only failed selections so admin can retry
+    setSelectedIds(new Set(failedIds));
+
+    const noun = action === 'approve' ? 'approved' : 'rejected';
+    const pastTense = action === 'approve' ? 'Approved' : 'Rejected';
+
+    if (failed === 0) {
+      toast.success(`${succeeded} ${noun}`);
+    } else if (succeeded === 0) {
+      toast.error(`0 ${noun}`, {
+        description: `All ${failed} request${failed !== 1 ? 's' : ''} failed. Please try again.`,
+      });
+    } else {
+      toast.warning(`${succeeded} ${noun}, ${failed} failed`, {
+        description: `The remaining ${failed} still selected — retry when ready.`,
+      });
+    }
+
+    setBulkAction(null);
+    // Avoid unused warning if you'd like to keep a reference
+    void pastTense;
+  };
+
+  const handleBulkApprove = () => runBulkAction('approve', approveApplication);
+  const handleBulkReject = () => runBulkAction('reject', rejectApplication);
+
+  const selectedCount = selectedIds.size;
 
   return (
     <div className="flex-1 min-w-0">
@@ -211,6 +314,54 @@ export default function ApplicantList() {
 
         <Separator />
 
+        {/* Bulk action bar */}
+        {selectedCount > 0 && !isLoading && !error && (
+          <div className="flex items-center justify-between gap-3 px-6 py-3 bg-[#2C5530]/5 border-b border-[#2C5530]/20">
+            <div className="flex items-center gap-3 text-sm">
+              <span className="font-medium text-[#2C5530]">
+                {selectedCount} selected
+              </span>
+              <button
+                type="button"
+                onClick={clearSelection}
+                disabled={isBulkProcessing}
+                className="text-xs text-gray-500 hover:text-gray-700 underline underline-offset-2 disabled:opacity-50"
+              >
+                Clear
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={isBulkProcessing}
+                onClick={handleBulkReject}
+                className="h-8 px-3 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-400 hover:text-red-700 flex items-center gap-1.5"
+              >
+                {bulkAction === 'reject' ? (
+                  <Loader2 size={13} className="animate-spin" />
+                ) : (
+                  <X size={13} />
+                )}
+                Reject Selected
+              </Button>
+              <Button
+                size="sm"
+                disabled={isBulkProcessing}
+                onClick={handleBulkApprove}
+                className="h-8 px-3 bg-green-600 hover:bg-green-700 text-white flex items-center gap-1.5"
+              >
+                {bulkAction === 'approve' ? (
+                  <Loader2 size={13} className="animate-spin" />
+                ) : (
+                  <Check size={13} />
+                )}
+                Approve Selected
+              </Button>
+            </div>
+          </div>
+        )}
+
         <CardContent className="p-0">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-16 text-center px-4">
@@ -246,10 +397,24 @@ export default function ApplicantList() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-gray-50 hover:bg-gray-50">
-                  <TableHead className="pl-6 w-12">#</TableHead>
-                  <TableHead>Student</TableHead>
-                  <TableHead>Student ID</TableHead>
-                  <TableHead>Program</TableHead>
+                  <TableHead className="pl-6 w-12">
+                    <Checkbox
+                      checked={
+                        allVisibleSelected
+                          ? true
+                          : someVisibleSelected
+                            ? 'indeterminate'
+                            : false
+                      }
+                      onCheckedChange={toggleSelectAll}
+                      disabled={isBulkProcessing}
+                      aria-label="Select all visible applicants"
+                    />
+                  </TableHead>
+                  <TableHead className="w-12">#</TableHead>
+                  <TableHead>Full Name</TableHead>
+                  <TableHead>School ID</TableHead>
+                  <TableHead>Course</TableHead>
                   <TableHead>Year Level</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Status</TableHead>
@@ -259,21 +424,33 @@ export default function ApplicantList() {
               <TableBody>
                 {filtered.map((student, index) => {
                   const isActioning = actioningId === student.applicationId;
+                  const isSelected = selectedIds.has(student.applicationId);
                   return (
-                    <TableRow key={student.applicationId} className="group">
+                    <TableRow
+                      key={student.applicationId}
+                      className="group"
+                      data-state={isSelected ? 'selected' : undefined}
+                    >
+                      {/* Checkbox */}
+                      <TableCell className="pl-6">
+                        <Checkbox
+                          checked={isSelected}
+                          onCheckedChange={() =>
+                            toggleSelect(student.applicationId)
+                          }
+                          disabled={isBulkProcessing}
+                          aria-label={`Select ${getFullName(student)}`}
+                        />
+                      </TableCell>
+
                       {/* Row # */}
-                      <TableCell className="pl-6 text-gray-400 text-xs">
+                      <TableCell className="text-gray-400 text-xs">
                         {index + 1}
                       </TableCell>
 
-                      {/* Student Name + Avatar */}
+                      {/* Student Name */}
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <Avatar>
-                            <AvatarFallback>
-                              {getInitials(student)}
-                            </AvatarFallback>
-                          </Avatar>
                           <span className="font-medium text-gray-900 whitespace-nowrap">
                             {getFullName(student)}
                           </span>
@@ -312,10 +489,10 @@ export default function ApplicantList() {
                         <Badge
                           variant={
                             student.status === 1
-                              ? 'default' // Pending - Orange
+                              ? 'default'
                               : student.status === 2
-                                ? 'secondary' // Approved - Green
-                                : 'destructive' // Rejected - Red
+                                ? 'secondary'
+                                : 'destructive'
                           }
                           className={
                             student.status === 1
@@ -338,7 +515,7 @@ export default function ApplicantList() {
                             <Button
                               size="sm"
                               variant="outline"
-                              disabled={isActioning}
+                              disabled={isActioning || isBulkProcessing}
                               onClick={() => handleReject(student)}
                               className="h-8 px-3 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-400 hover:text-red-700 flex items-center gap-1.5"
                             >
@@ -347,7 +524,7 @@ export default function ApplicantList() {
                             </Button>
                             <Button
                               size="sm"
-                              disabled={isActioning}
+                              disabled={isActioning || isBulkProcessing}
                               onClick={() => handleApprove(student)}
                               className="h-8 px-3 bg-green-600 hover:bg-green-700 text-white flex items-center gap-1.5"
                             >
