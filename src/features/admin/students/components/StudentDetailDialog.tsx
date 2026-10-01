@@ -307,9 +307,9 @@ export default function StudentDetailDialog({
                       <SelectValue placeholder="Select year level" />
                     </SelectTrigger>
                     <SelectContent>
-                      {yearLevelOptions.map((year) => (
-                        <SelectItem key={year} value={year}>
-                          {year}st Year
+                      {yearLevelOptions.map(({ value, label }) => (
+                        <SelectItem key={value} value={value}>
+                          {label}
                         </SelectItem>
                       ))}
                     </SelectContent>
