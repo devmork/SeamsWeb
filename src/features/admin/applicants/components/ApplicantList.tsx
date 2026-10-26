@@ -14,10 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  ApplicationStatus,
-  type Applicant,
-} from '@/features/admin/applicants/applicant.type';
+import type { Applicant } from '@/features/admin/applicants/applicant.type';
 import {
   approveApplication,
   rejectApplication,
@@ -69,12 +66,7 @@ export default function ApplicantList() {
     setError(null);
     try {
       const data = await getAllApplications();
-
-      const pendingApplications = data.filter(
-        (app) => app.status === ApplicationStatus.PENDING,
-      );
-
-      setStudents(pendingApplications);
+      setStudents(data); // Load ALL applications, not just pending
       setSelectedIds(new Set());
     } catch (err) {
       console.error(err);
@@ -143,8 +135,11 @@ export default function ApplicantList() {
       toast.success('Student Approved', {
         description: `${getFullName(applicant)} can now log in to the system.`,
       });
+      // Update status locally instead of removing
       setStudents((prev) =>
-        prev.filter((x) => x.applicationId !== applicant.applicationId),
+        prev.map((x) =>
+          x.applicationId === applicant.applicationId ? { ...x, status: 2 } : x,
+        ),
       );
       setSelectedIds((prev) => {
         const next = new Set(prev);
@@ -168,8 +163,11 @@ export default function ApplicantList() {
       toast.error('Registration Rejected', {
         description: `${getFullName(applicant)}'s application has been rejected.`,
       });
+      // Update status locally instead of removing
       setStudents((prev) =>
-        prev.filter((x) => x.applicationId !== applicant.applicationId),
+        prev.map((x) =>
+          x.applicationId === applicant.applicationId ? { ...x, status: 3 } : x,
+        ),
       );
       setSelectedIds((prev) => {
         const next = new Set(prev);
@@ -208,10 +206,15 @@ export default function ApplicantList() {
     const succeeded = succeededIds.length;
     const failed = failedIds.length;
 
-    // Remove resolved applications from the pending list
+    // Update status for succeeded applications instead of removing
     if (succeededIds.length > 0) {
+      const newStatus = action === 'approve' ? 2 : 3;
       setStudents((prev) =>
-        prev.filter((s) => !succeededIds.includes(s.applicationId)),
+        prev.map((s) =>
+          succeededIds.includes(s.applicationId)
+            ? { ...s, status: newStatus }
+            : s,
+        ),
       );
     }
 
@@ -234,7 +237,6 @@ export default function ApplicantList() {
     }
 
     setBulkAction(null);
-    // Avoid unused warning if you'd like to keep a reference
     void pastTense;
   };
 
@@ -242,6 +244,15 @@ export default function ApplicantList() {
   const handleBulkReject = () => runBulkAction('reject', rejectApplication);
 
   const selectedCount = selectedIds.size;
+
+  // Dynamic footer label based on selected filter
+  const getStatusLabel = () => {
+    if (filterStatus === '1') return 'pending application';
+    if (filterStatus === '2') return 'approved application';
+    if (filterStatus === '3') return 'rejected application';
+    return 'application';
+  };
+  const statusLabel = getStatusLabel();
 
   return (
     <div className="flex-1 min-w-0">
@@ -384,14 +395,15 @@ export default function ApplicantList() {
                 All caught up!
               </h3>
               <p className="text-sm text-gray-500 max-w-sm">
-                There are no pending student applications to review at this
-                time.
+                There are no student applications to review at this time.
               </p>
             </div>
           ) : filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center px-4">
               <Search size={36} className="text-gray-300 mb-3" />
-              <p className="text-gray-500">No students match your search.</p>
+              <p className="text-gray-500">
+                No applications match your search.
+              </p>
             </div>
           ) : (
             <Table>
@@ -552,7 +564,7 @@ export default function ApplicantList() {
           {/* Footer count */}
           {!isLoading && !error && filtered.length > 0 && (
             <div className="px-6 py-3 border-t border-gray-100 text-xs text-gray-400 text-right">
-              Showing {filtered.length} of {students.length} pending application
+              Showing {filtered.length} of {students.length} {statusLabel}
               {students.length !== 1 ? 's' : ''}
             </div>
           )}
