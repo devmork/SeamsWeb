@@ -91,9 +91,9 @@ export default function StudentList() {
     const q = search.toLowerCase();
     const matchesSearch =
       getFullName(s).toLowerCase().includes(q) ||
-      s.schoolStudentId.toLowerCase().includes(q) ||
-      s.course.toLowerCase().includes(q) ||
-      s.email.toLowerCase().includes(q);
+      (s.schoolStudentId ?? '').toLowerCase().includes(q) ||
+      (s.course ?? '').toLowerCase().includes(q) ||
+      (s.email ?? '').toLowerCase().includes(q);
 
     const matchesProgram =
       filterProgram === 'all' || s.course === filterProgram;
