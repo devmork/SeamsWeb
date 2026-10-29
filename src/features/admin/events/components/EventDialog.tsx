@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { Event, EventFormData } from '@/features/admin/events/event.type';
+import { yearLevelOptions } from '@/config/filter';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface EventDialogProps {
   open: boolean;
@@ -13,7 +15,12 @@ interface EventDialogProps {
   onSubmit: (data: EventFormData) => Promise<void>;
 }
 
-const EMPTY_FORM: EventFormData = { title: '', startDate: '', endDate: '' };
+const EMPTY_FORM: EventFormData = {
+  title: '',
+  startDate: '',
+  endDate: '',
+  targetYearLevels: [],
+};
 
 function toInputDate(iso: string): string {
   if (!iso) return '';
@@ -38,6 +45,7 @@ export default function EventDialog({
         title: event.title ?? '',
         startDate: toInputDate(event.startDate),
         endDate: toInputDate(event.endDate),
+        targetYearLevels: event.targetYearLevels ?? [],
       });
     } else {
       setForm(EMPTY_FORM);
@@ -170,6 +178,41 @@ export default function EventDialog({
                 <p className="text-xs text-red-500">{errors.endDate}</p>
               )}
             </div>
+          </div>
+          {/* Event Scope */}
+          <div className="flex flex-col gap-1.5">
+            <Label>Who is this event for?</Label>
+            <div className="grid grid-cols-2 gap-2 rounded-md border border-input p-3">
+              {yearLevelOptions.map(({ value, label }) => (
+                <label
+                  key={value}
+                  className="flex items-center gap-2 text-sm cursor-pointer select-none"
+                >
+                  <Checkbox
+                    checked={form.targetYearLevels.includes(value)}
+                    onCheckedChange={(checked) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        targetYearLevels: checked
+                          ? [...prev.targetYearLevels, value]
+                          : prev.targetYearLevels.filter((v) => v !== value),
+                      }))
+                    }
+                  />
+                  <span>{label}</span>
+                </label>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {form.targetYearLevels.length === 0
+                ? 'No year level selected — visible to all students.'
+                : `Restricted to ${form.targetYearLevels
+                    .map(
+                      (v) =>
+                        yearLevelOptions.find((o) => o.value === v)?.label ?? v,
+                    )
+                    .join(', ')}.`}
+            </p>
           </div>
         </div>
 
