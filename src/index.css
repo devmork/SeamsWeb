@@ -1,123 +1,299 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
-@import "@fontsource-variable/noto-sans";
+@import "@fontsource-variable/inter";
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+  ─────────────────────────────────────────────────────────────────────────────
+  Seams design tokens — implemented from docs/DESIGN.md (Notion-style system)
+  Light mode is the source of truth: warm paper canvas, near-black Inter type,
+  one structural blue accent, decorative sticker palette for status/illustration.
+  ─────────────────────────────────────────────────────────────────────────────
+*/
+
 :root {
-    --background: oklch(0.9706 0.0017 67.8);
-    --foreground: oklch(0 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0 0 0);
-    --primary: oklch(0.5679 0.1824 254.27);
-    --primary-foreground: oklch(1 0 0);
-    --primary-active: oklch(0.4727 0.1474 253.35);
-    --secondary: oklch(0.3557 0.1386 269.47);
-    --secondary-foreground: oklch(1 0 0);
-    --muted: oklch(0.9706 0.0017 67.8);
-    --muted-foreground: oklch(0.3095 0.0038 84.58);
-    --accent: oklch(0.5679 0.1824 254.27);
-    --accent-foreground: oklch(1 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.9249 0 0);
-    --input: oklch(0.9249 0 0);
-    --ring: oklch(0.5679 0.1824 254.27);
-    --chart-1: oklch(0.871 0.15 154.449);
-    --chart-2: oklch(0.723 0.219 149.579);
-    --chart-3: oklch(0.627 0.194 149.214);
-    --chart-4: oklch(0.527 0.154 150.069);
-    --chart-5: oklch(0.448 0.119 151.328);
-    --radius: 0.5rem;
-    --sidebar: oklch(1 0 0);
-    --sidebar-foreground: oklch(0 0 0);
-    --sidebar-primary: oklch(0.5679 0.1824 254.27);
-    --sidebar-primary-foreground: oklch(1 0 0);
-    --sidebar-accent: oklch(0.9706 0.0017 67.8);
-    --sidebar-accent-foreground: oklch(0.3095 0.0038 84.58);
-    --sidebar-border: oklch(0.9249 0 0);
-    --sidebar-ring: oklch(0.5679 0.1824 254.27);
+  /* Canvas & surfaces */
+  --canvas: oklch(1 0 0);
+  --canvas-soft: oklch(0.9706 0.0017 67.8);
+  --surface: oklch(1 0 0);
+  --surface-sunken: oklch(0.9706 0.0017 67.8);
+
+  /* Ink (text) */
+  --ink: oklch(0 0 0);
+  --ink-secondary: oklch(0.3095 0.0038 84.58);
+  --ink-muted: oklch(0.4808 0.0082 67.63);
+  --ink-faint: oklch(0.7017 0.0104 72.62);
+
+  /* Hairline */
+  --hairline: oklch(0.9249 0 0);
+
+  /* Single structural accent */
+  --primary: oklch(0.5679 0.1824 254.27);
+  --primary-active: oklch(0.4727 0.1474 253.35);
+  --primary-soft: oklch(0.9455 0.0285 254.27);
+  --on-primary: oklch(1 0 0);
+
+  /* Deep indigo — the single "night" band */
+  --night: oklch(0.3557 0.1386 269.47);
+  --night-deep: oklch(0.2848 0.1132 269.47);
+
+  /* Camera / media well — near-black blue for scanner viewfinders */
+  --well: oklch(0.1802 0.0325 266.62);
+
+  /* Functional (destructive only — never a structural accent) */
+  --destructive: oklch(0.568 0.2002 26.41);
+
+  /* Decorative sticker palette — status, icon tiles, category dots only */
+  --sticker-sky: oklch(0.7291 0.1227 246.66);
+  --sticker-purple: oklch(0.8254 0.0942 307.19);
+  --sticker-purple-deep: oklch(0.2998 0.1032 303.34);
+  --sticker-pink: oklch(0.7299 0.2149 344.12);
+  --sticker-orange: oklch(0.6293 0.1805 44.83);
+  --sticker-orange-deep: oklch(0.4128 0.111 48.82);
+  --sticker-teal: oklch(0.6338 0.0985 191.47);
+  --sticker-green: oklch(0.6556 0.1957 145.41);
+  --sticker-brown: oklch(0.3536 0.0656 67.28);
+
+  /* Sticker tints (fills behind status chips / icon tiles) */
+  --sticker-sky-tint: oklch(0.9619 0.0186 246.66);
+  --sticker-purple-tint: oklch(0.9629 0.0211 307.19);
+  --sticker-pink-tint: oklch(0.9666 0.0281 344.12);
+  --sticker-orange-tint: oklch(0.9634 0.0314 44.83);
+  --sticker-teal-tint: oklch(0.9619 0.0167 191.47);
+  --sticker-green-tint: oklch(0.9597 0.0338 145.41);
+  --sticker-brown-tint: oklch(0.9574 0.0141 67.28);
+
+  /* Sticker ink — text-safe tones on their tints (≥6:1 contrast) */
+  --sticker-sky-ink: oklch(0.45 0.12 246.66);
+  --sticker-purple-ink: oklch(0.45 0.13 307.19);
+  --sticker-pink-ink: oklch(0.5 0.17 344.12);
+  --sticker-orange-ink: oklch(0.48 0.13 44.83);
+  --sticker-teal-ink: oklch(0.45 0.08 191.47);
+  --sticker-green-ink: oklch(0.45 0.13 145.41);
+  --sticker-brown-ink: oklch(0.42 0.06 67.28);
+  --destructive-ink: oklch(0.48 0.18 26.41);
+
+  /* ─── shadcn-compatible aliases ─── */
+  --background: var(--canvas-soft);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary-foreground: var(--on-primary);
+  --secondary: var(--night);
+  --secondary-foreground: var(--on-primary);
+  --muted: var(--canvas-soft);
+  --muted-foreground: var(--ink-muted);
+  --accent: var(--primary);
+  --accent-foreground: var(--on-primary);
+  --border: var(--hairline);
+  --input: var(--hairline);
+  --ring: var(--primary);
+  --sidebar: var(--canvas);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--on-primary);
+  --sidebar-accent: var(--canvas-soft);
+  --sidebar-accent-foreground: var(--ink-secondary);
+  --sidebar-border: var(--hairline);
+  --sidebar-ring: var(--primary);
+
+  /* Chart ramp (kept for compatibility) */
+  --chart-1: var(--sticker-green);
+  --chart-2: var(--sticker-teal);
+  --chart-3: var(--sticker-sky);
+  --chart-4: var(--sticker-purple);
+  --chart-5: var(--sticker-pink);
+
+  /* ─── Elevation: hairline + barely-there layered shadows ─── */
+  --shadow-soft:
+    0 0.175px 1.041px rgba(0, 0, 0, 0.01),
+    0 0.8px 2.925px rgba(0, 0, 0, 0.02),
+    0 2.025px 7.847px rgba(0, 0, 0, 0.027),
+    0 4px 18px rgba(0, 0, 0, 0.04);
+  --shadow-elevated:
+    0 0.175px 1.041px rgba(0, 0, 0, 0.012),
+    0 0.8px 2.925px rgba(0, 0, 0, 0.024),
+    0 2.025px 7.847px rgba(0, 0, 0, 0.032),
+    0 4px 18px rgba(0, 0, 0, 0.048),
+    0 23px 52px rgba(0, 0, 0, 0.05);
 }
 
 .dark {
-    --background: oklch(0.145 0.006 85);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.3557 0.1386 269.47);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.245 0.08 275);
-    --popover-foreground: oklch(1 0 0);
-    --primary: oklch(0.5679 0.1824 254.27);
-    --primary-foreground: oklch(1 0 0);
-    --primary-active: oklch(0.4727 0.1474 253.35);
-    --secondary: oklch(0.3557 0.1386 269.47);
-    --secondary-foreground: oklch(1 0 0);
-    --muted: oklch(0.245 0.08 275);
-    --muted-foreground: oklch(0.72 0.01 85);
-    --accent: oklch(0.5679 0.1824 254.27);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(0.245 0.005 85);
-    --input: oklch(0.245 0.005 85);
-    --ring: oklch(0.5679 0.1824 254.27);
-    --chart-1: oklch(0.871 0.15 154.449);
-    --chart-2: oklch(0.723 0.219 149.579);
-    --chart-3: oklch(0.627 0.194 149.214);
-    --chart-4: oklch(0.527 0.154 150.069);
-    --chart-5: oklch(0.448 0.119 151.328);
-    --sidebar: oklch(0.245 0.08 275);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.5679 0.1824 254.27);
-    --sidebar-primary-foreground: oklch(1 0 0);
-    --sidebar-accent: oklch(0.32 0.1 275);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(0.245 0.005 85);
-    --sidebar-ring: oklch(0.5679 0.1824 254.27);
+  --canvas: oklch(0.1967 0.0028 85.71);
+  --canvas-soft: oklch(0.1609 0.0028 85.71);
+  --surface: oklch(0.245 0.005 85);
+  --surface-sunken: oklch(0.1967 0.0028 85.71);
+
+  --ink: oklch(0.985 0 0);
+  --ink-secondary: oklch(0.8879 0.0026 84.58);
+  --ink-muted: oklch(0.7206 0.0055 67.63);
+  --ink-faint: oklch(0.55 0.008 72.62);
+
+  --hairline: oklch(0.3095 0.004 84.58);
+
+  --primary: oklch(0.6305 0.1688 254.27);
+  --primary-active: oklch(0.7014 0.1398 253.35);
+  --primary-soft: oklch(0.35 0.09 254.27);
+  --on-primary: oklch(1 0 0);
+
+  --night: oklch(0.2848 0.1132 269.47);
+  --night-deep: oklch(0.221 0.09 269.47);
+
+  --destructive: oklch(0.6731 0.1757 22.22);
+
+  --sticker-sky: oklch(0.7698 0.1029 246.66);
+  --sticker-purple: oklch(0.8469 0.0766 307.19);
+  --sticker-pink: oklch(0.7632 0.1913 344.12);
+  --sticker-orange: oklch(0.7147 0.1512 44.83);
+  --sticker-teal: oklch(0.7283 0.081 191.47);
+  --sticker-green: oklch(0.7439 0.1655 145.41);
+  --sticker-brown: oklch(0.5918 0.0675 67.28);
+
+  --sticker-sky-tint: oklch(0.35 0.05 246.66);
+  --sticker-purple-tint: oklch(0.35 0.06 307.19);
+  --sticker-pink-tint: oklch(0.35 0.08 344.12);
+  --sticker-orange-tint: oklch(0.35 0.07 44.83);
+  --sticker-teal-tint: oklch(0.32 0.04 191.47);
+  --sticker-green-tint: oklch(0.35 0.07 145.41);
+  --sticker-brown-tint: oklch(0.33 0.04 67.28);
+
+  --sticker-sky-ink: oklch(0.78 0.09 246.66);
+  --sticker-purple-ink: oklch(0.8 0.08 307.19);
+  --sticker-pink-ink: oklch(0.78 0.16 344.12);
+  --sticker-orange-ink: oklch(0.78 0.13 44.83);
+  --sticker-teal-ink: oklch(0.78 0.07 191.47);
+  --sticker-green-ink: oklch(0.8 0.14 145.41);
+  --sticker-brown-ink: oklch(0.7 0.07 67.28);
+  --destructive-ink: oklch(0.75 0.16 26.41);
+
+  --background: var(--canvas-soft);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --muted: var(--surface-sunken);
+  --muted-foreground: var(--ink-muted);
+  --accent: var(--primary);
+  --accent-foreground: var(--on-primary);
+  --border: var(--hairline);
+  --input: var(--hairline);
+  --ring: var(--primary);
+  --sidebar: var(--canvas);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--on-primary);
+  --sidebar-accent: var(--surface-sunken);
+  --sidebar-accent-foreground: var(--ink-secondary);
+  --sidebar-border: var(--hairline);
+  --sidebar-ring: var(--primary);
+
+  --shadow-soft:
+    0 0.175px 1.041px rgba(0, 0, 0, 0.2),
+    0 0.8px 2.925px rgba(0, 0, 0, 0.3),
+    0 2.025px 7.847px rgba(0, 0, 0, 0.35),
+    0 4px 18px rgba(0, 0, 0, 0.4);
+  --shadow-elevated:
+    0 0.175px 1.041px rgba(0, 0, 0, 0.24),
+    0 0.8px 2.925px rgba(0, 0, 0, 0.36),
+    0 2.025px 7.847px rgba(0, 0, 0, 0.42),
+    0 4px 18px rgba(0, 0, 0, 0.48),
+    0 23px 52px rgba(0, 0, 0, 0.5);
 }
 
 @theme inline {
-    --font-sans: 'Geist Variable', sans-serif;
-    --font-heading: 'Noto Sans Variable', sans-serif;
-    --color-sidebar-ring: var(--sidebar-ring);
-    --color-sidebar-border: var(--sidebar-border);
-    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-    --color-sidebar-accent: var(--sidebar-accent);
-    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-    --color-sidebar-primary: var(--sidebar-primary);
-    --color-sidebar-foreground: var(--sidebar-foreground);
-    --color-sidebar: var(--sidebar);
-    --color-chart-5: var(--chart-5);
-    --color-chart-4: var(--chart-4);
-    --color-chart-3: var(--chart-3);
-    --color-chart-2: var(--chart-2);
-    --color-chart-1: var(--chart-1);
-    --color-ring: var(--ring);
-    --color-input: var(--input);
-    --color-border: var(--border);
-    --color-destructive: var(--destructive);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-accent: var(--accent);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-muted: var(--muted);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-secondary: var(--secondary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-primary: var(--primary);
-    --color-popover-foreground: var(--popover-foreground);
-    --color-popover: var(--popover);
-    --color-card-foreground: var(--card-foreground);
-    --color-card: var(--card);
-    --color-foreground: var(--foreground);
-    --color-background: var(--background);
-    --radius-sm: 0.3125rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
-    --radius-xl: 1rem;
-    --radius-2xl: 1.25rem;
-    --radius-3xl: 1.5rem;
-    --radius-4xl: 2rem;
+  /* Typography — NotionInter substitute: Inter */
+  --font-sans: "Inter Variable", Inter, -apple-system, system-ui, "Segoe UI",
+    Helvetica, Arial, sans-serif;
+  --font-heading: "Inter Variable", Inter, -apple-system, system-ui,
+    "Segoe UI", Helvetica, Arial, sans-serif;
+
+  /* Colors */
+  --color-canvas: var(--canvas);
+  --color-canvas-soft: var(--canvas-soft);
+  --color-surface: var(--surface);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-ink: var(--ink);
+  --color-ink-secondary: var(--ink-secondary);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-hairline: var(--hairline);
+  --color-primary: var(--primary);
+  --color-primary-active: var(--primary-active);
+  --color-primary-soft: var(--primary-soft);
+  --color-night: var(--night);
+  --color-night-deep: var(--night-deep);
+  --color-well: var(--well);
+  --color-sticker-sky: var(--sticker-sky);
+  --color-sticker-purple: var(--sticker-purple);
+  --color-sticker-purple-deep: var(--sticker-purple-deep);
+  --color-sticker-pink: var(--sticker-pink);
+  --color-sticker-orange: var(--sticker-orange);
+  --color-sticker-orange-deep: var(--sticker-orange-deep);
+  --color-sticker-teal: var(--sticker-teal);
+  --color-sticker-green: var(--sticker-green);
+  --color-sticker-brown: var(--sticker-brown);
+  --color-sticker-sky-ink: var(--sticker-sky-ink);
+  --color-sticker-purple-ink: var(--sticker-purple-ink);
+  --color-sticker-pink-ink: var(--sticker-pink-ink);
+  --color-sticker-orange-ink: var(--sticker-orange-ink);
+  --color-sticker-teal-ink: var(--sticker-teal-ink);
+  --color-sticker-green-ink: var(--sticker-green-ink);
+  --color-sticker-brown-ink: var(--sticker-brown-ink);
+  --color-sticker-sky-tint: var(--sticker-sky-tint);
+  --color-sticker-purple-tint: var(--sticker-purple-tint);
+  --color-sticker-pink-tint: var(--sticker-pink-tint);
+  --color-sticker-orange-tint: var(--sticker-orange-tint);
+  --color-sticker-teal-tint: var(--sticker-teal-tint);
+  --color-sticker-green-tint: var(--sticker-green-tint);
+  --color-sticker-brown-tint: var(--sticker-brown-tint);
+
+  /* shadcn aliases */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Radius — DESIGN.md scale: xs 4 / sm 5 / md 8 / lg 12 / xl 16 / full pill */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.3125rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.5rem;
+  --radius-4xl: 2rem;
+  --radius-full: 9999px;
+
+  /* Spacing — DESIGN.md scale (4/8/12/16/24/28/32) is Tailwind's default 4px
+     numeric scale: 1 2 3 4 6 7 8. Named --spacing-* tokens are deliberately not
+     defined here because Tailwind derives utilities like max-w-sm from them. */
+
+  /* Elevation */
+  --shadow-soft: var(--shadow-soft);
+  --shadow-elevated: var(--shadow-elevated);
 }
 
 @layer base {
@@ -125,9 +301,83 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background font-sans text-foreground antialiased;
+    font-feature-settings: "lnum" 1, "locl" 1;
   }
   html {
     @apply font-sans;
+  }
+}
+
+/*
+  ─── Type roles — DESIGN.md typography scale ────────────────────────────────
+  Heavy, tightly-tracked headlines; calm 400 body. Weight is the expressive lever.
+*/
+@layer utilities {
+  .type-display-1 {
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -2.125px;
+  }
+  .type-display-2 {
+    font-size: 54px;
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: -1.875px;
+  }
+  .type-heading-1 {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -1px;
+  }
+  .type-heading-2 {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.23;
+    letter-spacing: -0.625px;
+  }
+  .type-heading-3 {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.27;
+    letter-spacing: -0.25px;
+  }
+  .type-title {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: -0.125px;
+  }
+  .type-body-md {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0;
+  }
+  .type-body-sm {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.33;
+    letter-spacing: 0;
+  }
+  .type-button {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: 0;
+  }
+  .type-caption {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.43;
+    letter-spacing: 0;
+  }
+  .type-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.33;
+    letter-spacing: 0.125px;
   }
 }
