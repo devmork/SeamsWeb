@@ -6,7 +6,7 @@ import {
   SidebarHeader,
 } from '@/components/ui/sidebar';
 import { navigationData } from '@/config/navigation';
-import { NavHeader } from './NavHeader';
+// import { NavHeader } from './NavHeader';
 import { NavItem } from '@/shared/components/NavItem';
 import { NavUser } from '@/shared/components/NavUser';
 import { getCurrentUser } from '@/features/auth/services/AuthService';
@@ -23,7 +23,13 @@ export function AppSidebar({ role, ...props }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <NavHeader />
+        <div className="flex items-center justify-start py-1 group-data-[collapsible=icon]:justify-center">
+          <img
+            src="/public/assets/logos/app-logo.jpg"
+            alt="logo"
+            className="size-14 max-w-none shrink-0 object-contain"
+          />
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <NavItem items={navItems} />
