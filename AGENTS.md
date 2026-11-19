@@ -42,6 +42,12 @@ Gotcha: `npm run lint` runs ESLint over the whole repo and currently reports err
 - Styling: Tailwind v4 via `@tailwindcss/vite`, design tokens as CSS variables in `src/index.css` (`@theme inline`), shadcn component config in `components.json`.
 - Server state: TanStack Query client in `src/lib/query-client.ts` (staleTime 60s, retry 1).
 
+## Design system
+
+- `docs/DESIGN.md` is the design source of truth for visual design decisions.
+- Design tokens live in `src/index.css` (CSS variables consumed through `@theme inline`) — this file is the source of truth for token implementation; keep DESIGN.md and `index.css` aligned here and use oklch values (do not reintroduce raw hex).
+- Radius tokens (`--radius-*` in `@theme inline`) follow the DESIGN.md scale: sm 5 / md 8 / lg 12 / xl 16, full pill for CTAs.
+
 ## References
 
 - Design system notes: `docs/DESIGN.md`.
