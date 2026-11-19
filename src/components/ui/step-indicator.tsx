@@ -15,9 +15,9 @@ export function StepIndicator({ steps, current }: Props) {
               <div
                 className={cn(
                   "w-8 h-8 rounded-full border flex items-center justify-center text-xs font-medium transition-colors",
-                  done && "bg-green-50 border-green-300 text-green-700",
-                  active && "bg-blue-50 border-blue-300 text-blue-700",
-                  !done && !active && "border-border text-muted-foreground",
+                  done && "bg-sticker-green-tint border-sticker-green/30 text-sticker-green-ink",
+                  active && "bg-primary-soft border-primary/30 text-primary",
+                  !done && !active && "border-hairline text-ink-faint",
                 )}>
                 {done ? <Check className="w-3.5 h-3.5" /> : i + 1}
               </div>
@@ -25,8 +25,8 @@ export function StepIndicator({ steps, current }: Props) {
                 className={cn(
                   "text-[11px]",
                   active
-                    ? "text-blue-600 font-medium"
-                    : "text-muted-foreground",
+                    ? "text-primary font-medium"
+                    : "text-ink-muted",
                 )}>
                 {label}
               </span>
@@ -35,7 +35,7 @@ export function StepIndicator({ steps, current }: Props) {
               <div
                 className={cn(
                   "flex-1 h-px mx-2 mb-4",
-                  done ? "bg-green-300" : "bg-border",
+                  done ? "bg-sticker-green/40" : "bg-hairline",
                 )}
               />
             )}
