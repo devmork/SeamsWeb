@@ -4,10 +4,12 @@ export interface Event {
   eventName: string;
   startDate: string;
   endDate: string;
+  targetYearLevels: string[];
 }
 
 export interface EventFormData {
   title: string;
   startDate: string;
   endDate: string;
+  targetYearLevels: string[];
 }
