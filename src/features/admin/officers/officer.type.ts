@@ -1,5 +1,4 @@
 export interface Officer {
-  officerId: number;
   userId: number;
   firstName: string;
   middleName?: string | null;
