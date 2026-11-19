@@ -1,7 +1,6 @@
 export interface Event {
   eventId: number;
   title: string;
-  eventName: string;
   startDate: string;
   endDate: string;
   targetYearLevels: string[];

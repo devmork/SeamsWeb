@@ -8,6 +8,5 @@ export interface Officer {
   schoolStudentId: string;
   yearLevel: string;
   course: string;
-  position: string;
   photoUrl?: string | null;
 }

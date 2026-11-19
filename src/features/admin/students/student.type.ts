@@ -7,20 +7,22 @@ export interface Student {
   suffix?: string;
   email: string;
   schoolStudentId: string;
-  yearLevel: number;
+  /** Backend `YearLevel` is a free string (`"1"` … `"4"`). */
+  yearLevel: string;
   course: string;
   photoUrl?: string;
   status: number;
 }
 
+/** Mirrors `SeamsApp.DTOs.Student.StudentRequest` (no email on updates). */
 export interface StudentRequest {
   firstName: string;
   middleName?: string;
   lastName: string;
   suffix?: string;
-  email: string;
   schoolStudentId: string;
-  yearLevel: number;
+  yearLevel: string;
   course: string;
   photoUrl?: string;
+  status?: number;
 }

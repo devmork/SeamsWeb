@@ -12,6 +12,10 @@ export const studentService = {
     return response.data;
   },
 
+  /**
+   * `PATCH /api/student/{id}` — soft delete: the backend sets `Status = 0`,
+   * which is what the UI calls "deactivate".
+   */
   deleteStudent: async (studentId: number): Promise<void> => {
     await api.patch(`/student/${studentId}`);
   },
@@ -23,9 +27,6 @@ export const studentService = {
     await api.put(`/student/${studentId}`, data);
   },
 
-  deactivateStudent: async (studentId: number): Promise<void> => {
-    await api.patch(`/student/${studentId}/deactivate`);
-  },
 };
 
 export default studentService;

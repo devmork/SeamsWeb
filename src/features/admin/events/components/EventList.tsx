@@ -130,8 +130,8 @@ export default function EventList() {
   // ── Event CRUD ──────────────────────────────────────────────────────────────
   const handleCreateEvent = async (data: EventFormData) => {
     try {
-      const created = await createEvent(data);
-      setEvents((prev) => [...prev, created]);
+      await createEvent(data);
+      await loadEvents();
       setEventDialog({ open: false, mode: 'create', event: null });
       toast.success('Event Created', {
         description: `"${data.title}" has been added.`,

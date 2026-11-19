@@ -66,15 +66,10 @@ function StatusBadge({ status }: { status: number }) {
       </Badge>
     );
   }
-  if (status === ATTENDANCE_STATUS.Late) {
-    return (
-      <Badge className="bg-sticker-orange-tint text-sticker-orange-ink hover:bg-sticker-orange-tint">
-        Late
-      </Badge>
-    );
-  }
   return (
-    <Badge className="bg-destructive/10 text-destructive hover:bg-destructive/10">Absent</Badge>
+    <Badge className="bg-destructive/10 text-destructive hover:bg-destructive/10">
+      Absent
+    </Badge>
   );
 }
 

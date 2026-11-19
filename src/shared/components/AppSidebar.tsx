@@ -9,7 +9,7 @@ import { navigationData } from '@/config/navigation';
 // import { NavHeader } from './NavHeader';
 import { NavItem } from '@/shared/components/NavItem';
 import { NavUser } from '@/shared/components/NavUser';
-import { getCurrentUser } from '@/features/auth/services/AuthService';
+import { useAuthStore } from '@/features/auth/Stores/AuthStore';
 import { Separator } from '../../components/ui/separator';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
@@ -18,14 +18,14 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 
 export function AppSidebar({ role, ...props }: AppSidebarProps) {
   const navItems = navigationData.navByRole[role] || [];
-  const user = getCurrentUser();
+  const user = useAuthStore((state) => state.user);
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <div className="flex items-center justify-start py-1 group-data-[collapsible=icon]:justify-center">
           <img
-            src="/public/assets/logos/app-logo.jpg"
+            src="/assets/logos/app-logo.jpg"
             alt="logo"
             className="size-12 max-w-none shrink-0 object-contain"
           />

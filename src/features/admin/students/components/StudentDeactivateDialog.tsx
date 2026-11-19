@@ -45,7 +45,7 @@ export default function StudentDeactivateDialog({
   const handleConfirmDeactivate = async () => {
     if (setIsProcessing) setIsProcessing(true);
     try {
-      await studentService.deactivateStudent(student.studentId);
+      await studentService.deleteStudent(student.studentId);
       toast.success('Student Deactivated', {
         description: `${getFullName(student)} has been deactivated.`,
       });

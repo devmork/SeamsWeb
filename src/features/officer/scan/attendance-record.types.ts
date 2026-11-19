@@ -1,7 +1,10 @@
+/**
+ * Attendance records are 0 = absent, 1 = present. The history projection also
+ * uses 2 for "session still open", but that value never appears on a record.
+ */
 export const ATTENDANCE_STATUS = {
+  Absent: 0,
   Present: 1,
-  Late: 2,
-  Absent: 3,
 } as const;
 
 export type AttendanceStatus =

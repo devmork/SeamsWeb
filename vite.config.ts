@@ -23,7 +23,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           react: ['react', 'react-dom'],
-          vendor: ['axios', 'jwt-decode', 'react-router-dom'],
+          vendor: ['axios', 'react-router-dom'],
         },
       },
     },

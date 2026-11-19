@@ -20,11 +20,54 @@ export const api = axios.create({
   withCredentials: true,
 });
 
-// Request interceptor — only needs to leave multipart uploads alone.
-api.interceptors.request.use((config) => {
+// SeamsApp validates every unsafe method with AutoValidateAntiforgeryToken:
+// the JavaScript-readable XSRF-TOKEN cookie must be echoed back in the
+// X-XSRF-TOKEN header. ASP.NET writes that cookie URL-encoded, so decode it.
+const XSRF_COOKIE = 'XSRF-TOKEN';
+const XSRF_HEADER = 'X-XSRF-TOKEN';
+
+function readXsrfToken(): string | null {
+  const match = document.cookie.match(
+    new RegExp(`(?:^|;\\s*)${XSRF_COOKIE}=([^;]*)`),
+  );
+  if (!match) return null;
+  try {
+    return decodeURIComponent(match[1]);
+  } catch {
+    return match[1];
+  }
+}
+
+let xsrfRequest: Promise<unknown> | null = null;
+
+/** Fetch a token once before the first mutating request (login included). */
+function ensureXsrfToken(): Promise<unknown> | null {
+  if (readXsrfToken()) return null;
+  xsrfRequest ??= api
+    .get('/auth/csrf-token')
+    .catch(() => undefined)
+    .finally(() => {
+      xsrfRequest = null;
+    });
+  return xsrfRequest;
+}
+
+// Request interceptor — leaves multipart uploads alone and attaches the
+// antiforgery header to every mutating request.
+api.interceptors.request.use(async (config) => {
   if (config.data instanceof FormData) {
     delete config.headers['Content-Type'];
   }
+
+  const method = (config.method ?? 'get').toLowerCase();
+  if (method === 'get' || method === 'head' || method === 'options') {
+    return config;
+  }
+
+  await ensureXsrfToken();
+  const token = readXsrfToken();
+  if (token) config.headers[XSRF_HEADER] = token;
+
   return config;
 });
 

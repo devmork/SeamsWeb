@@ -9,6 +9,8 @@ export interface ManagedUser {
   isActive: number;
   /** The account's single application role, or null when unassigned. */
   role: UserRole | null;
+  departmentId: number | null;
+  departmentName: string | null;
 }
 
 /** Roles a superadmin can assign. Order is ascending privilege. */

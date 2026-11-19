@@ -6,9 +6,12 @@ export const getAllEvents = async (): Promise<Event[]> => {
   return response.data;
 };
 
-export const createEvent = async (data: EventFormData): Promise<Event> => {
-  const response = await api.post<Event>('/event', data);
-  return response.data;
+/**
+ * `POST /api/event` responds with the request body, not the stored event, so
+ * the response carries no `eventId`. Callers should refetch the list.
+ */
+export const createEvent = async (data: EventFormData): Promise<void> => {
+  await api.post('/event', data);
 };
 
 export const updateEvent = async (

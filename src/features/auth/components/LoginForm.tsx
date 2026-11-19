@@ -56,7 +56,9 @@ export default function LoginForm() {
       setUser(user);
 
       const role = user.role;
-      if (role === 'superadmin' || role === 'admin') {
+      if (role === 'superadmin') {
+        navigate({ to: '/superadmin/users' });
+      } else if (role === 'admin') {
         navigate({ to: '/admin/students' });
       } else if (role === 'officer') {
         navigate({ to: '/officer/dashboard' });

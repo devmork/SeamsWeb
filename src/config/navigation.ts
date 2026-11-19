@@ -1,4 +1,5 @@
 import {
+  Building2,
   Calendar,
   ClipboardCheck,
   FileUser,
@@ -29,14 +30,25 @@ const adminItems: NavItem[] = [
 
 export const navigationData = {
   navByRole: {
-    // Admins can browse users; only superadmins may change roles.
-    admin: [{ name: 'Users', url: '/admin/users', icon: UserCog }, ...adminItems],
+    admin: [...adminItems],
+    // The superadmin console is Users-only; the admin screens live in the
+    // /admin area and are guarded to the admin role.
     superadmin: [
-      { name: 'Users', url: '/admin/users', icon: UserCog },
-      ...adminItems,
+      { name: 'Users', url: '/superadmin/users', icon: UserCog },
+      { name: 'Departments', url: '/superadmin/departments', icon: Building2 },
     ],
     student: [
       { name: 'Dashboard', url: '/student/dashboard', icon: LayoutDashboard },
+      {
+        name: 'My Departments',
+        url: '/student/departments',
+        icon: Building2,
+      },
+      {
+        name: 'My Events',
+        url: '/student/my-events',
+        icon: Calendar,
+      },
       {
         name: 'Attendance',
         url: '/student/attendance-history',

@@ -51,7 +51,6 @@ function toRequest(student: Student): StudentRequest {
     middleName: student.middleName,
     lastName: student.lastName,
     suffix: student.suffix,
-    email: student.email,
     schoolStudentId: student.schoolStudentId,
     yearLevel: student.yearLevel,
     course: student.course,
@@ -87,8 +86,8 @@ export default function StudentDetailDialog({
 
   const handleSave = async () => {
     if (!form) return;
-    if (!form.firstName.trim() || !form.lastName.trim() || !form.email.trim()) {
-      toast.error('Please fill in first name, last name, and email');
+    if (!form.firstName.trim() || !form.lastName.trim()) {
+      toast.error('Please fill in first name and last name');
       return;
     }
     setIsSaving(true);
@@ -232,15 +231,8 @@ export default function StudentDetailDialog({
                 <Label className="text-xs font-medium text-ink-muted uppercase mb-1">
                   Email
                 </Label>
-                {isEditing ? (
-                  <Input
-                    type="email"
-                    value={form?.email ?? ''}
-                    onChange={(e) => update({ email: e.target.value })}
-                  />
-                ) : (
-                  <p className="text-sm text-ink">{student.email}</p>
-                )}
+                {/* Email lives on the Identity account and has no update endpoint. */}
+                <p className="text-sm text-ink">{student.email}</p>
               </div>
             </div>
           </div>
@@ -301,7 +293,7 @@ export default function StudentDetailDialog({
                 {isEditing ? (
                   <Select
                     value={String(form?.yearLevel ?? '')}
-                    onValueChange={(v) => update({ yearLevel: Number(v) })}
+                    onValueChange={(v) => update({ yearLevel: v })}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select year level" />

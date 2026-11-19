@@ -4,16 +4,22 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { Navigate, Outlet, useLocation } from '@tanstack/react-router';
+import { Outlet, useLocation } from '@tanstack/react-router';
 import { navigationData } from '@/config/navigation';
 import { Toaster } from '@/components/ui/sonner';
-import { getCurrentUser } from '@/features/auth/services/AuthService';
+import { useAuthStore } from '@/features/auth/Stores/AuthStore';
 
 export default function AuthenticatedLayout() {
   const location = useLocation();
-  const user = getCurrentUser();
+  // Subscribe rather than reading `getState()` once: the layout has to react
+  // when the user logs out.
+  const user = useAuthStore((state) => state.user);
 
-  if (!user) return <Navigate to="/login" replace />;
+  // `_authenticated/route.tsx` already guards entry, and the logout action
+  // navigates to /login itself. Rendering nothing here (instead of a
+  // `<Navigate>`) avoids re-throwing a redirect on every render while that
+  // navigation lands, which used to peg the renderer.
+  if (!user) return null;
 
   const role = user.role.toLowerCase() as
     | 'superadmin'

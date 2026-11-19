@@ -9,7 +9,17 @@ type UserDto = {
   email: string | null;
   isActive: number;
   role: string | null;
+  departmentId: number | null;
+  departmentName: string | null;
 };
+
+/** Mirrors `SeamsApp.DTOs.User.CreateUserRequest`. */
+export interface CreateUserData {
+  email: string;
+  password: string;
+  role: UserRole;
+  departmentId?: number;
+}
 
 function normalizeRole(role: string | null): UserRole | null {
   const normalized = role?.trim().toLowerCase();
@@ -23,6 +33,8 @@ function toManagedUser(dto: UserDto): ManagedUser {
     email: dto.email,
     isActive: dto.isActive,
     role: normalizeRole(dto.role),
+    departmentId: dto.departmentId ?? null,
+    departmentName: dto.departmentName ?? null,
   };
 }
 
@@ -36,6 +48,17 @@ export const userService = {
   /** `GET /api/user/{userId}` — superadmin + admin. */
   async getUser(userId: number): Promise<ManagedUser> {
     const { data } = await api.get<UserDto>(`/user/${userId}`);
+    return toManagedUser(data);
+  },
+
+  /** `POST /api/user` — superadmin only. */
+  async createUser(payload: CreateUserData): Promise<ManagedUser> {
+    const { data } = await api.post<UserDto>('/user', {
+      email: payload.email,
+      password: payload.password,
+      role: payload.role,
+      departmentId: payload.departmentId,
+    });
     return toManagedUser(data);
   },
 

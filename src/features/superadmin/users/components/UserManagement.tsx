@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { Loader2, Search, UserCog } from 'lucide-react';
+import { Loader2, Plus, Search, UserCog } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -20,7 +20,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import CreateUserDialog from './CreateUserDialog';
 import type { UserRole } from '@/features/auth/types';
 import { getCurrentUser } from '@/features/auth/services/AuthService';
 import { userService } from '../services/userService';
@@ -94,6 +96,7 @@ export default function UserManagement() {
   const [isReloading, setIsReloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pendingUserId, setPendingUserId] = useState<number | null>(null);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   // Role changes are a superadmin-only operation on the backend.
   const canManageRoles = getCurrentUser()?.role === 'superadmin';
@@ -162,21 +165,25 @@ export default function UserManagement() {
           <div className="space-y-1">
             <h1 className="type-heading-2 text-ink">Users</h1>
             <p className="text-sm text-ink-muted">
-              {canManageRoles
-                ? 'Browse accounts and change the single role assigned to each one.'
-                : 'Browse accounts and their assigned role. Only a superadmin can change roles.'}
+              Browse accounts and change the single role assigned to each one.
             </p>
           </div>
-          <div className="relative w-full sm:w-72">
-            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-faint" />
-            <Input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by name or email…"
-              aria-label="Search users"
-              className="pl-9"
-            />
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+            <Button onClick={() => setIsCreateOpen(true)}>
+              <Plus className="size-4" />
+              New user
+            </Button>
+            <div className="relative sm:w-72">
+              <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-faint" />
+              <Input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search by name or email…"
+                aria-label="Search users"
+                className="pl-9"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -213,6 +220,7 @@ export default function UserManagement() {
                   <TableHead className="pl-6 w-12">#</TableHead>
                   <TableHead>User</TableHead>
                   <TableHead>Email</TableHead>
+                  <TableHead>Department</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead className="text-right pr-6">Change role</TableHead>
@@ -242,6 +250,9 @@ export default function UserManagement() {
                       <TableCell className="text-ink-secondary">
                         {user.email ?? '—'}
                       </TableCell>
+                      <TableCell className="text-ink-secondary">
+                        {user.departmentName ?? '—'}
+                      </TableCell>
                       <TableCell>
                         <Badge
                           variant={user.isActive === 1 ? 'success' : 'secondary'}
@@ -251,9 +262,7 @@ export default function UserManagement() {
                       </TableCell>
                       <TableCell>
                         {user.role ? (
-                          <Badge variant="outline" className="capitalize">
-                            {user.role}
-                          </Badge>
+                          <Badge variant="outline">{user.role}</Badge>
                         ) : (
                           <span className="text-ink-faint text-sm">None</span>
                         )}
@@ -276,11 +285,7 @@ export default function UserManagement() {
                             <SelectContent>
                               <SelectItem value={NO_ROLE}>No role</SelectItem>
                               {ASSIGNABLE_ROLES.map((role) => (
-                                <SelectItem
-                                  key={role}
-                                  value={role}
-                                  className="capitalize"
-                                >
+                                <SelectItem key={role} value={role}>
                                   {role}
                                 </SelectItem>
                               ))}
@@ -303,6 +308,12 @@ export default function UserManagement() {
           {users.length !== 1 ? 's' : ''}
         </div>
       )}
+
+      <CreateUserDialog
+        open={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        onCreated={() => void loadUsers()}
+      />
     </div>
   );
 }
