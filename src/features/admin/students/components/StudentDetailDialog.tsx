@@ -110,19 +110,19 @@ export default function StudentDetailDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/30"
       onClick={(e) => {
         if (e.target === e.currentTarget && !isSaving) onClose();
       }}
     >
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-surface rounded-xl shadow-elevated w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-start justify-between">
+        <div className="sticky top-0 bg-surface border-b border-hairline px-6 py-4 flex items-start justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-ink">
               {isEditing ? 'Edit Student' : 'Student Details'}
             </h2>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <p className="text-sm text-ink-muted mt-0.5">
               {isEditing
                 ? 'Update student information'
                 : 'View complete student information'}
@@ -131,7 +131,7 @@ export default function StudentDetailDialog({
           <button
             onClick={onClose}
             disabled={isSaving}
-            className="text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
+            className="text-ink-faint hover:text-ink-secondary transition-colors disabled:opacity-50"
           >
             <X size={24} />
           </button>
@@ -143,21 +143,21 @@ export default function StudentDetailDialog({
           <div className="flex items-start gap-4 mb-6 pb-6 border-b">
             <Avatar className="size-16">
               <AvatarImage src={student.photoUrl || undefined} />
-              <AvatarFallback className="bg-blue-100 text-blue-600 text-lg">
+              <AvatarFallback className="bg-canvas-soft text-ink-muted text-lg">
                 {getInitials(student)}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <h3 className="text-xl font-semibold text-gray-900">
+              <h3 className="text-xl font-semibold text-ink">
                 {getFullName(student)}
               </h3>
-              <p className="text-sm text-gray-500 mt-1">{student.email}</p>
+              <p className="text-sm text-ink-muted mt-1">{student.email}</p>
               {/* <div className="flex items-center gap-2 mt-3">
                 <Badge
                   className={
                     student.status === 1
-                      ? 'bg-green-100 text-green-700 hover:bg-green-100 border-green-200'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-100 border-gray-200'
+                      ? 'bg-sticker-green-tint text-sticker-green-ink hover:bg-sticker-green-tint border-sticker-green/30'
+                      : 'bg-canvas-soft text-ink-secondary hover:bg-canvas-soft border-hairline'
                   }
                 >
                   {student.status === 1 ? '● Active' : '● Inactive'}
@@ -168,12 +168,12 @@ export default function StudentDetailDialog({
 
           {/* Personal Information */}
           <div className="mb-6">
-            <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
+            <h4 className="text-sm font-semibold text-ink uppercase tracking-wide mb-3">
               Personal Information
             </h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-xs font-medium text-gray-500 uppercase mb-1">
+                <Label className="text-xs font-medium text-ink-muted uppercase mb-1">
                   First Name
                 </Label>
                 {isEditing ? (
@@ -182,11 +182,11 @@ export default function StudentDetailDialog({
                     onChange={(e) => update({ firstName: e.target.value })}
                   />
                 ) : (
-                  <p className="text-sm text-gray-900">{student.firstName}</p>
+                  <p className="text-sm text-ink">{student.firstName}</p>
                 )}
               </div>
               <div>
-                <Label className="text-xs font-medium text-gray-500 uppercase mb-1">
+                <Label className="text-xs font-medium text-ink-muted uppercase mb-1">
                   Last Name
                 </Label>
                 {isEditing ? (
@@ -195,11 +195,11 @@ export default function StudentDetailDialog({
                     onChange={(e) => update({ lastName: e.target.value })}
                   />
                 ) : (
-                  <p className="text-sm text-gray-900">{student.lastName}</p>
+                  <p className="text-sm text-ink">{student.lastName}</p>
                 )}
               </div>
               <div>
-                <Label className="text-xs font-medium text-gray-500 uppercase mb-1">
+                <Label className="text-xs font-medium text-ink-muted uppercase mb-1">
                   Middle Name
                 </Label>
                 {isEditing ? (
@@ -208,13 +208,13 @@ export default function StudentDetailDialog({
                     onChange={(e) => update({ middleName: e.target.value })}
                   />
                 ) : (
-                  <p className="text-sm text-gray-900">
+                  <p className="text-sm text-ink">
                     {student.middleName || '—'}
                   </p>
                 )}
               </div>
               <div>
-                <Label className="text-xs font-medium text-gray-500 uppercase mb-1">
+                <Label className="text-xs font-medium text-ink-muted uppercase mb-1">
                   Suffix
                 </Label>
                 {isEditing ? (
@@ -223,13 +223,13 @@ export default function StudentDetailDialog({
                     onChange={(e) => update({ suffix: e.target.value })}
                   />
                 ) : (
-                  <p className="text-sm text-gray-900">
+                  <p className="text-sm text-ink">
                     {student.suffix || '—'}
                   </p>
                 )}
               </div>
               <div className="col-span-2">
-                <Label className="text-xs font-medium text-gray-500 uppercase mb-1">
+                <Label className="text-xs font-medium text-ink-muted uppercase mb-1">
                   Email
                 </Label>
                 {isEditing ? (
@@ -239,7 +239,7 @@ export default function StudentDetailDialog({
                     onChange={(e) => update({ email: e.target.value })}
                   />
                 ) : (
-                  <p className="text-sm text-gray-900">{student.email}</p>
+                  <p className="text-sm text-ink">{student.email}</p>
                 )}
               </div>
             </div>
@@ -249,12 +249,12 @@ export default function StudentDetailDialog({
 
           {/* School Information */}
           <div className="my-6">
-            <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
+            <h4 className="text-sm font-semibold text-ink uppercase tracking-wide mb-3">
               School Information
             </h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-xs font-medium text-gray-500 uppercase mb-1">
+                <Label className="text-xs font-medium text-ink-muted uppercase mb-1">
                   Student ID
                 </Label>
                 {isEditing ? (
@@ -265,13 +265,13 @@ export default function StudentDetailDialog({
                     }
                   />
                 ) : (
-                  <p className="text-sm font-mono bg-gray-100 px-2 py-1 rounded text-gray-900">
+                  <p className="text-sm font-mono bg-canvas-soft px-2 py-1 rounded text-ink">
                     {student.schoolStudentId}
                   </p>
                 )}
               </div>
               <div>
-                <Label className="text-xs font-medium text-gray-500 uppercase mb-1">
+                <Label className="text-xs font-medium text-ink-muted uppercase mb-1">
                   Program
                 </Label>
                 {isEditing ? (
@@ -291,11 +291,11 @@ export default function StudentDetailDialog({
                     </SelectContent>
                   </Select>
                 ) : (
-                  <p className="text-sm text-gray-900">{student.course}</p>
+                  <p className="text-sm text-ink">{student.course}</p>
                 )}
               </div>
               <div>
-                <Label className="text-xs font-medium text-gray-500 uppercase mb-1">
+                <Label className="text-xs font-medium text-ink-muted uppercase mb-1">
                   Year Level
                 </Label>
                 {isEditing ? (
@@ -315,7 +315,7 @@ export default function StudentDetailDialog({
                     </SelectContent>
                   </Select>
                 ) : (
-                  <p className="text-sm text-gray-900">{student.yearLevel}</p>
+                  <p className="text-sm text-ink">{student.yearLevel}</p>
                 )}
               </div>
             </div>
@@ -325,15 +325,15 @@ export default function StudentDetailDialog({
 
           {/* Status Information (read-only — status is managed via Deactivate) */}
           {/* <div className="mt-6">
-            <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
+            <h4 className="text-sm font-semibold text-ink uppercase tracking-wide mb-3">
               Account Status
             </h4>
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="flex items-center justify-between p-3 bg-canvas-soft rounded-lg border border-hairline">
               <div>
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-ink">
                   {student.status === 1 ? 'Active' : 'Inactive'}
                 </p>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-ink-muted mt-0.5">
                   {student.status === 1
                     ? 'Student can access the portal'
                     : 'Student cannot access the portal'}
@@ -342,8 +342,8 @@ export default function StudentDetailDialog({
               <Badge
                 className={
                   student.status === 1
-                    ? 'bg-green-100 text-green-700 hover:bg-green-100'
-                    : 'bg-red-100 text-red-700 hover:bg-red-100'
+                    ? 'bg-sticker-green-tint text-sticker-green-ink hover:bg-sticker-green-tint'
+                    : 'bg-destructive/10 text-destructive hover:bg-destructive/10'
                 }
               >
                 {student.status === 1 ? 'Active' : 'Inactive'}
@@ -353,7 +353,7 @@ export default function StudentDetailDialog({
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4">
+        <div className="sticky bottom-0 bg-canvas-soft border-t border-hairline px-6 py-4">
           {isEditing ? (
             <div className="flex gap-3">
               <Button

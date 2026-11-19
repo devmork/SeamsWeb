@@ -112,15 +112,15 @@ export default function AttendanceDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/30"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
+      <div className="bg-surface rounded-xl shadow-elevated w-full max-w-md mx-4 p-6">
         <div className="flex items-start justify-between mb-1">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-ink">
               {mode === 'create' ? 'Add Attendance Session' : 'Edit Session'}
             </h2>
             <p className="text-sm text-muted-foreground mt-0.5">
@@ -131,7 +131,7 @@ export default function AttendanceDialog({
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors ml-4 mt-0.5"
+            className="text-ink-faint hover:text-ink-secondary transition-colors ml-4 mt-0.5"
           >
             ✕
           </button>
@@ -141,17 +141,17 @@ export default function AttendanceDialog({
           {/* Session Title */}
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="att-title">
-              Session Title <span className="text-red-500">*</span>
+              Session Title <span className="text-destructive">*</span>
             </Label>
             <Input
               id="att-title"
               placeholder="e.g., Morning Registration"
               value={form.title}
               onChange={(e) => setField('title', e.target.value)}
-              className={errors.title ? 'border-red-400' : ''}
+              className={errors.title ? 'border-destructive' : ''}
             />
             {errors.title && (
-              <p className="text-xs text-red-500">{errors.title}</p>
+              <p className="text-xs text-destructive">{errors.title}</p>
             )}
           </div>
 
@@ -159,14 +159,14 @@ export default function AttendanceDialog({
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label>
-                Session <span className="text-red-500">*</span>
+                Session <span className="text-destructive">*</span>
               </Label>
               <Select
                 value={form.session}
                 onValueChange={(v) => setField('session', v)}
               >
                 <SelectTrigger
-                  className={errors.session ? 'border-red-400' : ''}
+                  className={errors.session ? 'border-destructive' : ''}
                 >
                   <SelectValue placeholder="Period" />
                 </SelectTrigger>
@@ -177,19 +177,19 @@ export default function AttendanceDialog({
                 </SelectContent>
               </Select>
               {errors.session && (
-                <p className="text-xs text-red-500">{errors.session}</p>
+                <p className="text-xs text-destructive">{errors.session}</p>
               )}
             </div>
             <div className="flex flex-col gap-1.5">
               <Label>
-                Log Type <span className="text-red-500">*</span>
+                Log Type <span className="text-destructive">*</span>
               </Label>
               <Select
                 value={form.logType}
                 onValueChange={(v) => setField('logType', v)}
               >
                 <SelectTrigger
-                  className={errors.logType ? 'border-red-400' : ''}
+                  className={errors.logType ? 'border-destructive' : ''}
                 >
                   <SelectValue placeholder="Type" />
                 </SelectTrigger>
@@ -199,7 +199,7 @@ export default function AttendanceDialog({
                 </SelectContent>
               </Select>
               {errors.logType && (
-                <p className="text-xs text-red-500">{errors.logType}</p>
+                <p className="text-xs text-destructive">{errors.logType}</p>
               )}
             </div>
           </div>
@@ -207,17 +207,17 @@ export default function AttendanceDialog({
           {/* Date */}
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="att-date">
-              Date <span className="text-red-500">*</span>
+              Date <span className="text-destructive">*</span>
             </Label>
             <Input
               id="att-date"
               type="date"
               value={form.date}
               onChange={(e) => setField('date', e.target.value)}
-              className={errors.date ? 'border-red-400' : ''}
+              className={errors.date ? 'border-destructive' : ''}
             />
             {errors.date && (
-              <p className="text-xs text-red-500">{errors.date}</p>
+              <p className="text-xs text-destructive">{errors.date}</p>
             )}
           </div>
 
@@ -225,32 +225,32 @@ export default function AttendanceDialog({
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="att-start">
-                Start Time <span className="text-red-500">*</span>
+                Start Time <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="att-start"
                 type="time"
                 value={form.startTime}
                 onChange={(e) => setField('startTime', e.target.value)}
-                className={errors.startTime ? 'border-red-400' : ''}
+                className={errors.startTime ? 'border-destructive' : ''}
               />
               {errors.startTime && (
-                <p className="text-xs text-red-500">{errors.startTime}</p>
+                <p className="text-xs text-destructive">{errors.startTime}</p>
               )}
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="att-end">
-                End Time <span className="text-red-500">*</span>
+                End Time <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="att-end"
                 type="time"
                 value={form.endTime}
                 onChange={(e) => setField('endTime', e.target.value)}
-                className={errors.endTime ? 'border-red-400' : ''}
+                className={errors.endTime ? 'border-destructive' : ''}
               />
               {errors.endTime && (
-                <p className="text-xs text-red-500">{errors.endTime}</p>
+                <p className="text-xs text-destructive">{errors.endTime}</p>
               )}
             </div>
           </div>
@@ -263,7 +263,7 @@ export default function AttendanceDialog({
           <Button
             onClick={handleSubmit}
             disabled={!isFormFilled || isSubmitting}
-            className="bg-[#2C5530] hover:bg-[#2C5530]/90 text-white min-w-28"
+            className="bg-primary hover:bg-primary/90 text-white min-w-28"
           >
             {isSubmitting ? (
               <Loader2 size={15} className="animate-spin" />

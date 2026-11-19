@@ -13,7 +13,7 @@ import { getCurrentUser } from '@/features/auth/services/AuthService';
 import { Separator } from '../../components/ui/separator';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  role: 'admin' | 'student' | 'officer';
+  role: 'superadmin' | 'admin' | 'student' | 'officer';
 }
 
 export function AppSidebar({ role, ...props }: AppSidebarProps) {
@@ -27,7 +27,7 @@ export function AppSidebar({ role, ...props }: AppSidebarProps) {
           <img
             src="/public/assets/logos/app-logo.jpg"
             alt="logo"
-            className="size-14 max-w-none shrink-0 object-contain"
+            className="size-12 max-w-none shrink-0 object-contain"
           />
         </div>
       </SidebarHeader>

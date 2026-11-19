@@ -284,32 +284,32 @@ export default function EventList() {
       {/* States */}
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-24">
-          <Loader2 size={28} className="text-gray-400 animate-spin mb-3" />
-          <p className="text-sm text-gray-500">Loading events…</p>
+          <Loader2 size={28} className="text-ink-faint animate-spin mb-3" />
+          <p className="text-sm text-ink-muted">Loading events…</p>
         </div>
       ) : error ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <p className="text-sm text-red-500 mb-3">{error}</p>
+          <p className="text-sm text-destructive mb-3">{error}</p>
           <Button variant="outline" size="sm" onClick={loadEvents}>
             Try again
           </Button>
         </div>
       ) : events.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="w-16 h-16 rounded-full bg-[#2C5530]/10 flex items-center justify-center mb-4">
-            <CalendarDays size={28} className="text-[#2C5530]" />
+          <div className="w-16 h-16 rounded-full bg-primary-soft flex items-center justify-center mb-4">
+            <CalendarDays size={28} className="text-primary" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">
+          <h3 className="text-lg font-semibold text-ink mb-1">
             No events yet
           </h3>
-          <p className="text-sm text-gray-500 max-w-sm mb-4">
+          <p className="text-sm text-ink-muted max-w-sm mb-4">
             Create your first event to start managing SSG attendance sessions.
           </p>
           <Button
             onClick={() =>
               setEventDialog({ open: true, mode: 'create', event: null })
             }
-            className="bg-[#2C5530] hover:bg-[#2C5530]/90 text-white flex items-center gap-1.5"
+            className="bg-primary hover:bg-primary/90 text-white flex items-center gap-1.5"
           >
             <Plus size={14} />
             Create Event
@@ -317,8 +317,8 @@ export default function EventList() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <Search size={36} className="text-gray-300 mb-3" />
-          <p className="text-gray-500">No events match your search.</p>
+          <Search size={36} className="text-ink-faint mb-3" />
+          <p className="text-ink-muted">No events match your search.</p>
         </div>
       ) : (
         <div className="flex flex-col gap-3">
@@ -331,25 +331,25 @@ export default function EventList() {
             return (
               <Card
                 key={event.eventId}
-                className="overflow-hidden border border-gray-200 shadow-sm"
+                className="overflow-hidden border border-hairline shadow-sm"
               >
                 {/* Event row */}
                 <CardContent className="p-0">
                   <div
-                    className="flex items-center gap-3 px-4 py-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-3 px-4 py-4 cursor-pointer hover:bg-canvas-soft transition-colors"
                     onClick={() => toggleExpand(event.eventId)}
                   >
                     {/* Folder icon */}
-                    <div className="w-9 h-9 rounded-lg bg-[#2C5530]/10 flex items-center justify-center shrink-0">
-                      <FolderOpen size={18} className="text-[#2C5530]" />
+                    <div className="w-9 h-9 rounded-lg bg-primary-soft flex items-center justify-center shrink-0">
+                      <FolderOpen size={18} className="text-primary" />
                     </div>
 
                     {/* Title + meta */}
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-gray-900 truncate">
+                      <p className="font-semibold text-ink truncate">
                         {event.title}
                       </p>
-                      <div className="flex items-center gap-3 mt-0.5 text-xs text-gray-500">
+                      <div className="flex items-center gap-3 mt-0.5 text-xs text-ink-muted">
                         <span className="flex items-center gap-1">
                           <CalendarDays size={11} />
                           {formatDate(event.startDate)}
@@ -371,7 +371,7 @@ export default function EventList() {
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-8 w-8 text-gray-400 hover:text-gray-700"
+                        className="h-8 w-8 text-ink-faint hover:text-ink-secondary"
                         onClick={() =>
                           setEventDialog({ open: true, mode: 'edit', event })
                         }
@@ -382,7 +382,7 @@ export default function EventList() {
                         size="icon"
                         variant="ghost"
                         disabled={isDeletingEvent}
-                        className="h-8 w-8 text-gray-400 hover:text-red-500"
+                        className="h-8 w-8 text-ink-faint hover:text-destructive"
                         onClick={() => handleDeleteEvent(event)}
                       >
                         {isDeletingEvent ? (
@@ -395,7 +395,7 @@ export default function EventList() {
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-8 w-8 text-gray-400"
+                        className="h-8 w-8 text-ink-faint"
                         onClick={() => toggleExpand(event.eventId)}
                       >
                         {isExpanded ? (
@@ -409,16 +409,16 @@ export default function EventList() {
 
                   {/* Expanded sessions */}
                   {isExpanded && (
-                    <div className="border-t border-gray-100 bg-gray-50/50 px-4 py-3 flex flex-col gap-2">
+                    <div className="border-t border-hairline bg-canvas-soft/50 px-4 py-3 flex flex-col gap-2">
                       {isLoadingSessions ? (
                         <div className="flex items-center justify-center py-6">
                           <Loader2
                             size={20}
-                            className="animate-spin text-gray-400"
+                            className="animate-spin text-ink-faint"
                           />
                         </div>
                       ) : sessions.length === 0 ? (
-                        <div className="text-center py-4 text-sm text-gray-400">
+                        <div className="text-center py-4 text-sm text-ink-faint">
                           No sessions yet. Add one below.
                         </div>
                       ) : (
@@ -429,47 +429,47 @@ export default function EventList() {
                           return (
                             <div
                               key={att.attendanceId}
-                              className="bg-white border border-gray-200 rounded-lg px-4 py-3 flex items-center gap-3"
+                              className="bg-surface border border-hairline rounded-lg px-4 py-3 flex items-center gap-3"
                             >
                               {/* Log type icon */}
                               <div
                                 className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                                  isSignIn ? 'bg-green-100' : 'bg-orange-100'
+                                  isSignIn ? 'bg-sticker-green-tint' : 'bg-sticker-orange-tint'
                                 }`}
                               >
                                 {isSignIn ? (
-                                  <LogIn size={15} className="text-green-600" />
+                                  <LogIn size={15} className="text-sticker-green-ink" />
                                 ) : (
                                   <LogOut
                                     size={15}
-                                    className="text-orange-500"
+                                    className="text-sticker-orange-ink"
                                   />
                                 )}
                               </div>
 
                               {/* Session info */}
                               <div className="flex-1 min-w-0">
-                                <p className="font-medium text-sm text-gray-900 truncate">
+                                <p className="font-medium text-sm text-ink truncate">
                                   {att.title}
                                 </p>
                                 <div className="flex flex-wrap items-center gap-2 mt-0.5">
                                   <Badge
                                     className={`text-xs px-1.5 py-0 ${
                                       isSignIn
-                                        ? 'bg-green-100 text-green-700 hover:bg-green-100'
-                                        : 'bg-orange-100 text-orange-600 hover:bg-orange-100'
+                                        ? 'bg-sticker-green-tint text-sticker-green-ink hover:bg-sticker-green-tint'
+                                        : 'bg-sticker-orange-tint text-sticker-orange-ink hover:bg-sticker-orange-tint'
                                     }`}
                                   >
                                     {att.logType}
                                   </Badge>
-                                  <span className="text-xs text-gray-400 flex items-center gap-1">
+                                  <span className="text-xs text-ink-faint flex items-center gap-1">
                                     🕐 {att.session}
                                   </span>
-                                  <span className="text-xs text-gray-400 flex items-center gap-1">
+                                  <span className="text-xs text-ink-faint flex items-center gap-1">
                                     <CalendarDays size={11} />
                                     {formatDate(att.date)}
                                   </span>
-                                  <span className="text-xs text-gray-400 flex items-center gap-1">
+                                  <span className="text-xs text-ink-faint flex items-center gap-1">
                                     <Clock size={11} />
                                     {formatTime(att.startTime)} –{' '}
                                     {formatTime(att.endTime)}
@@ -482,7 +482,7 @@ export default function EventList() {
                                 <Button
                                   size="icon"
                                   variant="ghost"
-                                  className="h-7 w-7 text-gray-400 hover:text-gray-700"
+                                  className="h-7 w-7 text-ink-faint hover:text-ink-secondary"
                                   onClick={() =>
                                     setAttDialog({
                                       open: true,
@@ -498,7 +498,7 @@ export default function EventList() {
                                   size="icon"
                                   variant="ghost"
                                   disabled={isDeletingAtt}
-                                  className="h-7 w-7 text-gray-400 hover:text-red-500"
+                                  className="h-7 w-7 text-ink-faint hover:text-destructive"
                                   onClick={() => handleDeleteAttendance(att)}
                                 >
                                   {isDeletingAtt ? (
@@ -526,7 +526,7 @@ export default function EventList() {
                             eventId: event.eventId,
                           })
                         }
-                        className="w-full mt-1 border border-dashed border-gray-300 rounded-lg py-2.5 text-sm text-gray-500 hover:border-[#2C5530] hover:text-[#2C5530] hover:bg-[#2C5530]/5 transition-colors flex items-center justify-center gap-1.5"
+                        className="w-full mt-1 border border-dashed border-hairline rounded-lg py-2.5 text-sm text-ink-muted hover:border-primary/40 hover:text-primary hover:bg-primary-soft transition-colors flex items-center justify-center gap-1.5"
                       >
                         <Plus size={14} />
                         Add Attendance Session

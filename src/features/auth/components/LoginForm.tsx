@@ -16,7 +16,7 @@ import {
 import AuthLayout from '@/shared/layouts/AuthLayout';
 import { logIn } from '@/features/auth/services/AuthService';
 import { useAuthStore } from '@/features/auth/Stores/AuthStore';
-import type { AuthResponse, User } from '@/features/auth/types';
+import { normalizeRole, type AuthResponse, type User } from '@/features/auth/types';
 import { Input } from '@/components/ui/input';
 
 const loginSchema = z.object({
@@ -26,19 +26,19 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-function normalizeUser(response: AuthResponse): User {
+function toUser(response: AuthResponse): User {
   return {
     id: response.userId,
-    name: response.name ?? response.email.split('@')[0],
+    name: response.email.split('@')[0],
     email: response.email,
-    role: response.role.toLowerCase(),
-    avatar: response.avatar ?? null,
+    role: normalizeRole(response.role),
+    avatar: null,
   };
 }
 
 export default function LoginForm() {
   const navigate = useNavigate();
-  const setAuth = useAuthStore((s) => s.setAuth);
+  const setUser = useAuthStore((s) => s.setUser);
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginFormValues>({
@@ -52,11 +52,11 @@ export default function LoginForm() {
   const loginMutation = useMutation({
     mutationFn: (data: LoginFormValues) => logIn(data),
     onSuccess: (response) => {
-      const user = normalizeUser(response);
-      setAuth(response.token, user);
+      const user = toUser(response);
+      setUser(user);
 
       const role = user.role;
-      if (role === 'admin') {
+      if (role === 'superadmin' || role === 'admin') {
         navigate({ to: '/admin/students' });
       } else if (role === 'officer') {
         navigate({ to: '/officer/dashboard' });
@@ -93,7 +93,7 @@ export default function LoginForm() {
       >
         <FieldGroup>
           <div className="flex flex-col items-center gap-1 text-center">
-            <h1 className="text-2xl font-bold">Welcome</h1>
+            <h1 className="type-heading-2">Welcome</h1>
             <p className="text-sm text-balance text-muted-foreground">
               Login to your account to continue
             </p>

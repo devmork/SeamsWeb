@@ -12,13 +12,6 @@ export const studentService = {
     return response.data;
   },
 
-  getStudentQRCodeInfo: async (
-    schoolStudentId: string,
-  ): Promise<Student | null> => {
-    const response = await api.get<Student>(`/student/qr/${schoolStudentId}`);
-    return response.data;
-  },
-
   deleteStudent: async (studentId: number): Promise<void> => {
     await api.patch(`/student/${studentId}`);
   },

@@ -109,7 +109,7 @@ export default function AttendanceList({ eventId }: AttendanceListProps) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-6">
-        <Loader2 size={20} className="animate-spin text-gray-400" />
+        <Loader2 size={20} className="animate-spin text-ink-faint" />
       </div>
     );
   }
@@ -117,7 +117,7 @@ export default function AttendanceList({ eventId }: AttendanceListProps) {
   return (
     <div className="flex flex-col gap-2">
       {sessions.length === 0 ? (
-        <div className="text-center py-4 text-sm text-gray-400">
+        <div className="text-center py-4 text-sm text-ink-faint">
           No sessions yet. Add one below.
         </div>
       ) : (
@@ -127,41 +127,41 @@ export default function AttendanceList({ eventId }: AttendanceListProps) {
           return (
             <div
               key={att.attendanceId}
-              className="bg-white border border-gray-200 rounded-lg px-4 py-3 flex items-center gap-3"
+              className="bg-surface border border-hairline rounded-lg px-4 py-3 flex items-center gap-3"
             >
               <div
                 className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                  isSignIn ? 'bg-green-100' : 'bg-orange-100'
+                  isSignIn ? 'bg-sticker-green-tint' : 'bg-sticker-orange-tint'
                 }`}
               >
                 {isSignIn ? (
-                  <LogIn size={15} className="text-green-600" />
+                  <LogIn size={15} className="text-sticker-green-ink" />
                 ) : (
-                  <LogOut size={15} className="text-orange-500" />
+                  <LogOut size={15} className="text-sticker-orange-ink" />
                 )}
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm text-gray-900 truncate">
+                <p className="font-medium text-sm text-ink truncate">
                   {att.title}
                 </p>
                 <div className="flex flex-wrap items-center gap-2 mt-0.5">
                   <Badge
                     className={`text-xs px-1.5 py-0 ${
                       isSignIn
-                        ? 'bg-green-100 text-green-700 hover:bg-green-100'
-                        : 'bg-orange-100 text-orange-600 hover:bg-orange-100'
+                        ? 'bg-sticker-green-tint text-sticker-green-ink hover:bg-sticker-green-tint'
+                        : 'bg-sticker-orange-tint text-sticker-orange-ink hover:bg-sticker-orange-tint'
                     }`}
                   >
                     {att.logType}
                   </Badge>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-ink-faint">
                     🕐 {att.session}
                   </span>
-                  <span className="text-xs text-gray-400 flex items-center gap-1">
+                  <span className="text-xs text-ink-faint flex items-center gap-1">
                     <CalendarDays size={11} /> {formatDate(att.date)}
                   </span>
-                  <span className="text-xs text-gray-400 flex items-center gap-1">
+                  <span className="text-xs text-ink-faint flex items-center gap-1">
                     <Clock size={11} /> {formatTime(att.startTime)} –{' '}
                     {formatTime(att.endTime)}
                   </span>
@@ -172,7 +172,7 @@ export default function AttendanceList({ eventId }: AttendanceListProps) {
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="h-7 w-7 text-gray-400 hover:text-gray-700"
+                  className="h-7 w-7 text-ink-faint hover:text-ink-secondary"
                   onClick={() =>
                     setDialog({ open: true, mode: 'edit', attendance: att })
                   }
@@ -183,7 +183,7 @@ export default function AttendanceList({ eventId }: AttendanceListProps) {
                   size="icon"
                   variant="ghost"
                   disabled={isDeleting}
-                  className="h-7 w-7 text-gray-400 hover:text-red-500"
+                  className="h-7 w-7 text-ink-faint hover:text-destructive"
                   onClick={() => handleDelete(att)}
                 >
                   {isDeleting ? (
@@ -203,7 +203,7 @@ export default function AttendanceList({ eventId }: AttendanceListProps) {
         onClick={() =>
           setDialog({ open: true, mode: 'create', attendance: null })
         }
-        className="w-full mt-1 border border-dashed border-gray-300 rounded-lg py-2.5 text-sm text-gray-500 hover:border-[#2C5530] hover:text-[#2C5530] hover:bg-[#2C5530]/5 transition-colors flex items-center justify-center gap-1.5"
+        className="w-full mt-1 border border-dashed border-hairline rounded-lg py-2.5 text-sm text-ink-muted hover:border-primary/40 hover:text-primary hover:bg-primary-soft transition-colors flex items-center justify-center gap-1.5"
       >
         <Plus size={14} /> Add Attendance Session
       </button>

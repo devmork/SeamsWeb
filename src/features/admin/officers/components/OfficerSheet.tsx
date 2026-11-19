@@ -96,7 +96,7 @@ export default function OfficerSheet({
         {/* Search */}
         <div className="relative mb-4">
           <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint"
             size={18}
           />
           <Input
@@ -111,21 +111,21 @@ export default function OfficerSheet({
         <div className="flex-1 overflow-y-auto space-y-3 pr-2">
           {isLoading ? (
             <div className="flex h-40 items-center justify-center">
-              <Loader2 className="animate-spin text-gray-400" size={28} />
+              <Loader2 className="animate-spin text-ink-faint" size={28} />
             </div>
           ) : filteredCandidates.length === 0 ? (
             <div className="flex h-40 flex-col items-center justify-center text-center">
-              <p className="text-gray-500">No matching candidates found</p>
+              <p className="text-ink-muted">No matching candidates found</p>
             </div>
           ) : (
             filteredCandidates.map((candidate) => (
               <div
                 key={candidate.userId}
-                className="flex items-center justify-between rounded-lg border p-4 hover:bg-gray-50 transition-colors"
+                className="flex items-center justify-between rounded-lg border p-4 hover:bg-canvas-soft transition-colors"
               >
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <Avatar className="h-10 w-10">
-                    <AvatarFallback className="bg-blue-100 text-blue-700">
+                    <AvatarFallback className="bg-canvas-soft text-ink-muted-active">
                       {getInitials(candidate)}
                     </AvatarFallback>
                   </Avatar>
@@ -134,14 +134,14 @@ export default function OfficerSheet({
                     <p className="font-medium truncate">
                       {candidate.firstName} {candidate.lastName}
                     </p>
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <div className="flex items-center gap-2 text-xs text-ink-muted">
                       <span className="font-mono">
                         {candidate.schoolStudentId}
                       </span>
                       <span>•</span>
                       <span>{candidate.course}</span>
                     </div>
-                    <p className="text-xs text-gray-500 truncate">
+                    <p className="text-xs text-ink-muted truncate">
                       {candidate.email}
                     </p>
                   </div>
@@ -151,7 +151,7 @@ export default function OfficerSheet({
                   onClick={() => handleAssign(candidate)}
                   disabled={assigningUserId === candidate.userId}
                   size="sm"
-                  className="bg-[#2C5530] hover:bg-[#234726] text-white"
+                  className="bg-primary hover:bg-primary-active text-white"
                 >
                   {assigningUserId === candidate.userId ? (
                     <Loader2 size={16} className="animate-spin" />

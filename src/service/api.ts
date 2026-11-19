@@ -1,33 +1,42 @@
 import axios from 'axios';
-import { useAuthStore } from '../features/auth/Stores/AuthStore';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'https://localhost:7122/api';
+
+// The backend authenticates with an HttpOnly Identity cookie ("seams.auth"),
+// so every request must carry credentials. There is no bearer token anymore.
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    /** Skip the global 401 → /login redirect (used by the login call itself). */
+    skipAuthRedirect?: boolean;
+  }
+}
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
-// Request Interceptor - Adds Bearer Token automatically
+// Request interceptor — only needs to leave multipart uploads alone.
 api.interceptors.request.use((config) => {
   if (config.data instanceof FormData) {
     delete config.headers['Content-Type'];
   }
-  const token = useAuthStore.getState().token;
-  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-// Response Interceptor (for global error handling)
+// Response interceptor — a 401 means the cookie session is gone.
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Clear auth state on token expiry / unauthorized access
-      useAuthStore.getState().clearAuth();
+    const status = error.response?.status;
+    const skipRedirect = error.config?.skipAuthRedirect;
+
+    if (status === 401 && !skipRedirect) {
+      window.localStorage.removeItem('auth-storage');
       window.location.href = '/login';
     }
     return Promise.reject(error);

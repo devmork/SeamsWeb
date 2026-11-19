@@ -2,6 +2,7 @@ import api from '@/service/api';
 import type {
   Attendance,
   AttendanceFormData,
+  AttendanceQrResponse,
 } from '@/features/admin/attendances';
 
 function toIsoDateTime(date: string, time: string): string {
@@ -34,6 +35,15 @@ export const attendanceService = {
     }
     const response = await api.get<Attendance[]>(
       `/attendance/event/${eventId}`,
+    );
+    return response.data;
+  },
+
+  getAttendanceQr: async (
+    attendanceId: number,
+  ): Promise<AttendanceQrResponse> => {
+    const response = await api.get<AttendanceQrResponse>(
+      `/attendance/${attendanceId}/qr`,
     );
     return response.data;
   },

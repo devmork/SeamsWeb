@@ -1,17 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import {
-  Scanner,
-  type IDetectedBarcode,
-  type IScannerError,
-} from '@yudiel/react-qr-scanner';
-import {
-  Camera,
   CalendarDays,
   Clock,
   LogIn,
   LogOut,
   QrCode,
+  RefreshCw,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -35,6 +30,7 @@ import { getAllEvents } from '@/features/admin/events/services/EventService';
 import type { Event } from '@/features/admin/events/event.type';
 import { attendanceService } from '@/features/admin/attendances';
 import type { Attendance } from '@/features/admin/attendances';
+import type { AttendanceQrResponse } from '@/features/admin/attendances';
 import { attendanceRecordService } from '../services/AttendanceRecordService';
 import {
   ATTENDANCE_STATUS,
@@ -65,20 +61,20 @@ function formatSessionLabel(session: Attendance): string {
 function StatusBadge({ status }: { status: number }) {
   if (status === ATTENDANCE_STATUS.Present) {
     return (
-      <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
+      <Badge className="bg-sticker-green-tint text-sticker-green-ink hover:bg-sticker-green-tint">
         Present
       </Badge>
     );
   }
   if (status === ATTENDANCE_STATUS.Late) {
     return (
-      <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">
+      <Badge className="bg-sticker-orange-tint text-sticker-orange-ink hover:bg-sticker-orange-tint">
         Late
       </Badge>
     );
   }
   return (
-    <Badge className="bg-red-100 text-red-700 hover:bg-red-100">Absent</Badge>
+    <Badge className="bg-destructive/10 text-destructive hover:bg-destructive/10">Absent</Badge>
   );
 }
 
@@ -92,12 +88,14 @@ export default function ScanQR() {
 
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [loadingSessions, setLoadingSessions] = useState(false);
+  const [loadingQr, setLoadingQr] = useState(false);
 
-  const [scanHistory, setScanHistory] = useState<AttendanceRecordResponse[]>(
-    [],
-  );
-  const [cameraError, setCameraError] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [qr, setQr] = useState<AttendanceQrResponse | null>(null);
+  const [scanHistory, setScanHistory] = useState<AttendanceRecordResponse[]>([]);
+  const [countdown, setCountdown] = useState<number>(0);
+
+  const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const selectedEvent = useMemo(
     () => events.find((e) => String(e.eventId) === selectedEventId) ?? null,
@@ -128,6 +126,7 @@ export default function ScanQR() {
   useEffect(() => {
     setSelectedAttendanceId('');
     setSessions([]);
+    setQr(null);
     setScanHistory([]);
     if (!selectedEventId) return;
 
@@ -149,9 +148,10 @@ export default function ScanQR() {
   // Load scan history whenever the session changes
   useEffect(() => {
     setScanHistory([]);
-    setCameraError(null);
-    if (!selectedAttendanceId) return;
-
+    if (!selectedAttendanceId) {
+      setQr(null);
+      return;
+    }
     (async () => {
       try {
         const data = await attendanceRecordService.getByAttendanceId(
@@ -159,71 +159,102 @@ export default function ScanQR() {
         );
         setScanHistory(data);
       } catch {
-        // 404 just means no records yet for this session — that's fine.
         setScanHistory([]);
       }
     })();
   }, [selectedAttendanceId]);
 
-  const handleLogout = () => {
-    logOut();
-    navigate({ to: '/login', replace: true });
-  };
-
-  const handleCameraError = (error: IScannerError) => {
-    setCameraError(
-      error.kind === 'permission-denied'
-        ? 'Camera access was unavailable. Check your browser permission and try again.'
-        : error.message || 'Unable to start the camera scanner.',
-    );
-  };
-
-  const handleScan = async (detectedCodes: IDetectedBarcode[]) => {
-    if (isProcessing || !selectedAttendanceId) return;
-
-    const rawValue = detectedCodes[0]?.rawValue?.trim();
-    if (!rawValue) return;
-
-    // QR payload is generated as "{FullName} - {schoolStudentId}"
-    const separatorIndex = rawValue.lastIndexOf(' - ');
-    const schoolStudentId =
-      separatorIndex !== -1
-        ? rawValue.slice(separatorIndex + 3).trim()
-        : rawValue;
-    if (!schoolStudentId) return;
-
-    setIsProcessing(true);
+  // Fetch + auto-refresh the rotating session QR
+  const fetchQr = async (attendanceId: number) => {
+    setLoadingQr(true);
     try {
-      const record = await attendanceRecordService.create({
-        attendanceID: Number(selectedAttendanceId),
-        schoolStudentID: schoolStudentId,
-        status: ATTENDANCE_STATUS.Present,
-      });
-      setScanHistory((prev) => [record, ...prev]);
-      toast.success(`${record.fullName} logged successfully.`);
-    } catch (error) {
-      const message =
-        (error as { response?: { data?: string } })?.response?.data ??
-        'Unable to log this student. Try scanning again.';
-      toast.error(message as string);
+      const data = await attendanceService.getAttendanceQr(attendanceId);
+      setQr(data);
+      setCountdown(data.refreshInSeconds);
+    } catch {
+      toast.error('Unable to load the session QR code.');
+      setQr(null);
     } finally {
-      // Cooldown so the same code isn't immediately re-scanned
-      setTimeout(() => setIsProcessing(false), 1500);
+      setLoadingQr(false);
     }
   };
 
+  useEffect(() => {
+    if (!selectedAttendanceId) {
+      setQr(null);
+      return;
+    }
+    fetchQr(Number(selectedAttendanceId));
+
+    return () => {
+      if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+      if (countdownRef.current) clearInterval(countdownRef.current);
+    };
+  }, [selectedAttendanceId]);
+
+  // Schedule refresh + countdown whenever a new QR is loaded
+  useEffect(() => {
+    if (!qr || !selectedAttendanceId) return;
+
+    if (countdownRef.current) clearInterval(countdownRef.current);
+    if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+
+    countdownRef.current = setInterval(() => {
+      setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    refreshTimerRef.current = setTimeout(() => {
+      fetchQr(Number(selectedAttendanceId));
+    }, qr.refreshInSeconds * 1000);
+
+    return () => {
+      if (countdownRef.current) clearInterval(countdownRef.current);
+      if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+    };
+  }, [qr?.token]);
+
+  // Poll scan history periodically while a session is active
+  useEffect(() => {
+    if (!selectedAttendanceId) return;
+    const interval = setInterval(async () => {
+      try {
+        const data = await attendanceRecordService.getByAttendanceId(
+          Number(selectedAttendanceId),
+        );
+        setScanHistory(data);
+      } catch {
+        // ignore
+      }
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [selectedAttendanceId]);
+
+  const handleLogout = () => {
+    void logOut().finally(() => navigate({ to: '/login', replace: true }));
+  };
+
+  const handleManualRefresh = () => {
+    if (selectedAttendanceId) fetchQr(Number(selectedAttendanceId));
+  };
+
+  const qrSrc = qr?.qrCode
+    ? `data:image/png;base64,${qr.qrCode}`
+    : null;
+
   return (
     <div className="min-h-svh bg-muted/30">
-      <header className="flex items-center justify-between border-b bg-white px-6 py-3">
+      <header className="flex items-center justify-between border-b bg-surface px-6 py-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-700 text-white">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <QrCode className="h-5 w-5" />
           </div>
           <div>
-            <h1 className="text-base font-bold text-green-700">
+            <h1 className="text-base font-bold text-ink">
               SEAMS — Officer Portal
             </h1>
-            <p className="text-xs text-muted-foreground">QR Code Scanner</p>
+            <p className="text-xs text-muted-foreground">
+              Session QR Display
+            </p>
           </div>
         </div>
         <Button variant="outline" size="sm" onClick={handleLogout}>
@@ -233,14 +264,15 @@ export default function ScanQR() {
       </header>
 
       <main className="grid gap-6 p-6 lg:grid-cols-[1fr_360px]">
-        <Card className="border-green-100">
+        <Card className="border-sticker-green/20">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <Camera className="h-4 w-4" />
-              QR Code Scanner
+              <QrCode className="h-4 w-4" />
+              Session QR Code
             </CardTitle>
             <CardDescription>
-              Select an event and session, then scan student QR codes
+              Select an event and session, then display the rotating QR for
+              students to scan
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
@@ -307,9 +339,9 @@ export default function ScanQR() {
                     >
                       <span className="flex items-center gap-2">
                         {session.logType?.toLowerCase().includes('out') ? (
-                          <LogOut className="h-3.5 w-3.5 text-green-600" />
+                          <LogOut className="h-3.5 w-3.5 text-sticker-green-ink" />
                         ) : (
-                          <LogIn className="h-3.5 w-3.5 text-green-600" />
+                          <LogIn className="h-3.5 w-3.5 text-sticker-green-ink" />
                         )}
                         {formatSessionLabel(session)}
                       </span>
@@ -320,8 +352,8 @@ export default function ScanQR() {
             </div>
 
             {selectedAttendance && (
-              <div className="rounded-lg border bg-green-50/60 p-3">
-                <p className="text-xs font-medium text-green-700">
+              <div className="rounded-lg border bg-sticker-green-tint p-3">
+                <p className="text-xs font-medium text-sticker-green-ink">
                   Active Session
                 </p>
                 <p className="text-sm font-semibold">{selectedEvent?.title}</p>
@@ -344,44 +376,45 @@ export default function ScanQR() {
             )}
 
             <div className="overflow-hidden rounded-lg border">
-              <div className="relative flex min-h-70 items-center justify-center bg-[#0b1120]">
+              <div className="relative flex min-h-70 items-center justify-center bg-surface">
                 {!selectedAttendanceId ? (
-                  <div className="flex flex-col items-center gap-2 px-8 text-center text-white/70">
-                    <Camera className="h-8 w-8" />
+                  <div className="flex flex-col items-center gap-2 px-8 text-center text-muted-foreground">
+                    <QrCode className="h-8 w-8" />
                     <p className="text-sm">
-                      Select an event and session to begin scanning.
+                      Select an event and session to display the QR code.
                     </p>
                   </div>
-                ) : cameraError ? (
-                  <div className="flex flex-col items-center gap-3 px-8 text-center">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-lg border-2 border-dashed border-white/30">
-                      <Camera className="h-8 w-8 text-white/50" />
+                ) : loadingQr ? (
+                  <div className="flex flex-col items-center gap-2 px-8 text-center text-muted-foreground">
+                    <RefreshCw className="h-8 w-8 animate-spin" />
+                    <p className="text-sm">Generating QR code…</p>
+                  </div>
+                ) : qrSrc ? (
+                  <div className="flex flex-col items-center gap-3 py-4">
+                    <img
+                      src={qrSrc}
+                      alt="Session attendance QR code"
+                      className="h-64 w-64 rounded-lg border object-contain"
+                    />
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <RefreshCw className="h-3.5 w-3.5" />
+                      Refreshes in {countdown}s
                     </div>
-                    <p className="text-sm font-semibold text-white">
-                      Preparing camera scanner
-                    </p>
-                    <p className="text-xs text-white/60">
-                      Allow camera access when prompted to start scanning QR
-                      codes.
-                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleManualRefresh}
+                    >
+                      Refresh now
+                    </Button>
                   </div>
                 ) : (
-                  <Scanner
-                    onScan={handleScan}
-                    onError={handleCameraError}
-                    paused={isProcessing}
-                    formats={['qr_code']}
-                    constraints={{ facingMode: 'environment' }}
-                    components={{ finder: true }}
-                    styles={{ container: { width: '100%', height: '100%' } }}
-                  />
+                  <div className="flex flex-col items-center gap-2 px-8 text-center text-muted-foreground">
+                    <QrCode className="h-8 w-8" />
+                    <p className="text-sm">QR code unavailable.</p>
+                  </div>
                 )}
               </div>
-              {cameraError && (
-                <p className="border-t bg-white px-4 py-2 text-xs text-red-500">
-                  {cameraError}
-                </p>
-              )}
             </div>
           </CardContent>
         </Card>
@@ -389,7 +422,9 @@ export default function ScanQR() {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Scan History</CardTitle>
-            <CardDescription>Recent attendance records</CardDescription>
+            <CardDescription>
+              Students who scanned this session
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {scanHistory.length === 0 ? (
@@ -397,7 +432,7 @@ export default function ScanQR() {
                 <QrCode className="h-10 w-10 text-muted-foreground/40" />
                 <p className="text-sm font-medium">No scans yet</p>
                 <p className="text-xs text-muted-foreground">
-                  Choose an event and session, then scan student QR codes
+                  Students will appear here after they scan the QR
                 </p>
               </div>
             ) : (

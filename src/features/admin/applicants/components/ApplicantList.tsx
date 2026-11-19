@@ -263,7 +263,7 @@ export default function ApplicantList() {
             <div className="relative w-full sm:w-72">
               <Search
                 size={15}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint"
               />
               <Input
                 placeholder="Search by name, ID, program..."
@@ -327,16 +327,16 @@ export default function ApplicantList() {
 
         {/* Bulk action bar */}
         {selectedCount > 0 && !isLoading && !error && (
-          <div className="flex items-center justify-between gap-3 px-6 py-3 bg-[#2C5530]/5 border-b border-[#2C5530]/20">
+          <div className="flex items-center justify-between gap-3 px-6 py-3 bg-primary-soft border-b border-primary/40/20">
             <div className="flex items-center gap-3 text-sm">
-              <span className="font-medium text-[#2C5530]">
+              <span className="font-medium text-primary">
                 {selectedCount} selected
               </span>
               <button
                 type="button"
                 onClick={clearSelection}
                 disabled={isBulkProcessing}
-                className="text-xs text-gray-500 hover:text-gray-700 underline underline-offset-2 disabled:opacity-50"
+                className="text-xs text-ink-muted hover:text-ink-secondary underline underline-offset-2 disabled:opacity-50"
               >
                 Clear
               </button>
@@ -347,7 +347,7 @@ export default function ApplicantList() {
                 variant="outline"
                 disabled={isBulkProcessing}
                 onClick={handleBulkReject}
-                className="h-8 px-3 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-400 hover:text-red-700 flex items-center gap-1.5"
+                className="h-8 px-3 border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive hover:text-destructive flex items-center gap-1.5"
               >
                 {bulkAction === 'reject' ? (
                   <Loader2 size={13} className="animate-spin" />
@@ -360,7 +360,7 @@ export default function ApplicantList() {
                 size="sm"
                 disabled={isBulkProcessing}
                 onClick={handleBulkApprove}
-                className="h-8 px-3 bg-green-600 hover:bg-green-700 text-white flex items-center gap-1.5"
+                className="h-8 px-3 bg-primary hover:bg-primary-active text-primary-foreground flex items-center gap-1.5"
               >
                 {bulkAction === 'approve' ? (
                   <Loader2 size={13} className="animate-spin" />
@@ -376,39 +376,39 @@ export default function ApplicantList() {
         <CardContent className="p-0">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-16 text-center px-4">
-              <Loader2 size={28} className="text-gray-400 animate-spin mb-3" />
-              <p className="text-sm text-gray-500">Loading applications…</p>
+              <Loader2 size={28} className="text-ink-faint animate-spin mb-3" />
+              <p className="text-sm text-ink-muted">Loading applications…</p>
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center py-16 text-center px-4">
-              <p className="text-sm text-red-500 mb-3">{error}</p>
+              <p className="text-sm text-destructive mb-3">{error}</p>
               <Button variant="outline" size="sm" onClick={loadApplications}>
                 Try again
               </Button>
             </div>
           ) : students.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center px-4">
-              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
-                <Check size={30} className="text-green-600" />
+              <div className="w-16 h-16 rounded-full bg-canvas-soft flex items-center justify-center mb-4">
+                <Check size={30} className="text-ink-muted" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+              <h3 className="text-lg font-semibold text-ink mb-1">
                 All caught up!
               </h3>
-              <p className="text-sm text-gray-500 max-w-sm">
+              <p className="text-sm text-ink-muted max-w-sm">
                 There are no student applications to review at this time.
               </p>
             </div>
           ) : filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center px-4">
-              <Search size={36} className="text-gray-300 mb-3" />
-              <p className="text-gray-500">
+              <Search size={36} className="text-ink-faint mb-3" />
+              <p className="text-ink-muted">
                 No applications match your search.
               </p>
             </div>
           ) : (
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50 hover:bg-gray-50">
+                <TableRow className="bg-canvas-soft hover:bg-canvas-soft">
                   <TableHead className="pl-6 w-12">
                     <Checkbox
                       checked={
@@ -456,14 +456,14 @@ export default function ApplicantList() {
                       </TableCell>
 
                       {/* Row # */}
-                      <TableCell className="text-gray-400 text-xs">
+                      <TableCell className="text-ink-faint text-xs">
                         {index + 1}
                       </TableCell>
 
                       {/* Student Name */}
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <span className="font-medium text-gray-900 whitespace-nowrap">
+                          <span className="font-medium text-ink whitespace-nowrap">
                             {getFullName(student)}
                           </span>
                         </div>
@@ -471,13 +471,13 @@ export default function ApplicantList() {
 
                       {/* Student ID */}
                       <TableCell>
-                        <span className="font-mono text-sm text-gray-700 bg-gray-100 px-2 py-0.5 rounded">
+                        <span className="font-mono text-sm text-ink-secondary bg-canvas-soft px-2 py-0.5 rounded">
                           {student.schoolStudentId}
                         </span>
                       </TableCell>
 
                       {/* Program */}
-                      <TableCell className="text-gray-600 max-w-45">
+                      <TableCell className="text-ink-secondary max-w-45">
                         <span className="truncate block">{student.course}</span>
                       </TableCell>
 
@@ -492,7 +492,7 @@ export default function ApplicantList() {
                       </TableCell>
 
                       {/* Email */}
-                      <TableCell className="text-gray-500 text-xs max-w-45">
+                      <TableCell className="text-ink-muted text-xs max-w-45">
                         <span className="truncate block">{student.email}</span>
                       </TableCell>
 
@@ -501,17 +501,10 @@ export default function ApplicantList() {
                         <Badge
                           variant={
                             student.status === 1
-                              ? 'default'
+                              ? 'warning'
                               : student.status === 2
-                                ? 'secondary'
-                                : 'destructive'
-                          }
-                          className={
-                            student.status === 1
-                              ? 'bg-orange-100 text-orange-700 hover:bg-orange-100 border-orange-200'
-                              : student.status === 2
-                                ? 'bg-green-100 text-green-700 hover:bg-green-100 border-green-200'
-                                : 'bg-red-100 text-red-700 hover:bg-red-100 border-red-200'
+                                ? 'success'
+                                : 'danger'
                           }
                         >
                           {student.status === 1 && 'Pending'}
@@ -529,7 +522,7 @@ export default function ApplicantList() {
                               variant="outline"
                               disabled={isActioning || isBulkProcessing}
                               onClick={() => handleReject(student)}
-                              className="h-8 px-3 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-400 hover:text-red-700 flex items-center gap-1.5"
+                              className="h-8 px-3 border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive hover:text-destructive flex items-center gap-1.5"
                             >
                               <X size={13} />
                               Reject
@@ -538,7 +531,7 @@ export default function ApplicantList() {
                               size="sm"
                               disabled={isActioning || isBulkProcessing}
                               onClick={() => handleApprove(student)}
-                              className="h-8 px-3 bg-green-600 hover:bg-green-700 text-white flex items-center gap-1.5"
+                              className="h-8 px-3 flex items-center gap-1.5"
                             >
                               {isActioning ? (
                                 <Loader2 size={13} className="animate-spin" />
@@ -549,7 +542,7 @@ export default function ApplicantList() {
                             </Button>
                           </div>
                         ) : (
-                          <span className="text-gray-400 text-sm font-medium">
+                          <span className="text-ink-faint text-sm font-medium">
                             —
                           </span>
                         )}
@@ -563,7 +556,7 @@ export default function ApplicantList() {
 
           {/* Footer count */}
           {!isLoading && !error && filtered.length > 0 && (
-            <div className="px-6 py-3 border-t border-gray-100 text-xs text-gray-400 text-right">
+            <div className="px-6 py-3 border-t border-hairline text-xs text-ink-faint text-right">
               Showing {filtered.length} of {students.length} {statusLabel}
               {students.length !== 1 ? 's' : ''}
             </div>

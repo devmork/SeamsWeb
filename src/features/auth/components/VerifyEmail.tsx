@@ -193,7 +193,7 @@ export default function VerifyEmail() {
 
           {/* Centered title + description */}
           <div className="flex flex-col items-center gap-2 px-4 pt-4 text-center">
-            <AlertDialogTitle className="text-2xl font-bold">
+            <AlertDialogTitle className="type-heading-2">
               {dialog?.title ?? ''}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-sm text-muted-foreground">

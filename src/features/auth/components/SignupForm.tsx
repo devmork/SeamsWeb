@@ -59,10 +59,10 @@ function ProgressBar({ current }: { current: number }) {
           key={i}
           className={`h-1.5 flex-1 rounded-full ${
             i < current
-              ? 'bg-teal-400'
+              ? 'bg-primary'
               : i === current
-                ? 'bg-foreground'
-                : 'bg-muted'
+                ? 'bg-ink'
+                : 'bg-canvas-soft'
           }`}
         />
       ))}
@@ -125,7 +125,7 @@ function PersonalInfoStep({
   return (
     <FieldGroup>
       <div className="mb-4">
-        <h1 className="text-2xl font-bold">Create an account</h1>
+        <h1 className="type-heading-2">Create an account</h1>
         <p className="text-sm text-muted-foreground">
           Fill out the fields to get started.
         </p>
@@ -288,7 +288,7 @@ function SchoolInfoStep({
   return (
     <FieldGroup>
       <div className="mb-4">
-        <h1 className="text-2xl font-bold">Create an account</h1>
+        <h1 className="type-heading-2">Create an account</h1>
         <p className="text-sm text-muted-foreground">
           Fill out the fields to get started.
         </p>
@@ -485,7 +485,7 @@ function ReviewStep({
   return (
     <FieldGroup>
       <div className="mb-4">
-        <h1 className="text-2xl font-bold">Create an account</h1>
+        <h1 className="type-heading-2">Create an account</h1>
         <p className="text-sm text-muted-foreground">
           Fill out the fields to get started.
         </p>
@@ -723,7 +723,7 @@ export default function SignupForm() {
 
           {/* Centered title + description */}
           <div className="flex flex-col items-center gap-2 px-4 pt-4 text-center">
-            <AlertDialogTitle className="text-2xl font-bold">
+            <AlertDialogTitle className="type-heading-2">
               {alert?.title ?? 'Oops!'}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-sm text-muted-foreground">

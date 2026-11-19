@@ -15,7 +15,11 @@ export default function AuthenticatedLayout() {
 
   if (!user) return <Navigate to="/login" replace />;
 
-  const role = user.role.toLowerCase() as 'admin' | 'officer' | 'student';
+  const role = user.role.toLowerCase() as
+    | 'superadmin'
+    | 'admin'
+    | 'officer'
+    | 'student';
   const navItems = navigationData.navByRole[role] || [];
 
   let currentTitle = 'Dashboard';
@@ -39,12 +43,12 @@ export default function AuthenticatedLayout() {
     <SidebarProvider>
       <AppSidebar role={role} />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b border-hairline bg-canvas px-4">
           <SidebarTrigger className="-ml-1" />
-          <div className="h-4 w-[1.5px] bg-gray-300 mx-2 rounded-full" />
-          <span className="text-sm font-semibold">{currentTitle}</span>
+          <div className="h-4 w-px bg-hairline mx-2" />
+          <span className="type-title text-ink">{currentTitle}</span>
         </header>
-        <main className="p-4">
+        <main className="p-4 md:p-6">
           <Outlet />
           <Toaster />
         </main>

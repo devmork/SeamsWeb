@@ -15,7 +15,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { useNavigate } from '@tanstack/react-router';
-import { useAuthStore } from '@/features/auth/Stores/AuthStore';
+import { logOut } from '@/features/auth/services/AuthService';
 
 export function NavUser({
   user,
@@ -28,11 +28,9 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar();
   const navigate = useNavigate();
-  const  clearAuth = useAuthStore((state) => state.clearAuth);
 
   const handleLogout = () => {
-    clearAuth();
-    navigate({ to: '/login', replace: true });
+    void logOut().finally(() => navigate({ to: '/login', replace: true }));
   };
 
   return (

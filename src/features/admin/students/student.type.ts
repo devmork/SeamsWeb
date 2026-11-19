@@ -10,7 +10,6 @@ export interface Student {
   yearLevel: number;
   course: string;
   photoUrl?: string;
-  qrCode?: string;
   status: number;
 }
 

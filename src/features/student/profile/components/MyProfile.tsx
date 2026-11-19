@@ -42,11 +42,11 @@ function InfoField({
   value: React.ReactNode;
 }) {
   return (
-    <div className="rounded-lg bg-gray-50 border border-gray-100 px-4 py-3">
-      <p className="text-[11px] font-medium tracking-wide text-gray-400 uppercase mb-1">
+    <div className="rounded-lg bg-canvas-soft border border-hairline px-4 py-3">
+      <p className="text-[11px] font-medium tracking-wide text-ink-faint uppercase mb-1">
         {label}
       </p>
-      <p className="text-sm font-medium text-gray-900">{value ?? 'N/A'}</p>
+      <p className="text-sm font-medium text-ink">{value ?? 'N/A'}</p>
     </div>
   );
 }
@@ -83,8 +83,8 @@ export default function MyProfile() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-24">
-        <Loader2 size={28} className="text-gray-400 animate-spin mb-3" />
-        <p className="text-sm text-gray-500">Loading your profile…</p>
+        <Loader2 size={28} className="text-ink-faint animate-spin mb-3" />
+        <p className="text-sm text-ink-muted">Loading your profile…</p>
       </div>
     );
   }
@@ -92,7 +92,7 @@ export default function MyProfile() {
   if (error || !profile) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
-        <p className="text-sm text-red-500 mb-3">
+        <p className="text-sm text-destructive mb-3">
           {error ?? 'Profile unavailable.'}
         </p>
         <Button variant="outline" size="sm" onClick={loadProfile}>
@@ -104,33 +104,33 @@ export default function MyProfile() {
 
   return (
     <div className="flex-1 min-w-0 max-w-4xl">
-      <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
-        {/* Banner */}
-        <div className="h-28 bg-linear-to-r from-[#2C5530] to-[#1f3f23]" />
+      <div className="rounded-xl border border-hairline bg-surface overflow-hidden">
+        {/* Cover band */}
+        <div className="h-24 bg-linear-to-r from-primary-soft to-sticker-sky-tint" />
 
         {/* Identity row */}
         <div className="px-6">
           <div className="flex items-start justify-between -mt-10">
             <div className="flex items-end gap-4">
-              <div className="size-20 rounded-2xl bg-[#2C5530] border-4 border-white shadow-sm flex items-center justify-center text-white text-2xl font-bold">
+              <div className="size-20 rounded-2xl bg-primary border-4 border-surface shadow-soft flex items-center justify-center text-primary-foreground text-2xl font-bold">
                 {getInitials(profile)}
               </div>
               <div className="pb-1">
-                <h1 className="text-xl font-bold text-gray-900">
+                <h1 className="text-xl font-bold text-ink">
                   {getFullName(profile)}
                 </h1>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-ink-muted">
                   ID: {profile.schoolStudentId}
                 </p>
               </div>
             </div>
-            <Badge className="mt-12 bg-green-100 text-green-700 hover:bg-green-100 border-green-200 flex items-center gap-1">
+            <Badge variant="success" className="mt-12 flex items-center gap-1">
               <BadgeCheck size={12} />
               Verified student
             </Badge>
           </div>
 
-          <p className="text-sm text-gray-500 mt-4">
+          <p className="text-sm text-ink-muted mt-4">
             Account information is read-only. Contact your administrator if any
             detail needs correction.
           </p>
@@ -139,8 +139,8 @@ export default function MyProfile() {
         <div className="px-6 pb-6 pt-5 space-y-6">
           {/* Personal Information */}
           <section>
-            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-1.5">
-              <span className="w-1 h-3.5 bg-[#2C5530] rounded-full" />
+            <h4 className="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-3 flex items-center gap-1.5">
+              <span className="w-1 h-3.5 bg-ink-faint rounded-full" />
               Personal Information
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -158,38 +158,38 @@ export default function MyProfile() {
 
           {/* Contact & Identification */}
           <section>
-            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-1.5">
-              <span className="w-1 h-3.5 bg-[#2C5530] rounded-full" />
+            <h4 className="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-3 flex items-center gap-1.5">
+              <span className="w-1 h-3.5 bg-ink-faint rounded-full" />
               Contact &amp; Identification
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="rounded-lg bg-gray-50 border border-gray-100 px-4 py-3">
-                <p className="text-[11px] font-medium tracking-wide text-gray-400 uppercase mb-1">
+              <div className="rounded-lg bg-canvas-soft border border-hairline px-4 py-3">
+                <p className="text-[11px] font-medium tracking-wide text-ink-faint uppercase mb-1">
                   Email Address
                 </p>
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm font-medium text-gray-900 flex items-center gap-1.5 truncate">
-                    <Mail size={14} className="text-gray-400 shrink-0" />
+                  <span className="text-sm font-medium text-ink flex items-center gap-1.5 truncate">
+                    <Mail size={14} className="text-ink-faint shrink-0" />
                     {profile.email}
                   </span>
                   {profile.emailVerified !== false && (
-                    <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-green-200 shrink-0">
+                    <Badge className="bg-sticker-green-tint text-sticker-green-ink hover:bg-sticker-green-tint border-sticker-green/30 shrink-0">
                       Verified
                     </Badge>
                   )}
                 </div>
               </div>
-              <div className="rounded-lg bg-gray-50 border border-gray-100 px-4 py-3">
-                <p className="text-[11px] font-medium tracking-wide text-gray-400 uppercase mb-1">
+              <div className="rounded-lg bg-canvas-soft border border-hairline px-4 py-3">
+                <p className="text-[11px] font-medium tracking-wide text-ink-faint uppercase mb-1">
                   Student ID
                 </p>
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm font-medium text-ink">
                     {profile.schoolStudentId}
                   </span>
                   <button
                     onClick={copyStudentId}
-                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                    className="text-ink-faint hover:text-ink-secondary transition-colors"
                     aria-label="Copy student ID"
                   >
                     <Copy size={14} />
@@ -203,8 +203,8 @@ export default function MyProfile() {
 
           {/* Academic Information */}
           <section>
-            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-1.5">
-              <span className="w-1 h-3.5 bg-[#2C5530] rounded-full" />
+            <h4 className="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-3 flex items-center gap-1.5">
+              <span className="w-1 h-3.5 bg-ink-faint rounded-full" />
               Academic Information
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -212,7 +212,7 @@ export default function MyProfile() {
                 label="Program"
                 value={
                   <span className="flex items-center gap-1.5">
-                    <GraduationCap size={14} className="text-gray-400" />
+                    <GraduationCap size={14} className="text-ink-faint" />
                     {profile.course}
                   </span>
                 }
@@ -221,7 +221,7 @@ export default function MyProfile() {
                 label="Year Level"
                 value={
                   <span className="flex items-center gap-1.5">
-                    <BookOpen size={14} className="text-gray-400" />
+                    <BookOpen size={14} className="text-ink-faint" />
                     {profile.yearLevel}
                   </span>
                 }
@@ -230,7 +230,7 @@ export default function MyProfile() {
                 label="Semester"
                 value={
                   <span className="flex items-center gap-1.5">
-                    <Calendar size={14} className="text-gray-400" />
+                    <Calendar size={14} className="text-ink-faint" />
                     {profile.semester || 'N/A'}
                   </span>
                 }
@@ -239,7 +239,7 @@ export default function MyProfile() {
                 label="School Year"
                 value={
                   <span className="flex items-center gap-1.5">
-                    <Calendar size={14} className="text-gray-400" />
+                    <Calendar size={14} className="text-ink-faint" />
                     {profile.schoolYear || 'N/A'}
                   </span>
                 }
@@ -251,18 +251,18 @@ export default function MyProfile() {
 
           {/* Account Security */}
           <section>
-            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-1.5">
-              <span className="w-1 h-3.5 bg-[#2C5530] rounded-full" />
+            <h4 className="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-3 flex items-center gap-1.5">
+              <span className="w-1 h-3.5 bg-ink-faint rounded-full" />
               Account Security
             </h4>
-            <div className="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3">
+            <div className="flex items-center justify-between rounded-lg border border-hairline px-4 py-3">
               <div className="flex items-center gap-3">
-                <div className="size-9 rounded-full bg-gray-100 flex items-center justify-center">
-                  <KeyRound size={16} className="text-gray-500" />
+                <div className="size-9 rounded-full bg-canvas-soft flex items-center justify-center">
+                  <KeyRound size={16} className="text-ink-muted" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Password</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-sm font-medium text-ink">Password</p>
+                  <p className="text-xs text-ink-muted">
                     Keep your account secure with a strong password.
                   </p>
                 </div>

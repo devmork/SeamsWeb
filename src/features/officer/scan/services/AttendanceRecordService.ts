@@ -29,6 +29,14 @@ export const attendanceRecordService = {
     );
     return response.data;
   },
+
+  scan: async (token: string): Promise<AttendanceRecordResponse> => {
+    const response = await api.post<AttendanceRecordResponse>(
+      '/attendance-record/scan',
+      { token },
+    );
+    return response.data;
+  },
 };
 
 export default attendanceRecordService;

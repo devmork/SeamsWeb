@@ -27,15 +27,28 @@ export const resendVerification = async (email: string): Promise<void> => {
 };
 
 export const logIn = async (data: LoginData): Promise<AuthResponse> => {
-  const response = await api.post<AuthResponse>('/auth/login', data);
+  const response = await api.post<AuthResponse>('/auth/login', data, {
+    // Bad credentials return 401 — that must not bounce the login form.
+    skipAuthRedirect: true,
+  });
   return response.data;
 };
 
 /** Read the current user from the Zustand store (works outside React). */
 export const getCurrentUser = () => useAuthStore.getState().user;
 
-export const logOut = (): void => {
-  useAuthStore.getState().clearAuth();
+/**
+ * Ends the server-side cookie session, then clears the local user. The local
+ * clear happens even if the request fails (the cookie may already be gone).
+ */
+export const logOut = async (): Promise<void> => {
+  try {
+    await api.post('/auth/logout');
+  } catch {
+    // ignore — clear locally regardless
+  } finally {
+    useAuthStore.getState().clearAuth();
+  }
 };
 
 export const authService = {

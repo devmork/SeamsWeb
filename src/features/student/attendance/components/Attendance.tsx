@@ -50,27 +50,27 @@ function sessionVisual(status: AttendanceMarkStatus) {
     case AttendanceMarkStatus.Present:
       return {
         icon: CheckCircle2,
-        iconWrap: 'bg-green-100',
-        iconColor: 'text-green-600',
+        iconWrap: 'bg-sticker-green-tint',
+        iconColor: 'text-sticker-green-ink',
         badge:
-          'bg-green-100 text-green-700 hover:bg-green-100 border-green-200',
+          'bg-sticker-green-tint text-sticker-green-ink hover:bg-sticker-green-tint border-sticker-green/30',
         label: 'Present',
       };
     case AttendanceMarkStatus.Upcoming:
       return {
         icon: Clock,
-        iconWrap: 'bg-amber-100',
-        iconColor: 'text-amber-600',
+        iconWrap: 'bg-sticker-orange-tint',
+        iconColor: 'text-sticker-orange-ink',
         badge:
-          'bg-amber-100 text-amber-700 hover:bg-amber-100 border-amber-200',
+          'bg-sticker-orange-tint text-sticker-orange-ink hover:bg-sticker-orange-tint border-sticker-orange/30',
         label: 'Upcoming',
       };
     default:
       return {
         icon: XCircle,
-        iconWrap: 'bg-red-100',
-        iconColor: 'text-red-500',
-        badge: 'bg-red-100 text-red-700 hover:bg-red-100 border-red-200',
+        iconWrap: 'bg-destructive/10',
+        iconColor: 'text-destructive',
+        badge: 'bg-destructive/10 text-destructive hover:bg-destructive/10 border-destructive/30',
         label: 'Absent',
       };
   }
@@ -119,23 +119,18 @@ export default function Attendance() {
 
   return (
     <div className="flex-1 min-w-0">
-      {/* Header banner */}
-      <div className="rounded-xl bg-linear-to-r from-[#2C5530] to-[#1f3f23] px-6 py-5 mb-6 flex items-center justify-between">
+      {/* Page header */}
+      <div className="mb-6 flex items-center justify-between rounded-xl bg-surface px-5 py-4 shadow-soft ring-1 ring-hairline">
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-lg bg-white/15 flex items-center justify-center">
-            <CalendarDays size={20} className="text-white" />
+          <div className="flex size-10 items-center justify-center rounded-lg bg-primary-soft">
+            <CalendarDays size={20} className="text-primary" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-white">My Attendance</h1>
-            <p className="text-sm text-white/70">Events &amp; session marks</p>
+            <h1 className="type-title text-ink">My Attendance</h1>
+            <p className="text-sm text-ink-muted">Events &amp; session marks</p>
           </div>
         </div>
-        <Button
-          variant="secondary"
-          className="bg-white hover:bg-white/90 text-gray-900"
-          onClick={loadHistory}
-          disabled={isLoading}
-        >
+        <Button variant="outline" onClick={loadHistory} disabled={isLoading}>
           <RefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
           Refresh
         </Button>
@@ -143,14 +138,14 @@ export default function Attendance() {
 
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-24">
-          <Loader2 size={28} className="text-gray-400 animate-spin mb-3" />
-          <p className="text-sm text-gray-500">
+          <Loader2 size={28} className="text-ink-faint animate-spin mb-3" />
+          <p className="text-sm text-ink-muted">
             Loading your attendance history…
           </p>
         </div>
       ) : error ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <p className="text-sm text-red-500 mb-3">{error}</p>
+          <p className="text-sm text-destructive mb-3">{error}</p>
           <Button variant="outline" size="sm" onClick={loadHistory}>
             Try again
           </Button>
@@ -159,19 +154,19 @@ export default function Attendance() {
         <>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <div>
-              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-1.5">
-                <CalendarCheck size={14} className="text-[#2C5530]" />
+              <h3 className="text-xs font-semibold text-ink-muted uppercase tracking-wide flex items-center gap-1.5">
+                <CalendarCheck size={14} className="text-primary" />
                 My Events &amp; Attendance
               </h3>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-ink-muted mt-1">
                 Expand an event to view every session and your mark.
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-green-200">
+              <Badge className="bg-sticker-green-tint text-sticker-green-ink hover:bg-sticker-green-tint border-sticker-green/30">
                 {totals.present} present
               </Badge>
-              <Badge className="bg-red-100 text-red-700 hover:bg-red-100 border-red-200">
+              <Badge className="bg-destructive/10 text-destructive hover:bg-destructive/10 border-destructive/30">
                 {totals.absent} absent
               </Badge>
             </div>
@@ -179,13 +174,13 @@ export default function Attendance() {
 
           {groups.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
-              <div className="w-16 h-16 rounded-full bg-[#2C5530]/10 flex items-center justify-center mb-4">
-                <FolderOpen size={28} className="text-[#2C5530]" />
+              <div className="w-16 h-16 rounded-full bg-primary-soft flex items-center justify-center mb-4">
+                <FolderOpen size={28} className="text-primary" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+              <h3 className="text-lg font-semibold text-ink mb-1">
                 No events yet
               </h3>
-              <p className="text-sm text-gray-500 max-w-sm">
+              <p className="text-sm text-ink-muted max-w-sm">
                 Once an event with an attendance session is created, it will
                 show up here.
               </p>
@@ -210,22 +205,22 @@ export default function Attendance() {
                 return (
                   <Card
                     key={group.eventId}
-                    className="overflow-hidden border border-gray-200 shadow-sm"
+                    className="overflow-hidden border border-hairline shadow-sm"
                   >
                     <CardContent className="p-0">
                       <button
-                        className="w-full flex items-center gap-3 px-4 py-4 hover:bg-gray-50 transition-colors text-left"
+                        className="w-full flex items-center gap-3 px-4 py-4 hover:bg-canvas-soft transition-colors text-left"
                         onClick={() => toggleExpand(group.eventId)}
                       >
-                        <div className="w-9 h-9 rounded-lg bg-[#2C5530]/10 flex items-center justify-center shrink-0">
-                          <FolderOpen size={18} className="text-[#2C5530]" />
+                        <div className="w-9 h-9 rounded-lg bg-primary-soft flex items-center justify-center shrink-0">
+                          <FolderOpen size={18} className="text-primary" />
                         </div>
 
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-gray-900 truncate">
+                          <p className="font-semibold text-ink truncate">
                             {group.eventTitle}
                           </p>
-                          <div className="flex items-center gap-3 mt-0.5 text-xs text-gray-500">
+                          <div className="flex items-center gap-3 mt-0.5 text-xs text-ink-muted">
                             <span className="flex items-center gap-1">
                               <CalendarDays size={11} />
                               {formatDate(group.date)}
@@ -240,32 +235,32 @@ export default function Attendance() {
 
                         <div className="flex items-center gap-2 shrink-0">
                           {present > 0 && (
-                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-green-200">
+                            <Badge className="bg-sticker-green-tint text-sticker-green-ink hover:bg-sticker-green-tint border-sticker-green/30">
                               {present} present
                             </Badge>
                           )}
                           {absent > 0 && (
-                            <Badge className="bg-red-100 text-red-700 hover:bg-red-100 border-red-200">
+                            <Badge className="bg-destructive/10 text-destructive hover:bg-destructive/10 border-destructive/30">
                               {absent} absent
                             </Badge>
                           )}
                           {upcoming > 0 && (
-                            <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 border-amber-200">
+                            <Badge className="bg-sticker-orange-tint text-sticker-orange-ink hover:bg-sticker-orange-tint border-sticker-orange/30">
                               {upcoming} upcoming
                             </Badge>
                           )}
                           {isExpanded ? (
-                            <ChevronUp size={16} className="text-gray-400" />
+                            <ChevronUp size={16} className="text-ink-faint" />
                           ) : (
-                            <ChevronDown size={16} className="text-gray-400" />
+                            <ChevronDown size={16} className="text-ink-faint" />
                           )}
                         </div>
                       </button>
 
                       {isExpanded && (
-                        <div className="border-t border-gray-100 bg-gray-50/50 px-4 py-3 flex flex-col gap-2">
+                        <div className="border-t border-hairline bg-canvas-soft/50 px-4 py-3 flex flex-col gap-2">
                           {group.sessions.length === 0 ? (
-                            <div className="text-center py-4 text-sm text-gray-400">
+                            <div className="text-center py-4 text-sm text-ink-faint">
                               No attendance sessions scheduled yet.
                             </div>
                           ) : (
@@ -275,7 +270,7 @@ export default function Attendance() {
                               return (
                                 <div
                                   key={session.recordId}
-                                  className="bg-white border border-gray-200 rounded-lg px-4 py-3 flex items-center gap-3"
+                                  className="bg-surface border border-hairline rounded-lg px-4 py-3 flex items-center gap-3"
                                 >
                                   <div
                                     className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${visual.iconWrap}`}
@@ -287,10 +282,10 @@ export default function Attendance() {
                                   </div>
 
                                   <div className="flex-1 min-w-0">
-                                    <p className="font-medium text-sm text-gray-900 truncate">
+                                    <p className="font-medium text-sm text-ink truncate">
                                       {session.session}
                                     </p>
-                                    <span className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
+                                    <span className="text-xs text-ink-faint flex items-center gap-1 mt-0.5">
                                       <Clock size={11} />
                                       {formatTime(session.startTime)} –{' '}
                                       {formatTime(session.endTime)}

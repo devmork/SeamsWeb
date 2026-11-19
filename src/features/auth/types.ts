@@ -1,9 +1,11 @@
+export type UserRole = 'superadmin' | 'admin' | 'officer' | 'student';
+
 export interface User {
   id: number;
   name: string;
   email: string;
   avatar: string | null;
-  role: string;
+  role: UserRole;
 }
 
 export interface LoginData {
@@ -17,13 +19,15 @@ export interface SignupResponse {
   status: number;
 }
 
+/**
+ * Mirrors `SeamsApp.DTOs.Auth.LoginResponse` (camelCase on the wire).
+ * Auth is cookie-based, so there is no token — the session lives in the
+ * HttpOnly "seams.auth" cookie.
+ */
 export interface AuthResponse {
-  token: string;
   userId: number;
   email: string;
   role: string;
-  name?: string;
-  avatar?: string;
 }
 
 export interface SignupData {
@@ -50,3 +54,11 @@ export type SchoolInfoData = {
   yearLevel: string;
   department: string;
 };
+
+const ROLES: UserRole[] = ['superadmin', 'admin', 'officer', 'student'];
+
+/** Backend roles are lowercase; anything unknown falls back to `student`. */
+export function normalizeRole(role: string | null | undefined): UserRole {
+  const normalized = role?.trim().toLowerCase() as UserRole | undefined;
+  return normalized && ROLES.includes(normalized) ? normalized : 'student';
+}

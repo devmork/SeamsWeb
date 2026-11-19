@@ -89,17 +89,17 @@ export default function EventDialog({
   return (
     // Backdrop
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/30"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       {/* Dialog */}
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
+      <div className="bg-surface rounded-xl shadow-elevated w-full max-w-md mx-4 p-6">
         {/* Header */}
         <div className="flex items-start justify-between mb-1">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-ink">
               {mode === 'create' ? 'Create New Event' : 'Edit Event'}
             </h2>
             <p className="text-sm text-muted-foreground mt-0.5">
@@ -110,7 +110,7 @@ export default function EventDialog({
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors ml-4 mt-0.5"
+            className="text-ink-faint hover:text-ink-secondary transition-colors ml-4 mt-0.5"
           >
             ✕
           </button>
@@ -121,7 +121,7 @@ export default function EventDialog({
           {/* Event Name */}
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="event-title">
-              Event Name <span className="text-red-500">*</span>
+              Event Name <span className="text-destructive">*</span>
             </Label>
             <Input
               id="event-title"
@@ -129,11 +129,11 @@ export default function EventDialog({
               value={form.title}
               onChange={set('title')}
               className={
-                errors.title ? 'border-red-400 focus-visible:ring-red-300' : ''
+                errors.title ? 'border-destructive focus-visible:ring-destructive/30' : ''
               }
             />
             {errors.title && (
-              <p className="text-xs text-red-500">{errors.title}</p>
+              <p className="text-xs text-destructive">{errors.title}</p>
             )}
           </div>
 
@@ -141,7 +141,7 @@ export default function EventDialog({
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="event-start">
-                Start Date <span className="text-red-500">*</span>
+                Start Date <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="event-start"
@@ -150,17 +150,17 @@ export default function EventDialog({
                 onChange={set('startDate')}
                 className={
                   errors.startDate
-                    ? 'border-red-400 focus-visible:ring-red-300'
+                    ? 'border-destructive focus-visible:ring-destructive/30'
                     : ''
                 }
               />
               {errors.startDate && (
-                <p className="text-xs text-red-500">{errors.startDate}</p>
+                <p className="text-xs text-destructive">{errors.startDate}</p>
               )}
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="event-end">
-                End Date <span className="text-red-500">*</span>
+                End Date <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="event-end"
@@ -170,12 +170,12 @@ export default function EventDialog({
                 min={form.startDate}
                 className={
                   errors.endDate
-                    ? 'border-red-400 focus-visible:ring-red-300'
+                    ? 'border-destructive focus-visible:ring-destructive/30'
                     : ''
                 }
               />
               {errors.endDate && (
-                <p className="text-xs text-red-500">{errors.endDate}</p>
+                <p className="text-xs text-destructive">{errors.endDate}</p>
               )}
             </div>
           </div>
@@ -224,7 +224,7 @@ export default function EventDialog({
           <Button
             onClick={handleSubmit}
             disabled={!isFormFilled || isSubmitting}
-            className="bg-[#2C5530] hover:bg-[#2C5530]/90 text-white min-w-28"
+            className="bg-primary hover:bg-primary/90 text-white min-w-28"
           >
             {isSubmitting ? (
               <Loader2 size={15} className="animate-spin" />

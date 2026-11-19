@@ -13,6 +13,5 @@ export interface StudentProfile {
   semester?: string;
   schoolYear?: string;
   photoUrl?: string;
-  qrCode?: string;
   status: number;
 }
