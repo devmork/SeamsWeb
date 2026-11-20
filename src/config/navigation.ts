@@ -4,7 +4,6 @@ import {
   ClipboardCheck,
   FileUser,
   LayoutDashboard,
-  ScanQrCode,
   ShieldUser,
   UserCog,
   Users,
@@ -45,16 +44,10 @@ export const navigationData = {
         icon: Building2,
       },
       {
-        name: 'My Events',
-        url: '/student/my-events',
-        icon: Calendar,
-      },
-      {
         name: 'Attendance',
         url: '/student/attendance-history',
         icon: ClipboardCheck,
       },
-      { name: 'My QR', url: '/student/my-qr', icon: ScanQrCode },
     ],
     officer: [
       { name: 'Dashboard', url: '/officer/dashboard', icon: LayoutDashboard },

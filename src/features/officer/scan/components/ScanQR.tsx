@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
 import {
   CalendarDays,
   Clock,
@@ -25,7 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { logOut } from '@/features/auth/services/AuthService';
 import { getAllEvents } from '@/features/admin/events/services/EventService';
 import type { Event } from '@/features/admin/events/event.type';
 import { attendanceService } from '@/features/admin/attendances';
@@ -59,23 +57,19 @@ function formatSessionLabel(session: Attendance): string {
 }
 
 function StatusBadge({ status }: { status: number }) {
-  if (status === ATTENDANCE_STATUS.Present) {
-    return (
-      <Badge className="bg-sticker-green-tint text-sticker-green-ink hover:bg-sticker-green-tint">
-        Present
-      </Badge>
-    );
-  }
-  return (
-    <Badge className="bg-destructive/10 text-destructive hover:bg-destructive/10">
-      Absent
-    </Badge>
+  return status === ATTENDANCE_STATUS.Present ? (
+    <Badge variant="success">Present</Badge>
+  ) : (
+    <Badge variant="danger">Absent</Badge>
   );
 }
 
+/**
+ * Officer portal — a Monitor surface: the rotating session QR is the focal
+ * object and the scan feed is a dense, glanceable list. Lives inside
+ * AuthenticatedLayout, so it renders no chrome of its own.
+ */
 export default function ScanQR() {
-  const navigate = useNavigate();
-
   const [events, setEvents] = useState<Event[]>([]);
   const [sessions, setSessions] = useState<Attendance[]>([]);
   const [selectedEventId, setSelectedEventId] = useState<string>('');
@@ -224,10 +218,6 @@ export default function ScanQR() {
     return () => clearInterval(interval);
   }, [selectedAttendanceId]);
 
-  const handleLogout = () => {
-    void logOut().finally(() => navigate({ to: '/login', replace: true }));
-  };
-
   const handleManualRefresh = () => {
     if (selectedAttendanceId) fetchQr(Number(selectedAttendanceId));
   };
@@ -236,126 +226,110 @@ export default function ScanQR() {
     ? `data:image/png;base64,${qr.qrCode}`
     : null;
 
+  const rotationRatio =
+    qr && qr.refreshInSeconds > 0
+      ? Math.max(0, Math.min(1, countdown / qr.refreshInSeconds))
+      : 0;
+
   return (
-    <div className="min-h-svh bg-muted/30">
-      <header className="flex items-center justify-between border-b bg-surface px-6 py-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <QrCode className="h-5 w-5" />
-          </div>
-          <div>
-            <h1 className="text-base font-bold text-ink">
-              SEAMS — Officer Portal
-            </h1>
-            <p className="text-xs text-muted-foreground">
-              Session QR Display
-            </p>
-          </div>
-        </div>
-        <Button variant="outline" size="sm" onClick={handleLogout}>
-          <LogOut className="mr-2 h-4 w-4" />
-          Logout
-        </Button>
-      </header>
+    <div className="flex flex-col gap-5">
+      <div>
+        <p className="type-eyebrow text-ink-muted">Officer Portal</p>
+        <h1 className="type-heading-2 mt-1 text-ink">Session QR</h1>
+        <p className="mt-1 text-sm text-ink-muted">
+          Display the rotating QR for students to scan, and watch arrivals as
+          they happen.
+        </p>
+      </div>
 
-      <main className="grid gap-6 p-6 lg:grid-cols-[1fr_360px]">
-        <Card className="border-sticker-green/20">
+      {/* Session picker — the Operate part, kept compact above the monitor. */}
+      <Card>
+        <CardContent className="grid gap-4 p-4 sm:grid-cols-2">
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="officer-event"
+              className="text-xs font-medium text-ink-muted"
+            >
+              Event
+            </label>
+            <Select
+              value={selectedEventId}
+              onValueChange={setSelectedEventId}
+              disabled={loadingEvents}
+            >
+              <SelectTrigger id="officer-event">
+                <SelectValue
+                  placeholder={
+                    loadingEvents ? 'Loading events…' : 'Choose an event'
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {events.map((event) => (
+                  <SelectItem key={event.eventId} value={String(event.eventId)}>
+                    {event.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="officer-session"
+              className="text-xs font-medium text-ink-muted"
+            >
+              Attendance session
+            </label>
+            <Select
+              value={selectedAttendanceId}
+              onValueChange={setSelectedAttendanceId}
+              disabled={!selectedEventId || loadingSessions}
+            >
+              <SelectTrigger id="officer-session">
+                <SelectValue
+                  placeholder={
+                    !selectedEventId
+                      ? 'Select an event first'
+                      : loadingSessions
+                        ? 'Loading sessions…'
+                        : 'Choose a session'
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {sessions.map((session) => (
+                  <SelectItem
+                    key={session.attendanceId}
+                    value={String(session.attendanceId)}
+                  >
+                    <span className="flex items-center gap-2">
+                      {session.logType?.toLowerCase().includes('out') ? (
+                        <LogOut className="h-3.5 w-3.5 text-ink-muted" />
+                      ) : (
+                        <LogIn className="h-3.5 w-3.5 text-ink-muted" />
+                      )}
+                      {formatSessionLabel(session)}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+        {/* QR stage — the focal object. */}
+        <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <QrCode className="h-4 w-4" />
-              Session QR Code
+            <CardTitle className="type-title text-ink">
+              {selectedEvent?.title ?? 'Session QR'}
             </CardTitle>
-            <CardDescription>
-              Select an event and session, then display the rotating QR for
-              students to scan
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-muted-foreground">
-                STEP 1{' '}
-                <span className="ml-1 font-semibold text-foreground">
-                  Select Event *
-                </span>
-              </span>
-              <Select
-                value={selectedEventId}
-                onValueChange={setSelectedEventId}
-                disabled={loadingEvents}
-              >
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={
-                      loadingEvents ? 'Loading events…' : 'Choose an event'
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {events.map((event) => (
-                    <SelectItem
-                      key={event.eventId}
-                      value={String(event.eventId)}
-                    >
-                      {event.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-muted-foreground">
-                STEP 2{' '}
-                <span className="ml-1 font-semibold text-foreground">
-                  Select Attendance Session *
-                </span>
-              </span>
-              <Select
-                value={selectedAttendanceId}
-                onValueChange={setSelectedAttendanceId}
-                disabled={!selectedEventId || loadingSessions}
-              >
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={
-                      !selectedEventId
-                        ? 'Select an event first'
-                        : loadingSessions
-                          ? 'Loading sessions…'
-                          : 'Choose a session'
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {sessions.map((session) => (
-                    <SelectItem
-                      key={session.attendanceId}
-                      value={String(session.attendanceId)}
-                    >
-                      <span className="flex items-center gap-2">
-                        {session.logType?.toLowerCase().includes('out') ? (
-                          <LogOut className="h-3.5 w-3.5 text-sticker-green-ink" />
-                        ) : (
-                          <LogIn className="h-3.5 w-3.5 text-sticker-green-ink" />
-                        )}
-                        {formatSessionLabel(session)}
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {selectedAttendance && (
-              <div className="rounded-lg border bg-sticker-green-tint p-3">
-                <p className="text-xs font-medium text-sticker-green-ink">
-                  Active Session
-                </p>
-                <p className="text-sm font-semibold">{selectedEvent?.title}</p>
-                <p className="text-sm text-muted-foreground">
-                  {selectedAttendance.title}
-                </p>
-                <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+            <CardDescription className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-muted">
+              {selectedAttendance ? (
+                <>
+                  <span>{selectedAttendance.title}</span>
                   <span className="flex items-center gap-1">
                     <CalendarDays className="h-3.5 w-3.5" />
                     {formatDate(selectedAttendance.date)}
@@ -366,86 +340,119 @@ export default function ScanQR() {
                     {formatTime(selectedAttendance.endTime)}
                   </span>
                   <Badge variant="outline">{selectedAttendance.session}</Badge>
+                </>
+              ) : (
+                'Select an event and session to start.'
+              )}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex min-h-80 flex-col items-center justify-center rounded-xl border border-hairline bg-canvas-soft/40">
+              {!selectedAttendanceId ? (
+                <div className="flex flex-col items-center gap-2 px-8 py-10 text-center">
+                  <QrCode className="h-8 w-8 text-ink-faint" />
+                  <p className="text-sm text-ink-muted">
+                    Select an event and session to display the QR code.
+                  </p>
                 </div>
-              </div>
-            )}
-
-            <div className="overflow-hidden rounded-lg border">
-              <div className="relative flex min-h-70 items-center justify-center bg-surface">
-                {!selectedAttendanceId ? (
-                  <div className="flex flex-col items-center gap-2 px-8 text-center text-muted-foreground">
-                    <QrCode className="h-8 w-8" />
-                    <p className="text-sm">
-                      Select an event and session to display the QR code.
-                    </p>
-                  </div>
-                ) : loadingQr ? (
-                  <div className="flex flex-col items-center gap-2 px-8 text-center text-muted-foreground">
-                    <RefreshCw className="h-8 w-8 animate-spin" />
-                    <p className="text-sm">Generating QR code…</p>
-                  </div>
-                ) : qrSrc ? (
-                  <div className="flex flex-col items-center gap-3 py-4">
-                    <img
-                      src={qrSrc}
-                      alt="Session attendance QR code"
-                      className="h-64 w-64 rounded-lg border object-contain"
-                    />
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <RefreshCw className="h-3.5 w-3.5" />
-                      Refreshes in {countdown}s
+              ) : loadingQr ? (
+                <div className="flex flex-col items-center gap-2 px-8 py-10 text-center">
+                  <RefreshCw className="h-8 w-8 animate-spin text-ink-faint" />
+                  <p className="text-sm text-ink-muted">Generating QR code…</p>
+                </div>
+              ) : qrSrc ? (
+                <div className="flex w-full flex-col items-center gap-3 px-6 py-6">
+                  <img
+                    src={qrSrc}
+                    alt="Session attendance QR code"
+                    className="h-64 w-64 rounded-lg border border-hairline bg-surface object-contain"
+                  />
+                  <div className="flex w-full max-w-64 flex-col gap-1.5">
+                    <div className="flex items-center justify-between text-xs text-ink-muted">
+                      <span className="flex items-center gap-1">
+                        <RefreshCw className="h-3.5 w-3.5" />
+                        Refreshes in {countdown}s
+                      </span>
+                      <span className="tabular-nums">
+                        {qr?.refreshInSeconds ?? 0}s cycle
+                      </span>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleManualRefresh}
+                    <div
+                      className="h-1 w-full overflow-hidden rounded-full bg-primary-soft"
+                      role="progressbar"
+                      aria-label="Time until the QR code rotates"
+                      aria-valuenow={countdown}
+                      aria-valuemin={0}
+                      aria-valuemax={qr?.refreshInSeconds ?? 0}
                     >
-                      Refresh now
-                    </Button>
+                      <div
+                        className="h-full rounded-full bg-primary transition-[width] duration-1000 ease-linear motion-reduce:transition-none"
+                        style={{ width: `${rotationRatio * 100}%` }}
+                      />
+                    </div>
                   </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-2 px-8 text-center text-muted-foreground">
-                    <QrCode className="h-8 w-8" />
-                    <p className="text-sm">QR code unavailable.</p>
-                  </div>
-                )}
-              </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleManualRefresh}
+                  >
+                    Refresh now
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-2 px-8 py-10 text-center">
+                  <QrCode className="h-8 w-8 text-ink-faint" />
+                  <p className="text-sm text-ink-muted">QR code unavailable.</p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Scan History</CardTitle>
-            <CardDescription>
-              Students who scanned this session
-            </CardDescription>
+        {/* Scan feed — dense, glanceable, live. */}
+        <Card className="flex flex-col">
+          <CardHeader className="flex-row items-center justify-between gap-2">
+            <div>
+              <CardTitle className="type-title text-ink">Scans</CardTitle>
+              <CardDescription className="text-xs text-ink-muted">
+                Students who scanned this session
+              </CardDescription>
+            </div>
+            <Badge variant="secondary" className="tabular-nums">
+              {scanHistory.length}
+            </Badge>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1">
             {scanHistory.length === 0 ? (
               <div className="flex flex-col items-center gap-2 py-16 text-center">
-                <QrCode className="h-10 w-10 text-muted-foreground/40" />
-                <p className="text-sm font-medium">No scans yet</p>
-                <p className="text-xs text-muted-foreground">
-                  Students will appear here after they scan the QR
+                <QrCode className="h-8 w-8 text-ink-faint" />
+                <p className="text-sm font-medium text-ink">No scans yet</p>
+                <p className="text-xs text-ink-muted">
+                  Students appear here as they scan the QR.
                 </p>
               </div>
             ) : (
-              <ul className="flex flex-col gap-2">
+              <ul
+                role="log"
+                aria-label="Attendance scan feed"
+                className="max-h-105 divide-y divide-hairline overflow-y-auto"
+              >
                 {scanHistory.map((record) => (
                   <li
                     key={record.recordID}
-                    className="flex items-center justify-between rounded-lg border p-3"
+                    className="flex items-center justify-between gap-3 py-2.5"
                   >
-                    <div>
-                      <p className="text-sm font-medium">{record.fullName}</p>
-                      <p className="text-xs text-muted-foreground">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-ink">
+                        {record.fullName}
+                      </p>
+                      <p className="truncate text-xs text-ink-muted">
                         {record.schoolStudentID}
                       </p>
                     </div>
-                    <div className="flex flex-col items-end gap-1">
+                    <div className="flex shrink-0 flex-col items-end gap-1">
                       <StatusBadge status={record.status} />
-                      <span className="text-[11px] text-muted-foreground">
+                      <span className="text-[11px] tabular-nums text-ink-faint">
                         {formatTime(record.timestamp)}
                       </span>
                     </div>
@@ -455,7 +462,7 @@ export default function ScanQR() {
             )}
           </CardContent>
         </Card>
-      </main>
+      </div>
     </div>
   );
 }

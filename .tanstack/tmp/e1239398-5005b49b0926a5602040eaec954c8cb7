@@ -26,8 +26,6 @@ import { Route as AuthenticatedOfficerDashboardRouteImport } from './routes/_aut
 import { Route as AuthenticatedStudentAttendanceHistoryRouteImport } from './routes/_authenticated/student/attendance-history'
 import { Route as AuthenticatedStudentDashboardRouteImport } from './routes/_authenticated/student/dashboard'
 import { Route as AuthenticatedStudentDepartmentsRouteImport } from './routes/_authenticated/student/departments'
-import { Route as AuthenticatedStudentMyEventsRouteImport } from './routes/_authenticated/student/my-events'
-import { Route as AuthenticatedStudentQrRouteImport } from './routes/_authenticated/student/qr'
 import { Route as AuthenticatedSuperadminDepartmentsRouteImport } from './routes/_authenticated/superadmin/departments'
 import { Route as AuthenticatedSuperadminUsersRouteImport } from './routes/_authenticated/superadmin/users'
 
@@ -126,17 +124,6 @@ const AuthenticatedStudentDepartmentsRoute =
     path: '/departments',
     getParentRoute: () => AuthenticatedStudentRouteRoute,
   } as any)
-const AuthenticatedStudentMyEventsRoute =
-  AuthenticatedStudentMyEventsRouteImport.update({
-    id: '/my-events',
-    path: '/my-events',
-    getParentRoute: () => AuthenticatedStudentRouteRoute,
-  } as any)
-const AuthenticatedStudentQrRoute = AuthenticatedStudentQrRouteImport.update({
-  id: '/qr',
-  path: '/qr',
-  getParentRoute: () => AuthenticatedStudentRouteRoute,
-} as any)
 const AuthenticatedSuperadminDepartmentsRoute =
   AuthenticatedSuperadminDepartmentsRouteImport.update({
     id: '/departments',
@@ -167,8 +154,6 @@ export interface FileRoutesByFullPath {
   '/student/attendance-history': typeof AuthenticatedStudentAttendanceHistoryRoute
   '/student/dashboard': typeof AuthenticatedStudentDashboardRoute
   '/student/departments': typeof AuthenticatedStudentDepartmentsRoute
-  '/student/my-events': typeof AuthenticatedStudentMyEventsRoute
-  '/student/qr': typeof AuthenticatedStudentQrRoute
   '/superadmin/departments': typeof AuthenticatedSuperadminDepartmentsRoute
   '/superadmin/users': typeof AuthenticatedSuperadminUsersRoute
 }
@@ -189,8 +174,6 @@ export interface FileRoutesByTo {
   '/student/attendance-history': typeof AuthenticatedStudentAttendanceHistoryRoute
   '/student/dashboard': typeof AuthenticatedStudentDashboardRoute
   '/student/departments': typeof AuthenticatedStudentDepartmentsRoute
-  '/student/my-events': typeof AuthenticatedStudentMyEventsRoute
-  '/student/qr': typeof AuthenticatedStudentQrRoute
   '/superadmin/departments': typeof AuthenticatedSuperadminDepartmentsRoute
   '/superadmin/users': typeof AuthenticatedSuperadminUsersRoute
 }
@@ -213,8 +196,6 @@ export interface FileRoutesById {
   '/_authenticated/student/attendance-history': typeof AuthenticatedStudentAttendanceHistoryRoute
   '/_authenticated/student/dashboard': typeof AuthenticatedStudentDashboardRoute
   '/_authenticated/student/departments': typeof AuthenticatedStudentDepartmentsRoute
-  '/_authenticated/student/my-events': typeof AuthenticatedStudentMyEventsRoute
-  '/_authenticated/student/qr': typeof AuthenticatedStudentQrRoute
   '/_authenticated/superadmin/departments': typeof AuthenticatedSuperadminDepartmentsRoute
   '/_authenticated/superadmin/users': typeof AuthenticatedSuperadminUsersRoute
 }
@@ -237,8 +218,6 @@ export interface FileRouteTypes {
     | '/student/attendance-history'
     | '/student/dashboard'
     | '/student/departments'
-    | '/student/my-events'
-    | '/student/qr'
     | '/superadmin/departments'
     | '/superadmin/users'
   fileRoutesByTo: FileRoutesByTo
@@ -259,8 +238,6 @@ export interface FileRouteTypes {
     | '/student/attendance-history'
     | '/student/dashboard'
     | '/student/departments'
-    | '/student/my-events'
-    | '/student/qr'
     | '/superadmin/departments'
     | '/superadmin/users'
   id:
@@ -282,8 +259,6 @@ export interface FileRouteTypes {
     | '/_authenticated/student/attendance-history'
     | '/_authenticated/student/dashboard'
     | '/_authenticated/student/departments'
-    | '/_authenticated/student/my-events'
-    | '/_authenticated/student/qr'
     | '/_authenticated/superadmin/departments'
     | '/_authenticated/superadmin/users'
   fileRoutesById: FileRoutesById
@@ -417,20 +392,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudentDepartmentsRouteImport
       parentRoute: typeof AuthenticatedStudentRouteRoute
     }
-    '/_authenticated/student/my-events': {
-      id: '/_authenticated/student/my-events'
-      path: '/my-events'
-      fullPath: '/student/my-events'
-      preLoaderRoute: typeof AuthenticatedStudentMyEventsRouteImport
-      parentRoute: typeof AuthenticatedStudentRouteRoute
-    }
-    '/_authenticated/student/qr': {
-      id: '/_authenticated/student/qr'
-      path: '/qr'
-      fullPath: '/student/qr'
-      preLoaderRoute: typeof AuthenticatedStudentQrRouteImport
-      parentRoute: typeof AuthenticatedStudentRouteRoute
-    }
     '/_authenticated/superadmin/departments': {
       id: '/_authenticated/superadmin/departments'
       path: '/departments'
@@ -486,8 +447,6 @@ interface AuthenticatedStudentRouteRouteChildren {
   AuthenticatedStudentAttendanceHistoryRoute: typeof AuthenticatedStudentAttendanceHistoryRoute
   AuthenticatedStudentDashboardRoute: typeof AuthenticatedStudentDashboardRoute
   AuthenticatedStudentDepartmentsRoute: typeof AuthenticatedStudentDepartmentsRoute
-  AuthenticatedStudentMyEventsRoute: typeof AuthenticatedStudentMyEventsRoute
-  AuthenticatedStudentQrRoute: typeof AuthenticatedStudentQrRoute
 }
 
 const AuthenticatedStudentRouteRouteChildren: AuthenticatedStudentRouteRouteChildren =
@@ -496,8 +455,6 @@ const AuthenticatedStudentRouteRouteChildren: AuthenticatedStudentRouteRouteChil
       AuthenticatedStudentAttendanceHistoryRoute,
     AuthenticatedStudentDashboardRoute: AuthenticatedStudentDashboardRoute,
     AuthenticatedStudentDepartmentsRoute: AuthenticatedStudentDepartmentsRoute,
-    AuthenticatedStudentMyEventsRoute: AuthenticatedStudentMyEventsRoute,
-    AuthenticatedStudentQrRoute: AuthenticatedStudentQrRoute,
   }
 
 const AuthenticatedStudentRouteRouteWithChildren =
